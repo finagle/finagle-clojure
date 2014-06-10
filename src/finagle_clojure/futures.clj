@@ -1,7 +1,7 @@
 (ns finagle-clojure.futures
-  (:refer-clojure :exclude [for future get map])
+  (:refer-clojure :exclude [await for future map])
   (:require [finagle-clojure.scala :as scala])
-  (:import [com.twitter.util Future]))
+  (:import [com.twitter.util Await Future]))
 
 ;; call this mapcat? which is the Clojure name for flatMap?
 ;; or is that too confusing
@@ -23,11 +23,11 @@
         (scala/Function1 ~param-binding
           ~@body))))
 
-(defn get
+(defn await
   "Get the value for Future f.
   Blocks until the Future is ready."
   [^Future f]
-  (.get f))
+  (Await/result f))
 
 (defn ^Future value
   "Returns a future with the constant value v"
