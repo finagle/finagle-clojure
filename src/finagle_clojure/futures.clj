@@ -34,6 +34,10 @@
   [v]
   (Future/value v))
 
+(defn ^Future exception
+  [^Throwable t]
+  (Future/exception t))
+
 ;; TODO support non-future values in intermediate bindings
 ;; like require <- or :<- or something for future values to do flatmap
 (defmacro for
@@ -56,3 +60,19 @@
   (flatmap (Future/collect (scala/seq->scala-list future-seq))
     [array-buffer]
     (value (scala/scala-seq->List array-buffer))))
+
+(defn rescue*
+  [^Future f ^scala.PartialFunction pfn]
+  (.rescue f pfn))
+
+(defmacro rescue
+  [^Future f arg-binding & body]
+  `(rescue* ~f (scala/PartialFunction ~arg-binding ~@body)))
+
+(defn handle*
+  [^Future f ^scala.PartialFunction pfn]
+  (.handle f pfn))
+
+(defmacro handle
+  [^Future f arg-binding & body]
+  `(handle* ~f (scala/PartialFunction ~arg-binding ~@body)))
