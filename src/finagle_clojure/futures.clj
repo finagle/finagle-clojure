@@ -58,8 +58,8 @@
   "Takes a seq of Futures, returns a Future of a seq of their values."
   [future-seq]
   (flatmap (Future/collect (scala/seq->scala-list future-seq))
-    [array-buffer]
-    (value (scala/scala-seq->List array-buffer))))
+    [scala-seq]
+    (value (scala/scala-seq->List scala-seq))))
 
 (defn rescue*
   [^Future f ^scala.PartialFunction pfn]

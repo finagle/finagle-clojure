@@ -35,3 +35,6 @@
 (facts "handle"
   (get (handle (exception (Exception.)) [Object _] 1)) => 1
   (get (handle (exception (Exception.)) [String _] 1)) => (throws Exception))
+
+(fact "collect"
+  (get (collect [(value 1) (value 2)])) => [1 2])
