@@ -24,3 +24,11 @@
          (if ~arg-tag
            (instance? ~arg-tag ~'v)
            (proxy-super isDefinedAt ~'v))))))
+
+(defmacro Function0
+  "Create a new scala.Function0.
+  The apply method will be implemented with body"
+  [& body]
+  `(proxy [scala.runtime.AbstractFunction0] []
+     (apply []
+       ~@body)))

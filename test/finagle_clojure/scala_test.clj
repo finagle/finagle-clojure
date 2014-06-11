@@ -16,3 +16,6 @@
 (facts "seq <=> scala conversion"
   (class (seq->scala-list [1])) => scala.collection.immutable.$colon$colon
   (-> [1] seq->scala-list scala-seq->List) => [1])
+
+(fact "Function0#apply"
+  (.apply (Function0 1)) => 1)

@@ -1,5 +1,5 @@
 (ns finagle-clojure.futures-test
-  (:refer-clojure :exclude [await for map])
+  (:refer-clojure :exclude [await ensure for map])
   (:require [finagle-clojure.futures :refer :all]
             [finagle-clojure.scala :as scala]
             [midje.sweet :refer :all]))
@@ -42,3 +42,7 @@
 
 (fact "collect"
   (await (collect [(value 1) (value 2)])) => [1 2])
+
+(facts "ensure"
+  (await (ensure (value 1) 1)) => 1
+  (await (ensure (exception (Exception.)) 1)) => (throws Exception))

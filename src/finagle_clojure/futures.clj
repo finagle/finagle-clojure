@@ -1,5 +1,5 @@
 (ns finagle-clojure.futures
-  (:refer-clojure :exclude [await for future map])
+  (:refer-clojure :exclude [await ensure for future map])
   (:require [finagle-clojure.scala :as scala])
   (:import [com.twitter.util Await Future]))
 
@@ -68,7 +68,7 @@
 
 (defmacro rescue
   [^Future f arg-binding & body]
-  `(rescue* ~f (scala/Function ~arg-binding ~@body)))
+  `(rescue* ~f (scala/Function ^Throwable ~arg-binding ~@body)))
 
 (defn ^Future handle*
   [^Future f ^scala.PartialFunction pfn]
@@ -77,3 +77,11 @@
 (defmacro handle
   [^Future f arg-binding & body]
   `(handle* ~f (scala/Function ^Throwable ~arg-binding ~@body)))
+
+(defn ^Future ensure*
+  [^Future f ^scala.Function0 fn0]
+  (.ensure f fn0))
+
+(defmacro ensure
+  [^Future f & body]
+  `(ensure* ~f (scala/Function0 ~@body)))
