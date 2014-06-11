@@ -86,6 +86,10 @@
   [^Future f & body]
   `(ensure* ~f (scala/Function0 ~@body)))
 
+(defn select
+  [^Future f ^Future other]
+  (.select f other))
+
 (defn defined?
   [^Future f]
   (.isDefined f))

@@ -52,3 +52,7 @@
   (defined? (value 1)) => true
   (defined? (exception (Exception.))) => true
   (defined? (NoFuture.)) => false)
+
+(facts "select"
+  (await (select (NoFuture.) (value 1))) => 1
+  (await (select (value 2) (NoFuture.))) => 2)
