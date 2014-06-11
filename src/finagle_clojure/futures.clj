@@ -11,7 +11,7 @@
   [twitter-future param-binding & body]
   (let [tagged-future (vary-meta twitter-future assoc :tag `Future)]
     `(.flatMap ~tagged-future
-        (scala/Function1 ~param-binding
+        (scala/Function ~param-binding
           ~@body))))
 
 (defmacro map
@@ -20,7 +20,7 @@
   [twitter-future param-binding & body]
   (let [tagged-future (vary-meta twitter-future assoc :tag `Future)]
     `(.map ~tagged-future
-        (scala/Function1 ~param-binding
+        (scala/Function ~param-binding
           ~@body))))
 
 (defn await
@@ -67,7 +67,7 @@
 
 (defmacro rescue
   [^Future f arg-binding & body]
-  `(rescue* ~f (scala/PartialFunction ~arg-binding ~@body)))
+  `(rescue* ~f (scala/Function ~arg-binding ~@body)))
 
 (defn handle*
   [^Future f ^scala.PartialFunction pfn]
@@ -75,4 +75,4 @@
 
 (defmacro handle
   [^Future f arg-binding & body]
-  `(handle* ~f (scala/PartialFunction ~arg-binding ~@body)))
+  `(handle* ~f (scala/Function ^Throwable ~arg-binding ~@body)))

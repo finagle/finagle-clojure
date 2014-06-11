@@ -29,12 +29,16 @@
   (await (exception (Exception.))) => (throws Exception))
 
 (facts "rescue"
-  (await (rescue (exception (Exception.)) [Object _] (value 1))) => 1
-  (await (rescue (exception (Exception.)) [String _] (value 1))) => (throws Exception))
+  (await (rescue (exception (Exception.)) [^Throwable t] (value 1))) => 1
+  (await (rescue (exception (Exception.)) [t] (value 1))) => 1
+  ;; this throws because the domain of the Function passed to rescue doesn't include Throwable
+  (await (rescue (exception (Exception.)) [^String s] (value 1))) => (throws Exception))
 
 (facts "handle"
-  (await (handle (exception (Exception.)) [Object _] 1)) => 1
-  (await (handle (exception (Exception.)) [String _] 1)) => (throws Exception))
+  (await (handle (exception (Exception.)) [^Throwable t] 1)) => 1
+  (await (handle (exception (Exception.)) [t] 1)) => 1
+  ;; this throws because the domain of the Function passed to handle doesn't include Throwable
+  (await (handle (exception (Exception.)) [^String s] 1)) => (throws Exception))
 
 (fact "collect"
   (await (collect [(value 1) (value 2)])) => [1 2])

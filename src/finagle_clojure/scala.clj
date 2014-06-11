@@ -9,30 +9,18 @@
   [scala-seq]
   (JavaConversions/seqAsJavaList scala-seq))
 
-;; TODO use Twitter Util Function instead?
-;; https://twitter.github.io/util/util-core/target/doc/main/api/com/twitter/util/Function.html
-(defmacro Function1
-  "Create a new scala.Function1.
+(defmacro Function
+  "Create a new com.twitter.util.Function.
+  It can be used a scala.Function1 or scala.PartialFunction.
   args-binding should be a vector containing one element,
-  the name to bind the parameter to the Function1 to.
-  Only Function1#apply will be implemented."
+  the name to bind the parameter to the Function to.
+  The apply method will be implemented with body."
   [[arg-name] & body]
-  `(reify scala.Function1
-     (apply [~'this ~arg-name]
-       ~@body)))
-
-(defn ^scala.Function1 fn->Function1
-  "Wrap a clojure IFn as a Function1"
-  [f]
-  (Function1 [arg] (f arg)))
-
-(defmacro PartialFunction
-  "Creates a new scala.PartialFunction.
-  args-binding should be a vector containing one element,
-  the name to bind the parameter to the PartialFunction to."
-  [[arg-class arg-name] & body]
-  `(reify scala.PartialFunction
-     (apply [~'this ~arg-name]
-       ~@body)
-     (isDefinedAt [~'this ~'v]
-       (instance? ~arg-class ~'v))))
+  (let [arg-tag (-> arg-name meta :tag)]
+    `(proxy [com.twitter.util.Function] []
+       (apply [~arg-name]
+         ~@body)
+       (isDefinedAt [~'v]
+         (if ~arg-tag
+           (instance? ~arg-tag ~'v)
+           (proxy-super isDefinedAt ~'v))))))
