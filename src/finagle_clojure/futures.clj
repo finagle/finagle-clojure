@@ -3,25 +3,26 @@
   (:require [finagle-clojure.scala :as scala])
   (:import [com.twitter.util Await Future]))
 
-;; call this mapcat? which is the Clojure name for flatMap?
-;; or is that too confusing
+(defn ^Future flatmap*
+  [^Future f ^scala.Function1 fn1]
+  (.flatMap f fn1))
+
+;; TODO: @samn 06/11/14 will this require reflection? type tag needed?
 (defmacro flatmap
   "Call flatMap on twitter-future.
   param-binding is a vector with 1 element, the name to bind the value of the flatMap to."
-  [twitter-future param-binding & body]
-  (let [tagged-future (vary-meta twitter-future assoc :tag `Future)]
-    `(.flatMap ~tagged-future
-        (scala/Function ~param-binding
-          ~@body))))
+  [^Future f param-binding & body]
+  `(flatmap* ~f (scala/Function ~param-binding ~@body)))
+
+(defn map*
+  [^Future f ^scala.Function1 fn1]
+  (.map f fn1))
 
 (defmacro map
   "Call map on twitter-future.
   param-binding is a vector with 1 element, the name to bind the value of the flatMap to."
-  [twitter-future param-binding & body]
-  (let [tagged-future (vary-meta twitter-future assoc :tag `Future)]
-    `(.map ~tagged-future
-        (scala/Function ~param-binding
-          ~@body))))
+  [^Future f  param-binding & body]
+  `(map* ~f (scala/Function ~param-binding ~@body)))
 
 (defn await
   "Get the value for Future f.
@@ -54,14 +55,14 @@
           (for ~(drop 2 bindings) ~@body))
       `(do ~@body))))
 
-(defn collect
+(defn ^Future collect
   "Takes a seq of Futures, returns a Future of a seq of their values."
   [future-seq]
   (flatmap (Future/collect (scala/seq->scala-list future-seq))
     [scala-seq]
     (value (scala/scala-seq->List scala-seq))))
 
-(defn rescue*
+(defn ^Future rescue*
   [^Future f ^scala.PartialFunction pfn]
   (.rescue f pfn))
 
@@ -69,7 +70,7 @@
   [^Future f arg-binding & body]
   `(rescue* ~f (scala/Function ~arg-binding ~@body)))
 
-(defn handle*
+(defn ^Future handle*
   [^Future f ^scala.PartialFunction pfn]
   (.handle f pfn))
 
