@@ -85,3 +85,7 @@
 (defmacro ensure
   [^Future f & body]
   `(ensure* ~f (scala/Function0 ~@body)))
+
+(defn defined?
+  [^Future f]
+  (.isDefined f))

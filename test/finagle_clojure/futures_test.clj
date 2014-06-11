@@ -1,5 +1,6 @@
 (ns finagle-clojure.futures-test
   (:refer-clojure :exclude [await ensure for map])
+  (:import [com.twitter.util NoFuture])
   (:require [finagle-clojure.futures :refer :all]
             [finagle-clojure.scala :as scala]
             [midje.sweet :refer :all]))
@@ -46,3 +47,8 @@
 (facts "ensure"
   (await (ensure (value 1) 1)) => 1
   (await (ensure (exception (Exception.)) 1)) => (throws Exception))
+
+(facts "defined?"
+  (defined? (value 1)) => true
+  (defined? (exception (Exception.))) => true
+  (defined? (NoFuture.)) => false)
