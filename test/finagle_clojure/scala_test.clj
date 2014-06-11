@@ -2,6 +2,8 @@
   (:require [finagle-clojure.scala :refer :all]
             [midje.sweet :refer :all]))
 
+(set! *warn-on-reflection* true)
+
 (facts "Function#isDefinedAt"
   (.isDefinedAt (Function [^String s] nil) (Object.)) => false
   (.isDefinedAt (Function [^String s] nil) "") => true

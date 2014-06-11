@@ -1,10 +1,10 @@
-;TODO
-;(set! *warn-on-reflection* true)
 (ns finagle-clojure.futures-test
   (:refer-clojure :exclude [await for map])
   (:require [finagle-clojure.futures :refer :all]
             [finagle-clojure.scala :as scala]
             [midje.sweet :refer :all]))
+
+(set! *warn-on-reflection* true)
 
 (fact "flatmap"
   (await (flatmap (value "hi") [s] (value (.toUpperCase ^String s)))) => "HI")
