@@ -2,6 +2,7 @@
 
 A thin wrapper around Finagle & Twitter Future
 
-## Usage
+## Documentation
 
-Public fns in finagle-clojure.futures have docstrings
+* [Overview](doc/intro.md)
+* [API Docs](doc/codox/index.html)
