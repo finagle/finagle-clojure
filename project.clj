@@ -4,7 +4,9 @@
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.6.0"]
                                   [midje "1.5.1" :exclusions [org.clojure/clojure]]]
                    :plugins [[lein-midje "3.1.1"]
-                             [codox "0.8.9"]]}
+                             [codox "0.8.9"]]
+                   :codox {:defaults {:doc/format :markdown}
+                           :output-dir "doc/codox"}}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
   :repositories [["twitter" "http://maven.twttr.com/"]]
