@@ -86,7 +86,7 @@
   *Arguments*:
 
     * `f`: a Future
-    * `param-binding`: is a vector with 1 element, the name to bind the value of Future f.
+    * `arg-binding`: is a vector with 1 element, the name to bind the value of Future f.
     * `body`: will execute when the (non-error) value of f is defined.
        Its result should be a Future.
 
@@ -97,8 +97,8 @@
     If `f` results in an error then `body` won't run.
 
   See [[flatmap*]] & [[scala/Function]]"
-  [^Future f param-binding & body]
-  `(flatmap* ~f (scala/Function ~param-binding ~@body)))
+  [^Future f arg-binding & body]
+  `(flatmap* ~f (scala/Function ~arg-binding ~@body)))
 
 (defn map*
   "Apply scala.Function1 fn1 with the value of Future f when f is defined with a value (not exception).
@@ -124,7 +124,7 @@
   *Arguments*:
 
     * `f`: a Future
-    * `param-binding`: is a vector with 1 element, the name to bind the value of Future f.
+    * `arg-binding`: is a vector with 1 element, the name to bind the value of Future f.
     * `body`: will execute when the (non-error) value of f is defined.
 
   *Returns*:
@@ -134,8 +134,8 @@
     If `f` results in an error then `body` won't run.
 
   See [[map*]] & [[scala/Function]]"
-  [^Future f  param-binding & body]
-  `(map* ~f (scala/Function ~param-binding ~@body)))
+  [^Future f  arg-binding & body]
+  `(map* ~f (scala/Function ~arg-binding ~@body)))
 
 ;; TODO support non-future values in intermediate bindings
 ;; like require <- or :<- or something for future values to do flatmap
@@ -196,7 +196,7 @@
   *Arguments*:
 
     * `f`: a Future
-    * `param-binding`: is a vector with 1 element, the name to bind the value of Future f.
+    * `arg-binding`: is a vector with 1 element, the name to bind the value of Future f.
     * `body`: will execute when the (error) value of f is defined.
       The return value should be a Future.
 
@@ -236,7 +236,7 @@
   *Arguments*:
 
     * `f`: a Future
-    * `param-binding`: is a vector with 1 element, the name to bind the value of Future f.
+    * `arg-binding`: is a vector with 1 element, the name to bind the value of Future f.
     * `body`: will execute when the (error) value of f is defined.
       The return value should be a Future.
 
