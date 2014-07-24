@@ -296,3 +296,19 @@
     A new Future that will be defined with the value of the Future that returns first (between `f1` & `f2`)."
   [^Future f1 ^Future f2]
   (.select f1 f2))
+
+(defn within
+  "Returns a new `Future` that will error if not complete within `timeout-duration`.
+
+  *Arguments*:
+
+    * `f`: a Future
+    * `timeout-duration`: a `com.twitter.util.Duration` indicating how long to wait before erroring.
+
+  *Returns*:
+
+    A new Future.
+
+  See [[finagle-clojure.duration/->Duration]]"
+  [^Future f timeout-duration]
+  (.within f timeout-duration))

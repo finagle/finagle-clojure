@@ -4,7 +4,7 @@
   It is where business logic is implemented.
   `Service`s can be created by using [[mk*]] & [[mk]],
   or by proxying `com.twitter.finagle.Service`.
-  
+
   If creating an instance of `Service` with proxy
   at least the apply method needs to be implemented.
   Default implementations are provided for all other methods.
@@ -15,7 +15,8 @@
   - (isAvailable []) ; => boolean
   - (map [fn1]) ; => Service[new-response-type]"
   (:refer-clojure :exclude [apply])
-  (:require [finagle-clojure.scala :as scala])
+  (:require [finagle-clojure.scala :as scala]
+            [finagle-clojure.duration :as duration])
   (:import [com.twitter.finagle Service Service$]))
 
 (defn ^Service mk*
@@ -29,7 +30,7 @@
   *Returns*:
 
     a new `Service`.
- 
+
   See: [[mk]]"
   [^scala.Function1 fn1]
   (.mk Service$/MODULE$ fn1))
@@ -46,7 +47,7 @@
   *Returns*:
 
     a new `Service`.
- 
+
   See: [[mk*]]"
   [arg-binding & body]
   `(mk* (scala/Function ~arg-binding ~@body)))
@@ -91,3 +92,19 @@
     `true` if the service is available, `false` otherwise."
   [^Service svc]
   (.isAvailable svc))
+
+(defn close!
+  "Mark `Service` `svc` as no longer in use. No further requests should be sent.
+
+  *Arguments*:
+
+    * `svc`: a `Service`.
+    * `deadline-time`: a `com.twitter.util.Time` instance describing how long to wait for the close to complete.
+
+  *Returns*:
+
+    A `Future` that will be complete when `svc` has closed.
+
+  See [[finagle-clojure.duration/->Time]]"
+  ([^Service svc deadline-time]
+   (.close svc deadline-time)))
