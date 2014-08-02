@@ -312,3 +312,55 @@
   See [[finagle-clojure.duration/->Duration]]"
   [^Future f timeout-duration]
   (.within f timeout-duration))
+
+(defn transform
+  "Returns a new `Future` that will transform its value when defined using the supplied fns.
+  This is sugar around chaining flatmap & rescue, so the supplied functions should return a `Future`.
+
+  *Arguments*:
+
+    * `f`: a Future
+    * `success-fn`: a fn that will be called with the successful value of `f` when it's defined.
+                    `success-fn` should return a `Future`.
+    * `failure-fn`: a fn that will be called with the exception that defines `f`.
+                    `failure-fn` should return a `Future`. Exceptions will not be `rescue`d if this isn't passed.
+
+  *Returns*:
+
+    A new Future.
+
+  See [[flatmap]] & [[rescue]]."
+  ([^Future f success-fn] 
+   (transform f success-fn nil))
+  ([^Future f success-fn failure-fn]
+   ;; TODO  what is the min target version of clojure? cond-> only since 1.5
+   (cond-> f
+     ;; order is important here, flatmap before rescue works, rescue before flatmap doesn't
+     (fn? success-fn) (flatmap [v] (success-fn v))
+     (fn? failure-fn) (rescue [t] (failure-fn t)))))
+
+(defmacro match-class
+  "Sugar for conditional execution based on the class of the first argument `value`.
+  Useful for handling different types of Exceptions in error callbacks.
+
+  *Arguments*:
+
+    * `value`: the class of this argument will be used to dispatch with `body`.
+    * `body`: like the body of a cond expression, expected-class expr
+
+  e.g. 
+
+  ````
+  (match-class (IllegalArgumentException.)
+    IllegalArgumentException (value :illegal-argument)
+    Exception (value :an-error))
+  ````
+
+  *Returns*:
+
+    The result of the expression that matches the class of `value`.
+
+  See [[handle]], [[rescue]], [[transform]]."
+  [value & body]
+  `(condp instance? ~value
+     ~@body))

@@ -56,3 +56,16 @@
 (facts "select"
   (await (select (NoFuture.) (value 1))) => 1
   (await (select (value 2) (NoFuture.))) => 2)
+
+(let [success-fn (fn [v] (value :success))
+      failure-fn (fn [t] (value :failure))]
+  (facts "transform"
+    (-> (value true) (transform success-fn) await) => :success
+    (-> (value true) (transform success-fn failure-fn) await) => :success
+    (-> (exception (Exception.)) (transform success-fn) await) => (throws Exception)
+    (-> (exception (Exception.)) (transform success-fn failure-fn) await) => :failure))
+
+(facts "match-class"
+  (-> (IllegalArgumentException.) (match-class Exception :expected)) => :expected
+  (-> (IllegalArgumentException.) (match-class IllegalArgumentException :expected Exception :unexpected)) => :expected
+  (-> (IllegalArgumentException.) (match-class ClassNotFoundException :unexpected IllegalArgumentException :expected Exception :unexpected)) => :expected)
