@@ -8,7 +8,9 @@
   [qualified-service-class-name]
   ;; TODO later versions of Finagle expect FutureIface, not ServiceIface?
   ;; See https://twitter.github.io/finagle/guide/Protocols.html#thrift
-  (symbol (str qualified-service-class-name "$ServiceIface")))
+  (if (-> qualified-service-class-name str (.endsWith "$ServiceIface"))
+    qualified-service-class-name
+    (symbol (str qualified-service-class-name "$ServiceIface"))))
 
 (defmacro service
   "Sugar for implementing a `com.twitter.finagle.Service` based on the

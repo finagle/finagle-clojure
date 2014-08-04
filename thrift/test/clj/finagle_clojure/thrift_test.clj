@@ -4,7 +4,8 @@
             [midje.sweet :refer :all]))
 
 (fact "finagle-interface"
-  (thrift/finagle-interface 'DogBreedService) => 'DogBreedService$ServiceIface)
+  (thrift/finagle-interface 'DogBreedService) => 'DogBreedService$ServiceIface
+  (thrift/finagle-interface 'DogBreedService$ServiceIface) => 'DogBreedService$ServiceIface)
 
 ;;; This is a high level integration test of finagle-clojure/thrift
 ;;; See the Thrift service definition in test/resources/service.thrift
