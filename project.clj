@@ -5,7 +5,7 @@
                 [finagle-clojure/thrift "0.1.0"]]
   :plugins [[lein-sub "0.3.0"]
             [codox "0.8.10"]
-            [lein-midje "3.1.1"]]
+            [lein-midje "3.1.3"]]
   :sub ["core" "thrift"]
   :codox {:sources ["core/src"]
           :defaults {:doc/format :markdown}
