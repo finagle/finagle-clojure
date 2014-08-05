@@ -13,4 +13,8 @@
   (facts "and-then"
     (-> service (svc/apply :input) f/await) => :service
     (-> filter-a (and-then service) (svc/apply :input) f/await) => :filter-a
-    (-> filter-b (and-then filter-a) (and-then service) (svc/apply :input) f/await) => :filter-b))
+    (-> filter-b (and-then filter-a) (and-then service) (svc/apply :input) f/await) => :filter-b)
+  (facts "chain"
+    (-> service (svc/apply :input) f/await) => :service
+    (-> (chain filter-a service) (svc/apply :input) f/await) => :filter-a
+    (-> (chain filter-b filter-a service) (svc/apply :input) f/await) => :filter-b))
