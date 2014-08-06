@@ -1,6 +1,8 @@
 (defproject finagle-clojure "0.1.0"
   :description "A light wrapper around Finagle for Clojure"
-  :url "https://github.com/crashlytics/finagle-clojure"
+  :url "https://github.com/twitter/finagle-clojure"
+  :license {:name "Apache License, Version 2.0"
+            :url "https://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[finagle-clojure/core "0.1.0"]
                 [finagle-clojure/thrift "0.1.0"]]
   :plugins [[lein-sub "0.3.0"]
