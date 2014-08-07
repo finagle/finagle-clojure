@@ -57,13 +57,19 @@
   (await (select (NoFuture.) (value 1))) => 1
   (await (select (value 2) (NoFuture.))) => 2)
 
-(let [success-fn (fn [v] (value :success))
-      failure-fn (fn [t] (value :failure))]
+(let [success-fn-a (fn [v] (value :success-a))
+      failure-fn-a (fn [t] (value :failure-a))
+      success-fn-b (fn [v] (value :success-b))
+      failure-fn-b (fn [t] (value :failure-b))]
   (facts "transform"
-    (-> (value true) (transform success-fn) await) => :success
-    (-> (value true) (transform success-fn failure-fn) await) => :success
-    (-> (exception (Exception.)) (transform success-fn) await) => (throws Exception)
-    (-> (exception (Exception.)) (transform success-fn failure-fn) await) => :failure))
+    (-> (value true) (transform success-fn-a) await) => :success-a
+    (-> (value true) (transform success-fn-a failure-fn-a) await) => :success-a
+    (-> (value true) (transform success-fn-a failure-fn-a) (transform success-fn-b) await) => :success-b
+    (-> (value true) (transform success-fn-a failure-fn-a) (transform success-fn-b failure-fn-b) await) => :success-b
+    (-> (exception (Exception.)) (transform success-fn-a) await) => (throws Exception)
+    (-> (exception (Exception.)) (transform success-fn-a failure-fn-a) await) => :failure-a
+    (-> (exception (Exception.)) (transform success-fn-a (fn [t] (exception t))) (transform success-fn-b failure-fn-b) await) => :failure-b
+    (-> (exception (Exception.)) (transform success-fn-a failure-fn-a) (transform success-fn-b failure-fn-b) await) => :success-b))
 
 (facts "match-class"
   (-> (IllegalArgumentException.) (match-class Exception :expected)) => :expected
