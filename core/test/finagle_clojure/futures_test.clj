@@ -71,6 +71,15 @@
     (-> (exception (Exception.)) (transform success-fn-a (fn [t] (exception t))) (transform success-fn-b failure-fn-b) await) => :failure-b
     (-> (exception (Exception.)) (transform success-fn-a failure-fn-a) (transform success-fn-b failure-fn-b) await) => :success-b))
 
+(let [marker (atom 0)
+      success-fn-a (fn [v] (value :success-a))
+      success-fn-b (fn [v] (value (swap! marker inc)))]
+  (facts "transform short circuits"
+    (-> (exception (Exception.)) (transform success-fn-a) (transform success-fn-b) await) => (throws Exception)
+    @marker => 0
+    (-> (value true) (transform success-fn-a) (transform success-fn-b) await) => 1
+    @marker => 1))
+
 (facts "match-class"
   (-> (IllegalArgumentException.) (match-class Exception :expected)) => :expected
   (-> (IllegalArgumentException.) (match-class IllegalArgumentException :expected Exception :unexpected)) => :expected
