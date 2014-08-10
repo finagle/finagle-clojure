@@ -1,11 +1,17 @@
 (ns finagle-clojure.thrift-test
+  (:import test.DogBreedService)
   (:require [finagle-clojure.thrift :as thrift]
             [finagle-clojure.futures :as f]
             [midje.sweet :refer :all]))
 
 (fact "finagle-interface"
-  (thrift/finagle-interface 'DogBreedService) => 'DogBreedService$ServiceIface
-  (thrift/finagle-interface 'DogBreedService$ServiceIface) => 'DogBreedService$ServiceIface)
+  (thrift/finagle-interface 'some.Service) => 'some.Service$ServiceIface
+  (thrift/finagle-interface 'some.Service$ServiceIface) => 'some.Service$ServiceIface
+  (thrift/finagle-interface 'test.DogBreedService) => 'test.DogBreedService$ServiceIface
+  (thrift/finagle-interface test.DogBreedService) => 'test.DogBreedService$ServiceIface
+  (thrift/finagle-interface 'DogBreedService) => 'test.DogBreedService$ServiceIface
+  (thrift/finagle-interface 'DogBreedService$ServiceIface) => 'DogBreedService$ServiceIface
+  (thrift/finagle-interface DogBreedService) => 'test.DogBreedService$ServiceIface)
 
 ;;; This is a high level integration test of finagle-clojure/thrift
 ;;; See the Thrift service definition in test/resources/service.thrift
@@ -15,7 +21,7 @@
 ;;; See http://github.com/samn/scrooge-clojure-demo for more info
 
 (def dog-breed-service 
-  (thrift/service test.DogBreedService
+  (thrift/service DogBreedService
     (breedInfo [breed-name]
       (if (= breed-name "pit bull")
         (f/value (test.BreedInfoResponse. breed-name true))

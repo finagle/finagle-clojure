@@ -3,14 +3,26 @@
   from a Thrift service definition using Scrooge."
   (:import [com.twitter.finagle Thrift]))
 
+(defn- ^:no-doc canonical-class-name
+  "Take a class-name, which can be a String, Symbol or Class and returns
+  the canonical class name for it (package + class).
+  If class-name is a symbol the ns-imports for the current ns are checked.
+  If there's no import matching the class-name symbol the symbol is returned
+  as a String."
+  [class-name]
+  (if-let [class (get (ns-imports *ns*) class-name)]
+    (.getCanonicalName class)
+    (if (class? class-name)
+      (.getCanonicalName class-name)
+      (str class-name))))
+
 (defn ^:no-doc finagle-interface
-  "Service -> 'Service$ServiceIface"
-  [qualified-service-class-name]
-  ;; TODO later versions of Finagle expect FutureIface, not ServiceIface?
-  ;; See https://twitter.github.io/finagle/guide/Protocols.html#thrift
-  (if (-> qualified-service-class-name str (.endsWith "$ServiceIface"))
-    qualified-service-class-name
-    (symbol (str qualified-service-class-name "$ServiceIface"))))
+  "Service -> 'package.canonical.Service$ServiceIface"
+  [service-class-name]
+  (let [canonical-service-class-name (canonical-class-name service-class-name)]
+    (if (.endsWith canonical-service-class-name "$ServiceIface")
+      (symbol canonical-service-class-name)
+      (symbol (str canonical-service-class-name "$ServiceIface")))))
 
 (defmacro service
   "Sugar for implementing a `com.twitter.finagle.Service` based on the
@@ -27,10 +39,10 @@
   *Returns*:
 
   A new `Service`."
-  [qualified-service-class-name & body]
+  [service-class-name & body]
   `(do
-     (import ~(finagle-interface qualified-service-class-name))
-     (proxy [~(finagle-interface qualified-service-class-name)] []
+     (import ~(finagle-interface service-class-name))
+     (proxy [~(finagle-interface service-class-name)] []
        ~@body)))
 
 (defn serve
