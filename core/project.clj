@@ -9,4 +9,4 @@
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
   :repositories [["twitter" "http://maven.twttr.com/"]]
-  :dependencies [[com.twitter/finagle-core "6.6.2"]])
+  :dependencies [[com.twitter/finagle-core_2.10 "6.18.0"]])
