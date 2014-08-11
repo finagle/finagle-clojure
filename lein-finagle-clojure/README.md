@@ -1,26 +1,15 @@
 # lein-finagle-clojure
 
-A Leiningen plugin to do many wonderful things.
+A lein plugin for compiling Thrift definitions using Scrooge.
+Generates Java classes that can be used with Finagle & finagle-clojure.
+
 
 ## Usage
 
-FIXME: Use this for user-level plugins:
+* Add `[lein-finagle-clojure "0.1.0-SNAPSHOT"]` to `:plugins` in your project.clj
+    * this will add a hook around `lein-javac` that will compile your Thrift definitions first.
+* Run manually: `lein finagle-clojure scrooge`
 
-Put `[lein-finagle-clojure "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your
-`:user` profile, or if you are on Leiningen 1.x do `lein plugin install
-lein-finagle-clojure 0.1.0-SNAPSHOT`.
+## Configuration
 
-FIXME: Use this for project-level plugins:
-
-Put `[lein-finagle-clojure "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your project.clj.
-
-FIXME: and add an example usage that actually makes sense:
-
-    $ lein finagle-clojure
-
-## License
-
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+    :finagle-clojure {:thrift-source-path "source-path" :thrift-output-path "output-path"}
