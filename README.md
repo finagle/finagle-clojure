@@ -20,3 +20,4 @@ A thin wrapper around Finagle & Twitter Future
 
 * [Overview](doc/intro.md)
 * [API Docs](doc/codox/index.html)
+  * run `lein doc` to generate

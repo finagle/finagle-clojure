@@ -1,1 +1,0 @@
-(ns finagle-clojure)
