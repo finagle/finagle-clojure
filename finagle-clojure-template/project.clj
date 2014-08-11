@@ -4,5 +4,5 @@
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
   :min-lein-version "2.0.0"
-  :dependencies [[camel-snake-kebab "0.2.1"]]
+  :dependencies [[camel-snake-kebab "0.2.1" :exclusions [org.clojure/clojure]]]
   :eval-in-leiningen true)
