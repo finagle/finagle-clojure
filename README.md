@@ -5,7 +5,7 @@ A thin wrapper around Finagle & Twitter Future
 ## Building
 
     lein sub install
-    lein install # in lein-finagle-clojure & finagle-clojure-template
+    lein sub -s "lein-finagle-clojure:finagle-clojure-template" install
 
 ## Create a new project
 
