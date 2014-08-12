@@ -13,8 +13,8 @@ A thin wrapper around Finagle & Twitter Future
 
 ## Libraries
 
-* `core` convenience fns for interacting with Futures
-* `thrift` create Thrift clients & servers
+* `core`: convenience fns for interacting with Futures.
+* `thrift`: create Thrift clients & servers.
 
 ## Documentation
 
