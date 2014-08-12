@@ -3,6 +3,8 @@
             [leiningen.core.main :as main]
             [camel-snake-kebab.core :refer [->CamelCase]]))
 
+(def finagle-clojure-version "0.1.0-SNAPSHOT")
+
 (def render (renderer "finagle-clojure"))
 
 (defn thrift-namespace
@@ -37,7 +39,7 @@
         java-source-paths ["src/java"]
         ;; TODO add comment explaining why checksum warn
         repositories (str '[["twitter" {:url "http://maven.twttr.com/" :checksum :warn}]])
-        dependencies '[{:dependency [finagle-clojure/thrift "0.1.0"]}
+        dependencies `[{:dependency [finagle-clojure/thrift ~finagle-clojure-version]}
                        {:dependency [com.twitter/scrooge-core_2.10 "3.16.3"]}]]
     {:name name
      :project-name (str name "-core")
@@ -57,7 +59,7 @@
   (let [module-name (module-name name "client")
         core-dependency (symbol (str name "-core"))
         dependencies `[{:dependency [~core-dependency "0.1.0-SNAPSHOT"]}
-                       {:dependency [finagle-clojure/thrift "0.1.0"]}]]
+                       {:dependency [finagle-clojure/thrift ~finagle-clojure-version]}]]
     {:name name
      :project-name (str name "-client")
      :module-name module-name
@@ -75,7 +77,7 @@
         core-dependency (symbol (str name "-core"))
         dependencies `[{:dependency [org.clojure/clojure "1.6.0"]}
                        {:dependency [~core-dependency "0.1.0-SNAPSHOT"]}
-                       {:dependency [finagle-clojure/thrift "0.1.0"]}]
+                       {:dependency [finagle-clojure/thrift ~finagle-clojure-version]}]
         service-ns (str (sanitize-ns name) ".service")]
     {:name name
      :project-name (str name "-service")

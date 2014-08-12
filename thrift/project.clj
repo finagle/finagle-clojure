@@ -1,4 +1,4 @@
-(defproject finagle-clojure/thrift "0.1.0"
+(defproject finagle-clojure/thrift "0.1.0-SNAPSHOT"
   :description "A light wrapper around finagle-thrift for Clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
@@ -16,6 +16,6 @@
   ;; but also to require fewer dependencies in projects that use thrift.
   ;; this is akin to Finagle itself, where depending on finagle-thrift
   ;; pulls in finagle-core as well.
-  :dependencies [[finagle-clojure/core "0.1.0"]
+  :dependencies [[finagle-clojure/core "0.1.0-SNAPSHOT"]
                  [com.twitter/finagle-thrift_2.10 "6.18.0"]
                  [org.apache.thrift/libthrift "0.5.0-1"]])
