@@ -330,14 +330,14 @@
     A new Future.
 
   See [[flatmap]] & [[rescue]]."
-  ([^Future f success-fn] 
+  ([^Future f success-fn]
    (transform f success-fn nil))
   ([^Future f success-fn failure-fn]
-   ;; TODO  what is the min target version of clojure? cond-> only since 1.5
-   (cond-> f
      ;; order is important here, flatmap before rescue works, rescue before flatmap doesn't
-     (fn? success-fn) (flatmap [v] (success-fn v))
-     (fn? failure-fn) (rescue [t] (failure-fn t)))))
+    (let [with-success (flatmap f [v] (success-fn v))]
+      (if (fn? failure-fn)
+        (rescue with-success [t] (failure-fn t))
+        with-success))))
 
 (defmacro match-class
   "Sugar for conditional execution based on the class of the first argument `value`.
@@ -348,7 +348,7 @@
     * `value`: the class of this argument will be used to dispatch with `body`.
     * `body`: like the body of a cond expression, expected-class expr
 
-  e.g. 
+  e.g.
 
   ````
   (match-class (IllegalArgumentException.)
