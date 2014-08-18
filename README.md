@@ -6,8 +6,8 @@ If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
 ## Building
 
-    lein sub install
     lein sub -s "lein-finagle-clojure:finagle-clojure-template" install
+    lein sub install
 
 
 ## Libraries

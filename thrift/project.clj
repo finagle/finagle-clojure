@@ -3,7 +3,9 @@
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
-  :plugins [[lein-midje "3.1.3"]]
+  :plugins [[lein-midje "3.1.3"]
+            [lein-finagle-clojure "0.1.0-SNAPSHOT" :hooks false]]
+  :finagle-clojure {:thrift-source-path "test/resources" :thrift-output-path "test/java"}
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.6.0"]
                                   [midje "1.6.3" :exclusions [org.clojure/clojure]]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}

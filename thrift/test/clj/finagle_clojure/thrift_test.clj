@@ -16,14 +16,13 @@
 ;;; This is a high level integration test of finagle-clojure/thrift
 ;;; See the Thrift service definition in test/resources/service.thrift
 ;;; It has been compiled into finagled Java classes at test/java/
-;;; To regenerate the compiled Java classes run scrooge against the thrift definition.
-;;; java -jar scrooge-generator-3.9.0-jar-with-dependencies.jar --finagle --language java --dest test/java/ test/resources/service.thrift
-;;; See http://github.com/samn/scrooge-clojure-demo for more info
+;;; To regenerate the compiled Java classes run scrooge against the thrift definition:
+;;;     lein finagle-clojure scrooge
 
-(def dog-breed-service 
+(def dog-breed-service
   (thrift/service DogBreedService
     (breedInfo [breed-name]
-      (if (= breed-name "pit bull")
+      (if (not= breed-name "pomeranian")
         (f/value (test.BreedInfoResponse. breed-name true))
         (f/value (test.BreedInfoResponse. breed-name false))))))
 
