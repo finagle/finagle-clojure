@@ -90,3 +90,15 @@
 (facts "within"
   (-> (NoFuture.) (within* (->Duration 1 :ms)) await) => (throws Exception)
   (-> (NoFuture.) (within  1 :ms) await) => (throws Exception))
+
+(let [pipeline #(-> %1
+                    (within 1 :ms)
+                    (handle [t] -10)
+                    (map [v] (%2 v))
+                    (handle [t] :second-handle)
+                    await)]
+  (facts "compose future operations"
+    (pipeline (value 1) inc) => 2
+    (pipeline (exception (Exception.)) inc) => -9
+    (pipeline (NoFuture.) inc) => -9
+    (pipeline (value 1) #(throw (Exception.))) => :second-handle))
