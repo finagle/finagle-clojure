@@ -2,8 +2,12 @@
   "Functions for working with com.twitter.util.Future objects.
   Futures are used to represent asynchronous operations in Finagle."
   (:refer-clojure :exclude [await ensure for map])
-  (:require [finagle-clojure.scala :as scala])
+  (:require [finagle-clojure.scala :as scala]
+            [finagle-clojure.timer :as timer]
+            [finagle-clojure.duration :refer [->Duration]])
   (:import [com.twitter.util Await Future]))
+
+(def implicit-timer (timer/java-timer true))
 
 (defn ^Future value
   "Returns a defined Future with the constant Return value `v`.
@@ -288,8 +292,8 @@
 (defn select
   "*Arguments*:
 
-    * `f1`: a Future
-    * `f2`: a Future
+    * `f1`: a `Future`
+    * `f2`: a `Future`
 
   *Returns*:
 
@@ -297,21 +301,46 @@
   [^Future f1 ^Future f2]
   (.select f1 f2))
 
+(defn within*
+  "Returns a new `Future` that will error if not complete within `timeout-duration`.
+
+  *Arguments*:
+
+    * `f`: a `Future`
+    * `timeout-duration`: a `com.twitter.util.Duration` indicating how long to wait before erroring.
+    * `timer` (optional): a `com.twitter.util.Timer` that schedules the check to see if `f` isn't defined after `timeout-duration`.
+      When not specified an internal `Timer` is used.
+
+  *Returns*:
+
+    A new Future that will be defined with a `TimeoutException` if it isn't otherwise defined within `timeout-duration`.
+
+  See [[finagle-clojure.duration/->Duration]]"
+  ([^Future f timeout-duration]
+   (within* f timeout-duration implicit-timer))
+  ([^Future f timeout-duration timer]
+   (.within f timeout-duration timer)))
+
 (defn within
   "Returns a new `Future` that will error if not complete within `timeout-duration`.
 
   *Arguments*:
 
-    * `f`: a Future
-    * `timeout-duration`: a `com.twitter.util.Duration` indicating how long to wait before erroring.
+    * `f`: a `Future`
+    * `timeout-value`
+    * `timeout-unit`: the unit for the timeout `Duration` (see [[finagle-clojure.duration/->Duration]]).
+    * `timer` (optional): a `com.twitter.util.Timer` that schedules the check to see if `f` isn't defined after `timeout-duration`.
+      When not specified an internal `Timer` is used.
 
   *Returns*:
 
-    A new Future.
+    A new Future that will be defined with a `TimeoutException` if it isn't otherwise defined within `timeout-value` `timeout-unit`s.
 
-  See [[finagle-clojure.duration/->Duration]]"
-  [^Future f timeout-duration]
-  (.within f timeout-duration))
+  See [[within*]] & [[finagle-clojure.duration/->Duration]]"
+  ([^Future f timeout-value timeout-unit]
+   (within f timeout-value timeout-unit implicit-timer))
+  ([^Future f timeout-value timeout-unit timer]
+   (within* f (->Duration timeout-value timeout-unit) timer)))
 
 (defn transform
   "Returns a new `Future` that will transform its value when defined using the supplied fns.

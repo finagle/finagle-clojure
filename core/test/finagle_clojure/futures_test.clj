@@ -3,6 +3,8 @@
   (:import [com.twitter.util NoFuture])
   (:require [finagle-clojure.futures :refer :all]
             [finagle-clojure.scala :as scala]
+            [finagle-clojure.timer :as timer]
+            [finagle-clojure.duration :refer [->Duration]]
             [midje.sweet :refer :all]))
 
 (set! *warn-on-reflection* true)
@@ -84,3 +86,7 @@
   (-> (IllegalArgumentException.) (match-class Exception :expected)) => :expected
   (-> (IllegalArgumentException.) (match-class IllegalArgumentException :expected Exception :unexpected)) => :expected
   (-> (IllegalArgumentException.) (match-class ClassNotFoundException :unexpected IllegalArgumentException :expected Exception :unexpected)) => :expected)
+
+(facts "within"
+  (-> (NoFuture.) (within* (->Duration 1 :ms)) await) => (throws Exception)
+  (-> (NoFuture.) (within  1 :ms) await) => (throws Exception))
