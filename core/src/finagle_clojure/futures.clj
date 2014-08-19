@@ -393,3 +393,77 @@
   [value & body]
   `(condp instance? ~value
      ~@body))
+
+(defn on-success*
+  "Apply `scala.Function1` `fn1` with the value of `Future` `f` when `f` is defined with a value (not exception).
+  The return value of `fn1` is ignored.
+  While this is used for side effects it still should not block the thread on which it runs.
+
+  *Arguments*:
+
+    * `f`: a Future
+    * `fn1`: a `scala.Function1` that will execute when the (non-error) value of `f` is defined.
+      `fn1` should return `scala.Unit`.
+
+  *Returns*:
+
+  A `Future` that will run `fn1` when it is defined with a successful value.
+
+  See [[scala/Function]]"
+  [^Future f ^scala.Function1 fn1]
+  (.onSuccess f fn1))
+
+(defmacro on-success
+  "Sugar for constructing a `scala.Function1` & applying [[on-success*]] with it.
+
+  *Arguments*:
+
+    * `f`: a `Future`.
+    * `arg-binding`: is a vector with 1 element, the name to bind the value of `Future` `f`.
+    * `body`: will execute when the (non-error) value of `f` is defined.
+        `body` will be transformed to automatically return a `scala.Unit` value for compatibility.
+
+  *Returns*:
+
+  A `Future` that will run `body` when it is defined with a successful value.
+
+  See [[on-success*]] & [[scala/Function]]"
+  [^Future f arg-binding & body]
+  `(on-success* ~f (scala/Function ~arg-binding (do ~@body) scala.runtime.BoxedUnit/UNIT)))
+
+(defn on-failure*
+  "Apply `scala.Function1` `fn1` with the value of `Future` `f` when `f` is defined with an exception.
+  The return value of `fn1` is ignored.
+  While this is used for side effects it still should not block the thread on which it runs.
+
+  *Arguments*:
+
+    * `f`: a Future
+    * `fn1`: a `scala.Function1` that will execute when the error value of `f` is defined.
+      `fn1` should return `scala.Unit`.
+
+  *Returns*:
+
+  A `Future` that will run `fn1` when it is defined with an error value.
+
+  See [[scala/Function]]"
+  [^Future f ^scala.Function1 fn1]
+  (.onFailure f fn1))
+
+(defmacro on-failure
+  "Sugar for constructing a `scala.Function1` & applying [[on-failure*]] with it.
+
+  *Arguments*:
+
+    * `f`: a `Future`.
+    * `arg-binding`: is a vector with 1 element, the name to bind the value of `Future` `f`.
+    * `body`: will execute when the error value of `f` is defined.
+        `body` will be transformed to automatically return a `scala.Unit` value for compatibility.
+
+  *Returns*:
+
+  A `Future` that will run `body` when it is defined with an error value.
+
+  See [[on-failure*]] & [[scala/Function]]"
+  [^Future f arg-binding & body]
+  `(on-failure* ~f (scala/Function ~arg-binding (do ~@body) scala.runtime.BoxedUnit/UNIT)))

@@ -102,3 +102,11 @@
     (pipeline (exception (Exception.)) inc) => -9
     (pipeline (NoFuture.) inc) => -9
     (pipeline (value 1) #(throw (Exception.))) => :second-handle))
+
+(let [counter (atom 0)
+      pipeline (fn [f] (-> f (on-success [_] (swap! counter inc)) (on-failure [_] (swap! counter dec)) (handle [_] nil) await) @counter)]
+  (against-background [(before :facts (reset! counter 0))]
+    (fact "on-success"
+      (pipeline (value 1)) => 1)
+    (fact "on-failure"
+      (pipeline (exception (Exception.))) => -1)))
