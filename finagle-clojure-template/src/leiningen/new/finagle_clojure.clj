@@ -47,7 +47,8 @@
      :misc-config [{:key :plugins :value '[[lein-finagle-clojure "0.1.0-SNAPSHOT"]]}
                    {:key :java-source-paths :value java-source-paths}
                    {:key :repositories :value repositories}
-                   {:key :finagle-clojure :value {:thrift-source-path "src/thrift" :thrift-output-path "src/java"}}]
+                   {:key :finagle-clojure :value {:thrift-source-path "src/thrift" :thrift-output-path "src/java"}}
+                   {:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.6.0"]]}}}]
      :dependencies dependencies
      :service-name (service-name name)
      :thrift-ns (thrift-namespace name)
