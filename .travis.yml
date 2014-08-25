@@ -1,7 +1,6 @@
 language: clojure
 lein: lein2
+install: lein2 sub install
 script: lein2 sub with-profile dev:1.5,test:1.4,test midje
 jdk:
     - openjdk7
-    - openjdk6
-    - oraclejdk7
