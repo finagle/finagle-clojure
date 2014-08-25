@@ -13,7 +13,8 @@
   :java-source-paths ["test/java"]
   :jar-exclusions [#"test"]
   :test-paths ["test/clj/"]
-  :repositories [["twitter" {:url "http://maven.twttr.com/"}]]
+  ;; TODO there's no checksum for libthrift-0.5.0.pom, set checksum to warn for now
+  :repositories [["twitter" {:url "http://maven.twttr.com/" :checksum :warn}]]
   ;; the dependency on finagle-clojure/core is required for tests
   ;; but also to require fewer dependencies in projects that use thrift.
   ;; this is akin to Finagle itself, where depending on finagle-thrift
