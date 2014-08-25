@@ -37,8 +37,6 @@
   [name]
   (let [module-name (module-name name "core")
         java-source-paths ["src/java"]
-        ;; TODO add comment explaining why checksum warn
-        repositories (str '[["twitter" {:url "http://maven.twttr.com/" :checksum :warn}]])
         dependencies `[{:dependency [finagle-clojure/thrift ~finagle-clojure-version]}
                        {:dependency [com.twitter/scrooge-core_2.10 "3.16.3"]}]]
     {:name name
@@ -46,7 +44,6 @@
      :module-name module-name
      :misc-config [{:key :plugins :value '[[lein-finagle-clojure "0.1.0-SNAPSHOT"]]}
                    {:key :java-source-paths :value java-source-paths}
-                   {:key :repositories :value repositories}
                    {:key :finagle-clojure :value {:thrift-source-path "src/thrift" :thrift-output-path "src/java"}}
                    {:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.6.0"]]}}}]
      :dependencies dependencies
