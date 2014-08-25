@@ -1,4 +1,4 @@
-# finagle-clojure
+# finagle-clojure [![Build Status](https://travis-ci.org/finagle/finagle-clojure.svg?branch=master)](https://travis-ci.org/finagle/finagle-clojure)
 
 A thin wrapper around Finagle & Twitter Future.
 This library assumes you are familiar with Finagle.
