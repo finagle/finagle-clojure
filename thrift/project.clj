@@ -5,15 +5,15 @@
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
   :plugins [[lein-midje "3.1.3"]
             [lein-finagle-clojure "0.1.0-SNAPSHOT" :hooks false]]
-  :finagle-clojure {:thrift-source-path "test/resources" :thrift-output-path "test/java"}
-  :profiles {:dev {:dependencies [[org.clojure/clojure "1.6.0"]
-                                  [midje "1.6.3" :exclusions [org.clojure/clojure]]]}
+  :profiles {:test {:dependencies [[midje "1.6.3" :exclusions [org.clojure/clojure]]]}
+             :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
-  :test-paths ["test/clj/"]
+  :finagle-clojure {:thrift-source-path "test/resources" :thrift-output-path "test/java"}
   :java-source-paths ["test/java"]
   :jar-exclusions [#"test"]
-  :repositories [["twitter" {:url "http://maven.twttr.com/" :checksum :warn}]]
+  :test-paths ["test/clj/"]
+  :repositories [["twitter" {:url "http://maven.twttr.com/"}]]
   ;; the dependency on finagle-clojure/core is required for tests
   ;; but also to require fewer dependencies in projects that use thrift.
   ;; this is akin to Finagle itself, where depending on finagle-thrift
