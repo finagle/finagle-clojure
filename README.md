@@ -4,9 +4,11 @@ A thin wrapper around Finagle & Twitter Future.
 This library assumes you are familiar with Finagle.
 If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
+
 ## Building
 
     lein sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift" install
+
 
 ## Running Tests
 
@@ -22,6 +24,7 @@ The readmes in each sub-library have more information.
 * `lein-finagle-clojure`: a lein plugin for automatically compiling Thrift definitions using [Scrooge](https://twitter.github.io/scrooge/index.html).
 * `finagle-clojure-template`: a lein template for creating new projects using finagle-clojure & Thrift.
 
+
 ## Create a new project with Thrift
 
     lein new finagle-clojure $PROJECT-NAME
@@ -31,6 +34,6 @@ Then check out the readmes in the generated project.
 
 ## Documentation
 
-* [API Docs](doc/codox/index.html)
+* [API Docs](https://finagle.github.io/finagle-clojure/)
   * run `lein doc` from this directory to generate
 * [Overview](doc/intro.md)
