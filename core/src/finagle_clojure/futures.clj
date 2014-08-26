@@ -169,9 +169,9 @@
     A new Future that will be defined when all Futures in `future-seq` have been defined.
     The value of that Future will be a Clojure seq of the values of the Futures in `future-seq`."
   [future-seq]
-  (flatmap (Future/collect (scala/seq->scala-buffer future-seq))
+  (map (Future/collect (scala/seq->scala-buffer future-seq))
     [scala-seq]
-    (value (scala/scala-seq->List scala-seq))))
+    (scala/scala-seq->List scala-seq)))
 
 (defn ^Future rescue*
   "Apply scala.PartialFunction pfn with the value of Future f when f is defined with a Throw (a Throwable).
