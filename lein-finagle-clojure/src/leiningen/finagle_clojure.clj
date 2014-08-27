@@ -24,14 +24,13 @@
                                (filter #(.isFile %))
                                (map #(.getPath %)))
              scrooge-args (concat ["--finagle" "--skip-unchanged" "--language" "java" "--dest" absolute-dest-path] thrift-files)]
-         (leiningen.core.main/debug "Compiling thrift files:" thrift-files)
+         (leiningen.core.main/info "Compiling Thrift files:" thrift-files)
          (leiningen.core.main/debug "Calling scrooge with parameters:" scrooge-args)
          (com.twitter.scrooge.Main/main (into-array scrooge-args)))
        (leiningen.core.main/info "No config found for lein-finagle-clojure, not compiling Thrift for" (:name project)))))
 
 (defn javac-hook
   [f project & args]
-  (leiningen.core.main/info "Compiling Thrift")
   (scrooge project)
   (apply f project args))
 
