@@ -5,7 +5,7 @@
   (:require [finagle-clojure.scala :as scala]
             [finagle-clojure.timer :as timer]
             [finagle-clojure.duration :refer [->Duration]])
-  (:import [com.twitter.util Await Future]))
+  (:import [com.twitter.util Await Duration Future Timer]))
 
 (def implicit-timer (timer/java-timer true))
 
@@ -318,7 +318,7 @@
   See [[finagle-clojure.duration/->Duration]]"
   ([^Future f timeout-duration]
    (within* f timeout-duration implicit-timer))
-  ([^Future f timeout-duration timer]
+  ([^Future f ^Duration timeout-duration ^Timer timer]
    (.within f timeout-duration timer)))
 
 (defn within

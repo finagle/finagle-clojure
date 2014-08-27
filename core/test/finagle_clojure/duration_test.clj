@@ -3,6 +3,9 @@
   (:require [finagle-clojure.duration :refer :all]
             [midje.sweet :refer :all]))
 
+;; set *warn-on-reflection* after loading midje to skip its reflection warnings
+(set! *warn-on-reflection* true)
+
 (facts "->Duration"
   (class (->Duration 1 :ms)) => com.twitter.util.Duration
   (.inMilliseconds (->Duration 1 :ms)) => 1

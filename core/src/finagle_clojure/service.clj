@@ -17,7 +17,8 @@
   (:refer-clojure :exclude [apply])
   (:require [finagle-clojure.scala :as scala]
             [finagle-clojure.duration :as duration])
-  (:import [com.twitter.finagle Service Service$]))
+  (:import [com.twitter.finagle Service Service$]
+           [com.twitter.util Time]))
 
 (defn ^Service mk*
   "Create a new `Service.`
@@ -106,5 +107,5 @@
     A `Future` that will be complete when `svc` has closed.
 
   See [[finagle-clojure.duration/->Time]]"
-  ([^Service svc deadline-time]
+  ([^Service svc ^Time deadline-time]
    (.close svc deadline-time)))

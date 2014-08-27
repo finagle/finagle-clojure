@@ -4,6 +4,9 @@
             [finagle-clojure.futures :as f]
             [midje.sweet :refer :all]))
 
+;; set *warn-on-reflection* after loading midje to skip its reflection warnings
+(set! *warn-on-reflection* true)
+
 (let [filter-a (proxy [com.twitter.finagle.Filter] [] 
                         (apply [req service] (f/value :filter-a)))
       filter-b (proxy [com.twitter.finagle.Filter] [] 

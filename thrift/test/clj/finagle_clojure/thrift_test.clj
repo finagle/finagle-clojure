@@ -4,6 +4,9 @@
             [finagle-clojure.futures :as f]
             [midje.sweet :refer :all]))
 
+;; set *warn-on-reflection* after loading midje to skip its reflection warnings
+(set! *warn-on-reflection* true)
+
 (fact "finagle-interface"
   (thrift/finagle-interface 'some.Service) => 'some.Service$ServiceIface
   (thrift/finagle-interface 'some.Service$ServiceIface) => 'some.Service$ServiceIface

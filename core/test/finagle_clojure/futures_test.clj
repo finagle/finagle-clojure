@@ -7,6 +7,7 @@
             [finagle-clojure.duration :refer [->Duration]]
             [midje.sweet :refer :all]))
 
+;; set *warn-on-reflection* after loading midje to skip its reflection warnings
 (set! *warn-on-reflection* true)
 
 (fact "flatmap"

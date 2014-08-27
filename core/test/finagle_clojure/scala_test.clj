@@ -2,6 +2,7 @@
   (:require [finagle-clojure.scala :refer :all]
             [midje.sweet :refer :all]))
 
+;; set *warn-on-reflection* after loading midje to skip its reflection warnings
 (set! *warn-on-reflection* true)
 
 (facts "Function#isDefinedAt"

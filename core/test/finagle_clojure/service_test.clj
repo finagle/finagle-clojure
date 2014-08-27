@@ -4,6 +4,9 @@
             [finagle-clojure.futures :as f]
             [midje.sweet :refer :all]))
 
+;; set *warn-on-reflection* after loading midje to skip its reflection warnings
+(set! *warn-on-reflection* true)
+
 (fact "mk"
   (-> (mk [in] (f/value (inc in))) (apply 1) f/await) => 2)
 

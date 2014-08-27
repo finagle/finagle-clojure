@@ -10,7 +10,7 @@
                        :s TimeUnit/SECONDS
                        TimeUnit/SECONDS TimeUnit/SECONDS})
 
-(defn ->Duration
+(defn ^Duration ->Duration
   "Create a new `com.twitter.util.Duration`.
 
   *Arguments*:
@@ -26,7 +26,7 @@
     (Duration/fromTimeUnit value time-unit)
     (throw (IllegalArgumentException. (str "Unit " unit " not found in " (keys ->Duration-units))))))
 
-(defn ns->Time
+(defn ^Time ns->Time
   "Create a new `com.twitter.util.Time` from `value` nanoseconds.
 
   *Arguments*:
@@ -39,7 +39,7 @@
   [nanoseconds]
   (Time/fromNanoseconds nanoseconds))
 
-(defn ms->Time
+(defn ^Time ms->Time
   "Create a new `com.twitter.util.Time` from `value` milliseconds.
 
   *Arguments*:
@@ -52,7 +52,7 @@
   [milliseconds]
   (Time/fromMilliseconds milliseconds))
 
-(defn s->Time
+(defn ^Time s->Time
   "Create a new `com.twitter.util.Time` from `value` seconds.
 
   *Arguments*:
@@ -72,7 +72,7 @@
                    :s s->Time
                    TimeUnit/SECONDS s->Time})
 
-(defn ->Time
+(defn ^Time ->Time
   "Create a new `com.twitter.util.Time`.
 
   *Arguments*:

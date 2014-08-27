@@ -1,19 +1,19 @@
 (ns finagle-clojure.thrift
   "Functions for creating Thrift clients & servers from Java classes generated
   from a Thrift service definition using Scrooge."
-  (:import [com.twitter.finagle Thrift]))
+  (:import [com.twitter.finagle Service Thrift]))
 
-(defn- ^:no-doc canonical-class-name
+(defn- ^:no-doc ^String canonical-class-name
   "Take a class-name, which can be a String, Symbol or Class and returns
   the canonical class name for it (package + class).
   If class-name is a symbol the ns-imports for the current ns are checked.
   If there's no import matching the class-name symbol the symbol is returned
   as a String."
   [class-name]
-  (if-let [class (get (ns-imports *ns*) class-name)]
+  (if-let [^Class class (get (ns-imports *ns*) class-name)]
     (.getCanonicalName class)
     (if (class? class-name)
-      (.getCanonicalName class-name)
+      (.getCanonicalName ^Class class-name)
       (str class-name))))
 
 (defn ^:no-doc finagle-interface
@@ -58,7 +58,7 @@
   *Returns*:
 
   A new `com.twitter.finagle.ListeningServer`."
-  [addr service]
+  [^String addr ^Service service]
   (Thrift/serveIface addr service))
 
 (defmacro client
