@@ -171,7 +171,7 @@
   [future-seq]
   (map (Future/collect (scala/seq->scala-buffer future-seq))
     [scala-seq]
-    (scala/scala-seq->List scala-seq)))
+    (scala/scala-seq->vec scala-seq)))
 
 (defn ^Future rescue*
   "Apply scala.PartialFunction pfn with the value of Future f when f is defined with a Throw (a Throwable).

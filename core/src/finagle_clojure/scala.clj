@@ -19,8 +19,8 @@
   [seq]
   (-> seq JavaConversions/asScalaBuffer .toList))
 
-(defn ^java.util.List scala-seq->List
-  "Convert a Scala Seq to a java.util.List.
+(defn scala-seq->vec
+  "Convert a Scala Seq to a vector.
 
   *Arguments*:
 
@@ -28,9 +28,9 @@
 
   *Returns*:
 
-    A java.util.List with the contents of `scala-seq`."
+    A PersistentVector with the contents of `scala-seq`."
   [scala-seq]
-  (JavaConversions/seqAsJavaList scala-seq))
+  (into [] (JavaConversions/seqAsJavaList scala-seq)))
 
 (defmacro Function
   "Create a new com.twitter.util.Function.
