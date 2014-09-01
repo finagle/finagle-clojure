@@ -32,6 +32,18 @@
   [scala-seq]
   (into [] (JavaConversions/seqAsJavaList scala-seq)))
 
+(defn ^com.twitter.util.Function Function*
+  ([apply-fn] (Function* apply-fn nil))
+  ([apply-fn defined-at-class]
+    (proxy [com.twitter.util.Function] []
+      (apply [arg]
+        (apply-fn arg))
+      (isDefinedAt [v]
+        (if defined-at-class
+          (instance? defined-at-class v)
+          (let [^com.twitter.util.Function this this]
+            (proxy-super isDefinedAt v)))))))
+
 (defmacro Function
   "Create a new com.twitter.util.Function.
   It can be used a scala.Function1 or scala.PartialFunction.
@@ -40,13 +52,7 @@
   The apply method will be implemented with body."
   [[arg-name] & body]
   (let [arg-tag (-> arg-name meta :tag)]
-    `(proxy [com.twitter.util.Function] []
-       (apply [~arg-name]
-         ~@body)
-       (isDefinedAt [~'v]
-         (if ~arg-tag
-           (instance? ~arg-tag ~'v)
-           (proxy-super isDefinedAt ~'v))))))
+    `(Function* (fn [~arg-name] ~@body) ~arg-tag)))
 
 (defmacro Function0
   "Create a new scala.Function0.
