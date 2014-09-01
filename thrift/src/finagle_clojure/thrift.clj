@@ -80,6 +80,6 @@
 
   A new client."
   [addr client-iterface-class]
-  `(let [interface# (finagle-interface ~client-iterface-class)]
+  `(do
      (import ~(finagle-interface client-iterface-class))
      (Thrift/newIface ~addr ~(finagle-interface client-iterface-class))))

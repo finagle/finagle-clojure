@@ -29,16 +29,15 @@
         (f/value (test.BreedInfoResponse. breed-name true))
         (f/value (test.BreedInfoResponse. breed-name false))))))
 
-(def dog-breed-server (thrift/serve ":9999" dog-breed-service))
+(def ^com.twitter.finagle.ListeningServer dog-breed-server (thrift/serve ":9999" dog-breed-service))
 
-(def dog-breed-client (thrift/client "localhost:9999" test.DogBreedService))
+(def ^test.DogBreedService$ServiceIface dog-breed-client (thrift/client "localhost:9999" test.DogBreedService))
 
 (defn beautiful-dog?
   "Is `dog-breed` beautiful?"
-  [dog-breed]
-  (-> dog-breed-client
-      (.breedInfo dog-breed)
-      (f/map [breed-info] (.beautiful breed-info))))
+  [dog-breed] 
+  (-> (.breedInfo dog-breed-client dog-breed)
+      (f/map [^test.BreedInfoResponse breed-info] (.beautiful breed-info))))
 
 (fact "this all works"
   (f/await (beautiful-dog? "pit bull")) =>  true
