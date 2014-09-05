@@ -169,6 +169,7 @@
     A new Future that will be defined when all Futures in `future-seq` have been defined.
     The value of that Future will be a Clojure seq of the values of the Futures in `future-seq`."
   [future-seq]
+  {:pre [(not (nil? future-seq))]}
   (map (Future/collect (scala/seq->scala-buffer future-seq))
     [scala-seq]
     (scala/scala-seq->vec scala-seq)))

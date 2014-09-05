@@ -45,7 +45,10 @@
   (await (handle (exception (Exception.)) [^String s] 1)) => (throws Exception))
 
 (fact "collect"
-  (await (collect [(value 1) (value 2)])) => [1 2])
+  (await (collect [(value 1) (value 2)])) => [1 2]
+  (await (collect [(value 1) (value nil)])) => [1 nil]
+  (await (collect '())) => []
+  (collect nil) => (throws AssertionError))
 
 (facts "ensure"
   (await (ensure (value 1) 1)) => 1
