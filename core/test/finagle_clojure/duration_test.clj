@@ -12,6 +12,10 @@
   (.inMilliseconds (->Duration 1 TimeUnit/MILLISECONDS)) => 1
   (.inSeconds (->Duration 1 :s)) => 1
   (.inSeconds (->Duration 1 TimeUnit/SECONDS)) => 1
+  (.inNanoseconds (->Duration 1 :ns)) => 1
+  (.inNanoseconds (->Duration 1 TimeUnit/NANOSECONDS)) => 1
+  (.inMicroseconds (->Duration 1 :us)) => 1
+  (.inMicroseconds (->Duration 1 TimeUnit/MICROSECONDS)) => 1
   (->Duration 1 :invalid) => (throws IllegalArgumentException))
 
 (fact "ns->Time"

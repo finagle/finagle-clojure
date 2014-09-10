@@ -5,10 +5,14 @@
 
 ;; TODO is it confusing for Time & Duration to be in the same ns?
 
-(def ->Duration-units {:ms TimeUnit/MILLISECONDS
+(def ->Duration-units {:s TimeUnit/SECONDS
+                       TimeUnit/SECONDS TimeUnit/SECONDS
+                       :ms TimeUnit/MILLISECONDS
                        TimeUnit/MILLISECONDS TimeUnit/MILLISECONDS
-                       :s TimeUnit/SECONDS
-                       TimeUnit/SECONDS TimeUnit/SECONDS})
+                       :us TimeUnit/MICROSECONDS
+                       TimeUnit/MICROSECONDS TimeUnit/MICROSECONDS
+                       :ns TimeUnit/NANOSECONDS
+                       TimeUnit/NANOSECONDS TimeUnit/NANOSECONDS})
 
 (defn ^Duration ->Duration
   "Create a new `com.twitter.util.Duration`.
@@ -39,6 +43,19 @@
   [nanoseconds]
   (Time/fromNanoseconds nanoseconds))
 
+(defn ^Time us->Time
+  "Create a new `com.twitter.util.Time` from `value` microseconds.
+
+  *Arguments*:
+
+    * `value`: how many microseconds since epoch.
+
+  *Returns*:
+
+    A `com.twitter.util.Time`."
+  [microseconds]
+  (Time/fromMicroseconds microseconds))
+
 (defn ^Time ms->Time
   "Create a new `com.twitter.util.Time` from `value` milliseconds.
 
@@ -65,7 +82,9 @@
   [seconds]
   (Time/fromSeconds seconds))
 
-(def ->Time-units {:ns ns->Time
+(def ->Time-units {:us us->Time
+                   TimeUnit/MICROSECONDS us->Time
+                   :ns ns->Time
                    TimeUnit/NANOSECONDS ns->Time
                    :ms ms->Time
                    TimeUnit/MILLISECONDS ms->Time
