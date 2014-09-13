@@ -47,7 +47,7 @@
 (defmacro Function
   "Create a new com.twitter.util.Function.
   It can be used a scala.Function1 or scala.PartialFunction.
-  args-binding should be a vector containing one element,
+  `args-binding` should be a vector containing one element `[arg-name]`
   the name to bind the parameter to the Function to.
   The apply method will be implemented with body."
   [[arg-name] & body]

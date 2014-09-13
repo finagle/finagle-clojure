@@ -1,18 +1,22 @@
 (ns finagle-clojure.future-pool
-  "Functions for creating & using FuturePools.
-  FuturePools can be used to run synchronous code asynchronously.
+  "Functions for creating & using `com.twitter.util.FuturePool`.
+  FuturePools can be used to run blocking code on a thread separate from Finagle.
+  This allows synchronous libraries to be used asynchronously in an application using Finagle.
   A Future will be returned which allows for easy integration to other asynchronous Finagle code."
   (:require [finagle-clojure.scala :as scala])
   (:import [com.twitter.util ExecutorServiceFuturePool Future FuturePool]
            [java.util.concurrent ExecutorService]))
 
 ;; TODO: @samn 06/17/14 add support for InterruptibleExecutorServiceFuturePool
+
 (defn ^FuturePool future-pool
   "FuturePools can be used to run synchronous code on a thread pool.
+  Once a FuturePool has been created tasks can be run on it, a Future
+  will be returned representing its completion.
 
   *Arguments*:
 
-    * `executor-service`: the java.util.concurrent.ExecutorService that will back the returned FuturePool
+    * `executor-service`: the `java.util.concurrent.ExecutorService` that will back the returned FuturePool.
 
   *Returns*:
 
@@ -47,8 +51,8 @@
 
   *Arguments*:
 
-    * `future-pool`: the FuturePool on which `fn0` will run
-    * `body`: will executor on the ExecutorService backing `future-pool`
+    * `future-pool`: the FuturePool on which `body` will run
+    * `body`: will execute asynchronously to relative to the current thread on `future-pool`
 
   *Returns*:
 
