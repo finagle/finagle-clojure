@@ -70,6 +70,49 @@
   [^String addr ^Service service]
   (Thrift/serveIface addr service))
 
+(defn announce*
+  "Announce this server to the configured load balancer.
+
+  *Arguments*:
+  * `path`: a String represent the path on the load balancer
+  * `server`: a ListeningServer (returned by [serve])
+  
+  *Returns*:
+  
+  A Future[Announcement].
+
+  *See*:
+  [[announce]], [https://twitter.github.io/finagle/guide/Names.html]"
+  [ path ^ListeningServer server]
+  (.announce server path))
+
+(defn announce
+  "Announce this server to the configured load balancer.
+
+  This functions the same as [[announce*]] but returns the `server` passed in
+  so it can be chained together like:
+
+  ````clojure
+  (->> service
+       (thrift/serve \":9999\")
+       (thrift/announce \"zk!localhost!/path/to/nodes\")
+       (f/await))
+  ````
+
+  *Arguments*:
+  * `path`: a String represent the path on the load balancer
+  * `server`: a ListeningServer (returned by [serve])
+  
+  *Returns*:
+  
+  `server`
+
+  *See*:
+  [[announce*]], [https://twitter.github.io/finagle/guide/Names.html]"
+  [path ^ListeningServer server]
+  (announce* path server)
+  server)
+
 (defmacro client
   "Sugar for creating a client for a compiled Thrift service.
   The appropriate Finagle interface for that class will automatically be imported.
