@@ -3,7 +3,7 @@
             [leiningen.core.main :as main]
             [camel-snake-kebab.core :refer [->CamelCase]]))
 
-(def finagle-clojure-version "0.1.0-SNAPSHOT")
+(def finagle-clojure-version "0.1.0")
 
 (def render (renderer "finagle-clojure"))
 
@@ -42,7 +42,7 @@
     {:name name
      :project-name (str name "-core")
      :module-name module-name
-     :misc-config [{:key :plugins :value '[[lein-finagle-clojure "0.1.0-SNAPSHOT"]]}
+     :misc-config [{:key :plugins :value [['lein-finagle-clojure finagle-clojure-version]]}
                    {:key :java-source-paths :value java-source-paths}
                    {:key :finagle-clojure :value {:thrift-source-path "src/thrift" :thrift-output-path "src/java"}}
                    {:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.6.0"]]}}}]
