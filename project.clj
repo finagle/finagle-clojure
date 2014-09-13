@@ -3,6 +3,7 @@
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
+  :scm {:name "git" :url "http://github.com/finagle/finagle-clojure"}
   :dependencies [[finagle-clojure/core "0.1.0"]
                  [finagle-clojure/thrift "0.1.0"]]
   :plugins [[lein-sub "0.3.0"]
