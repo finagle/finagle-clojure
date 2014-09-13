@@ -12,5 +12,5 @@
   :codox {:sources ["core/src" "thrift/src"]
           :defaults {:doc/format :markdown}
           :output-dir "doc/codox"
-          :src-dir-uri "http://github.com/samn/finagle-clojure/blob/v0.1.0/"
+          :src-dir-uri "https://github.com/finagle/finagle-clojure/blob/v0.1.0/"
           :src-linenum-anchor-prefix "L"})
