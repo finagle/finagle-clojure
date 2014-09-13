@@ -3,7 +3,7 @@
             [leiningen.core.main :as main]
             [camel-snake-kebab.core :refer [->CamelCase]]))
 
-(def finagle-clojure-version "0.1.0")
+(def finagle-clojure-version "0.1.1")
 
 (def render (renderer "finagle-clojure"))
 
