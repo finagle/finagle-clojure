@@ -36,4 +36,7 @@ Then check out the readmes in the generated project.
 
 * [API Docs](https://finagle.github.io/finagle-clojure/)
   * run `lein doc` from this directory to generate
-* [Overview](doc/intro.md)
+* Finagle Docs
+  * [User's Guide](https://twitter.github.io/finagle/guide/)
+  * [API Docs (scala)](https://twitter.github.io/finagle/docs/#com.twitter.finagle.package)
+  * [GitHub](https://github.com/twitter/finagle)
