@@ -34,6 +34,7 @@ Then check out the readmes in the generated project.
 
 ## Documentation
 
+* [Quick Start with finagle-clojure & Thrift](doc/quick-start.md)
 * [API Docs](https://finagle.github.io/finagle-clojure/)
   * run `lein doc` from this directory to generate
 * Finagle Docs
