@@ -21,7 +21,8 @@
              thrift-files (->> source-path
                                (io/file project-root)
                                file-seq 
-                               (filter #(.isFile %))
+                               (filter #(and (.isFile %)
+                                             (.endsWith (.getName %) ".thrift")))
                                (map #(.getPath %)))
              scrooge-args (concat ["--finagle" "--skip-unchanged" "--language" "java" "--dest" absolute-dest-path] thrift-files)]
          (leiningen.core.main/info "Compiling Thrift files:" thrift-files)
