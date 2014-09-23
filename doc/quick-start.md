@@ -223,7 +223,7 @@ It should look like this:
   (f/await (thrift/serve ":9999" (make-service))))
 ````
 
-The Java class for your service (`MyService`) has been imported & two finagle-clojure namespaces have been required.
+The Java class for your service (`MyProject`) has been imported & two finagle-clojure namespaces have been required.
 
 The `finagle-clojure.futures` namespace (aliased as `f`) contains helpers to compose Futures together.
 Futures will either come from operations on a Service (which could be the Client to a Service running on another machine), returned from other asynchronous libraries, or created directly.
@@ -330,7 +330,7 @@ E.g. to return just the beautiful boolean from the BeautifulDogResponse instead 
 (-> (.isBreedBeautiful client (BeautifulDogRequest. "pit bull" "spike"))
     (f/map [response] 
       (.isBeautiful response))
-    f/await) ; => false
+    f/await) ; => true
 ````
 
 This should return true.
@@ -344,7 +344,7 @@ Let's try it with an ugly dog:
     f/await) ; => false
 ````
 
-This should have returned false.
+This should return false.
 
 `f/map` is used to when the transformation returns a raw value (not a Future, i.e. no other RPC calls) synchronously (e.g. hashing the response).
 `f/flatmap` is used when the transformation returns a Future (e.g. it makes a request to another service).
