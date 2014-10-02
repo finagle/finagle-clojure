@@ -11,4 +11,5 @@
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha5"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
-  :dependencies [[com.twitter/finagle-core_2.10 "6.24.0"]])
+  :dependencies [[com.twitter/finagle-core_2.10 "6.24.0"]
+                 [org.clojure/algo.monads "0.1.5"]])

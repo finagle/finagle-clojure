@@ -4,6 +4,10 @@ Minor release before 1.0.0 may include breaking changes and will explicitly mark
 
 ## Next Release
 
+* [core] Add a `algo.monad` instance for Finagle futures. Also add a `dofuture` macro which is a thin layer over `domonad` from `algo.monads`. 
+  This is intended to serve as a replacement for [the custom sequencing macro](https://github.com/finagle/finagle-clojure/blob/v0.1.1/core/src/finagle_clojure/futures.clj#L169-L181)
+  that we have at present.
+
 ## Version 0.3.0
 
 * [mysql] Add support for finagle-mysql (thanks [@bguthrie](http://github.com/bguthrie)!). [PR](https://github.com/finagle/finagle-clojure/pull/6)
