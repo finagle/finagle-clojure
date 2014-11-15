@@ -2,6 +2,8 @@
 
 ## Next Release
 
+* Add [ThriftMux](http://twitter.github.io/finagle/docs/index.html#com.twitter.finagle.mux.package) support in finagle-clojure/thriftmux
+
 ### Version 0.1.1
 
 * Initial release!
