@@ -9,4 +9,5 @@
              :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
-  :dependencies [[com.twitter/finagle-core_2.10 "6.18.0"]])
+  :dependencies [[com.twitter/finagle-core_2.10 "6.18.0"]
+                 [com.twitter/finagle-http_2.10 "6.18.0"]])
