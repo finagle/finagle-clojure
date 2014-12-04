@@ -1,20 +1,54 @@
 (ns finagle-clojure.http.message
   (:import (com.twitter.finagle.http Response Request Message)
-           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod)))
+           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod)
+           (scala Option)))
 
-(defn ^Response response [^HttpResponseStatus status]
-  (Response/apply status))
+(defn- ^HttpResponseStatus int->HttpResponseStatus [c]
+  (HttpResponseStatus/valueOf c))
 
-(defn ^Request request [^HttpMethod method uri]
-  (Request/apply method uri))
+(defn- ^HttpMethod str->HttpMethod [m]
+  (HttpMethod/valueOf (-> m (name) (.toUpperCase))))
 
-(defn set-content-string [^Message msg content]
+(defn ^Response response
+  ([]
+    (Response/apply))
+  ([status-code]
+    (Response/apply (int->HttpResponseStatus status-code))))
+
+(defn ^Request request
+  ([uri]
+    (Request/apply uri))
+  ([uri method]
+    (Request/apply (str->HttpMethod method) uri)))
+
+(defn ^Response set-status-code [^Response resp status-code]
+  (.setStatusCode resp status-code)
+  resp)
+
+(defn status-code [^Response resp]
+  (.statusCode resp))
+
+(defn ^Message set-content-string [^Message msg content]
   (.setContentString msg content)
   msg)
 
-(defn content-string [^Message msg]
-  (.getContentString msg))
+(defn ^String content-string [^Message msg]
+  (.contentString msg))
 
-(defn set-content-type [^Message msg type]
-  (.setContentType msg type "utf-8")
-  msg)
+(defn ^Message set-content-type
+  ([^Message msg type]
+    (set-content-type msg type "utf-8"))
+  ([^Message msg type charset]
+    (.setContentType msg type charset)
+    msg))
+
+(defn ^String content-type [^Message msg]
+  (let [^Option ct (.contentType msg)]
+    (when-not (.isEmpty ct) (.get ct))))
+
+(defn ^Request set-http-method [^Request req meth]
+  (.setMethod req (str->HttpMethod meth))
+  req)
+
+(defn http-method [^Request req]
+  (-> req (.method) (.getName)))
