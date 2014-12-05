@@ -1,5 +1,5 @@
 (ns finagle-clojure.options
-  (:import (scala Option Some None$)))
+  (:import (scala Option)))
 
 (defn ^Option option
   "Returns an Option with the given value `v`.

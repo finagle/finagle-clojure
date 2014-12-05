@@ -9,7 +9,7 @@
   (:require [finagle-clojure.scala :as scala]
             [finagle-clojure.timer :as timer]
             [finagle-clojure.duration :refer [->Duration]])
-  (:import [com.twitter.util Await Duration Future Timer]))
+  (:import [com.twitter.util Await Duration Future Timer Promise]))
 
 (def ^:no-doc default-timer (timer/java-timer true))
 
@@ -509,3 +509,16 @@
   See [[on-failure*]] & [[scala/Function]]"
   [^Future f arg-binding & body]
   `(on-failure* ~f (scala/Function ~arg-binding (do ~@body) scala.runtime.BoxedUnit/UNIT)))
+
+(defn ^Promise promise
+  "Returns a new Promise, an unresolved subclass of Future.
+
+  *Arguments*:
+
+    * None.
+
+  *Returns*:
+
+  A "
+  [^scala.Function1 fn1]
+  (Promise.))
