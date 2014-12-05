@@ -2,6 +2,7 @@
   (:import (com.twitter.finagle.builder ServerBuilder IncompleteSpecification Server)
            (com.twitter.finagle.http Request))
   (:require [finagle-clojure.http.server :refer :all]
+            [finagle-clojure.server :refer :all]
             [finagle-clojure.http.message :as m]
             [finagle-clojure.service :as s]
             [finagle-clojure.futures :as f]

@@ -2,7 +2,7 @@
   (:import (com.twitter.finagle.builder Server)
            (com.twitter.finagle Service)
            (com.twitter.finagle.http Http))
-  (:require [finagle-clojure.core.builder :refer :all]))
+  (:require [finagle-clojure.server :refer :all]))
 
 (def http
   "The HTTP codec."

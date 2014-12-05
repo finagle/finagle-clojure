@@ -1,4 +1,5 @@
 (ns finagle-clojure.options
+  "Functions for working with `scala.Option` objects."
   (:import (scala Option)))
 
 (defn ^Option option
@@ -32,7 +33,7 @@
   "Returns the value wrapped by `o`.
   Although the Scala implementation throws a `Predef.NoSuchElementException` if called
   on an empty Option, Clojure generally avoids throwing on empty gets, instead preferring to return nil.
-  This function adopts the Clojure behavior, choosing to treat this as a call to `getOrNull`.
+  This function adopts the Clojure behavior, choosing to treat this effectively as a call to `getOrNull`.
 
   *Arguments*:
 
@@ -42,4 +43,3 @@
 
     the Option's value if non-empty, nil otherwise"
   (when-not (empty? o) (.get o)))
-

@@ -1,4 +1,7 @@
-(ns finagle-clojure.http.server
+(ns finagle-clojure.server
+  "Functions for creating and altering `com.twitter.finagle.Server` objects independent
+  of any particular codec. To start an Http server specifically, see
+  `finagle-clojure.http.server/http-server`."
   (:import (com.twitter.finagle.builder ServerBuilder Server)
            (com.twitter.finagle Service)
            (java.net InetSocketAddress)
@@ -13,8 +16,7 @@
   The main class to use is [[com.twitter.finagle.builder.ServerBuilder]], as so:
 
   ```
-    (-> (->ServerBuilder)
-        (codec http)
+    (-> (builder)
         (named \"servicename\")
         (bind-to 3000)
         (build some-service))
@@ -43,7 +45,7 @@
 
     a running instance of [[com.twitter.finagle.builder.Server]]"
   [^ServerBuilder b ^Service svc]
-  (ServerBuilder/safeBuild svc b))
+  (.unsafeBuild b svc))
 
 
 ;; TODO Does this belong more generically in a Closable namespace?
