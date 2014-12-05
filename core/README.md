@@ -15,3 +15,4 @@ This module contains wrappers for `com.twitter.util.Future` & core Finagle class
 * `finagle-clojure.futures`: wrappers around `Future` operations.
 * `finagle-clojure.scala`: sugar for Clojure/Scala interop.
 * `finagle-clojure.service`: wrappers for operations on `Service`.
+* `finagle-clojure.server`: wrappers for creating, starting, and stopping `Server`s.

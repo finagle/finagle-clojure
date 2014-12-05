@@ -8,5 +8,5 @@ This module contains wrappers for `com.twitter.finagle.HttpServer` and HTTP mess
 
 ### Namespaces
 
-* `finagle-clojure.http.server`: wrappers for creating `HttpServer` objects via the `ServerBuilder` pattern.
+* `finagle-clojure.http.server`: a helper for building an HTTP server and a Clojured reference to the `Http` codec
 * `finagle-clojure.http.message`: wrappers for creating `Response` and `Request` objects
