@@ -1,8 +1,8 @@
 (ns {{ns}}
   (:import [{{thrift-ns}} {{service-name}}])
   (:require [finagle-clojure.futures :as f]
-            [finagle-clojure.thrift :as thrift]))
+            [finagle-clojure.{{project-type}} :as {{project-type}}]))
 
 (defn make-client
   [address]
-  (thrift/client address {{service-name}}))
+  ({{project-type}}/client address {{service-name}}))
