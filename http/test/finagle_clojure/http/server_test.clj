@@ -6,11 +6,14 @@
             [finagle-clojure.http.message :as m]
             [finagle-clojure.service :as s]
             [finagle-clojure.futures :as f]
-            [midje.sweet :refer :all]))
+            [midje.sweet :refer :all]
+            [clj-http.client :as http]))
 
 (def test-service
   (s/mk [^Request req]
-    (f/value (m/->Response 200))))
+    (f/value
+      (-> (m/->Response 200)
+          (m/set-content-string "Hello, World")))))
 
 (facts "about the ServerBuilder"
   (class (builder)) => ServerBuilder
@@ -25,9 +28,11 @@
                    (codec http)
                    (build test-service))]
     (instance? Server server) => true
+    (-> "http://localhost:3000" (http/get) (:body)) => "Hello, World"
     (close! server))
 
   (let [server (http-server "test" 3000 test-service)]
     (instance? Server server) => true
+    (-> "http://localhost:3000" (http/get) (:body)) => "Hello, World"
     (close! server))
   )
