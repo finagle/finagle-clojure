@@ -47,8 +47,6 @@
   [^ServerBuilder b ^Service svc]
   (.unsafeBuild b svc))
 
-
-;; TODO Does this belong more generically in a Closable namespace?
 (defn ^Future close!
   "Stops the given Server.
 

@@ -17,7 +17,7 @@
   ([v]
    (Option/apply v)))
 
-(defn empty? [^Option o]
+(defn empty?
   "Does Option `o` have a value? Returns true if so, false otherwise.
 
   *Arguments*:
@@ -27,9 +27,10 @@
   *Returns*:
 
     true if `v` is None, false otherwise"
+  [^Option o]
   (.isEmpty o))
 
-(defn get [^Option o]
+(defn get
   "Returns the value wrapped by `o`.
   Although the Scala implementation throws a `Predef.NoSuchElementException` if called
   on an empty Option, Clojure generally avoids throwing on empty gets, instead preferring to return nil.
@@ -42,4 +43,5 @@
   *Returns*:
 
     the Option's value if non-empty, nil otherwise"
+  [^Option o]
   (when-not (empty? o) (.get o)))

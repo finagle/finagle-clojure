@@ -6,8 +6,8 @@
   (wrapped in a `Future`) in turn. Most requests are constructed by Finagle, but the functions here to may be helpful
   to create `MockRequest`s for service testing purposes."
   (:import (com.twitter.finagle.http Response Request Message)
-           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod)
-           (scala Option)))
+           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod))
+  (:require [finagle-clojure.options :as opt]))
 
 (defn- ^HttpResponseStatus int->HttpResponseStatus [c]
   (HttpResponseStatus/valueOf (int c)))
@@ -47,7 +47,7 @@
   ([uri method]
     (Request/apply (str->HttpMethod method) uri)))
 
-(defn ^Response set-status-code [^Response resp code]
+(defn ^Response set-status-code
   "Sets the status code of the given response.
 
   *Arguments*:
@@ -58,6 +58,7 @@
   *Returns*:
 
     the given response"
+  [^Response resp code]
   (.setStatusCode resp code)
   resp)
 
@@ -131,8 +132,7 @@
 
     the content type of the message"
   [^Message msg]
-  (let [^Option ct (.contentType msg)]
-    (when-not (.isEmpty ct) (.get ct))))
+  (opt/get (.contentType msg)))
 
 (defn ^Request set-http-method
   "Sets the HTTP method of the given request.
