@@ -12,7 +12,7 @@
 (def test-service
   (s/mk [^Request req]
     (f/value
-      (-> (m/->Response 200)
+      (-> (m/response 200)
           (m/set-content-string "Hello, World")))))
 
 (facts "about the ServerBuilder"

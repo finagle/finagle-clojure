@@ -15,7 +15,7 @@
 (defn- ^HttpMethod str->HttpMethod [m]
   (HttpMethod/valueOf (-> m (name) (.toUpperCase))))
 
-(defn ^Response ->Response
+(defn ^Response response
   "Constructs a `Response`, required for Finagle services that interact with an `HttpServer`.
 
   *Arguments*:
@@ -30,7 +30,7 @@
   ([code]
     (Response/apply (int->HttpResponseStatus code))))
 
-(defn ^Request ->Request
+(defn ^Request request
   "Constructs a `Request`. Usually this will be constructed on your behalf for incoming requests;
   this function is useful primarily testing purposes, and indeed returns a `MockRequest` in its current form.
 
