@@ -1,30 +1,28 @@
 (ns finagle-clojure.http.server
-  (:import (com.twitter.finagle.builder Server)
-           (com.twitter.finagle Service)
-           (com.twitter.finagle.http Http))
+  (:import (com.twitter.finagle.exp HttpServer$ HttpServer)
+           (com.twitter.finagle.server StackServerLike)
+           (com.twitter.finagle Stack$Param ListeningServer)
+           (com.twitter.finagle.netty3 Netty3ListenerTLSConfig)
+           (com.twitter.util StorageUnit))
   (:require [finagle-clojure.server :refer :all]))
 
-(def http
-  "The HTTP codec."
-  (Http/get))
+(defn ^HttpServer with-tls [^HttpServer server ^Netty3ListenerTLSConfig cfg]
+  (.withTls server cfg))
 
-(defn ^Server http-server
-  "Creates a new HttpServer with the given name, port, service and codec. Convenient but not as full-featured as a
-  custom builder.
+(defn ^HttpServer with-max-request-size [^HttpServer server ^StorageUnit size]
+  (.withMaxRequestSize server size))
 
-  *Arguments*:
+(defn ^HttpServer with-max-response-size [^HttpServer server ^StorageUnit size]
+  (.withMaxResponseSize server size))
 
-    * `name`: the name of this server
-    * `port`: the port to bind this server to
-    * `svc`: the Service to use to respond to requests
+(defn- ^Stack$Param param [p]
+  (reify Stack$Param (default [this] p)))
 
-  *Returns*:
+(defn ^HttpServer configured [^HttpServer server p]
+  (.configured server p (param p)))
 
-    a running Server with the HTTP codec"
-  [^String name port ^Service svc]
-  (-> (builder)
-      (named name)
-      (bind-to port)
-      (codec http)
-      (build svc)))
+(defn ^ListeningServer [^HttpServer$ server address service]
+  (.serve server address service))
 
+(defn ^HttpServer http-server []
+  HttpServer$/MODULE$)
