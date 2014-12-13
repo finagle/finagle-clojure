@@ -1,7 +1,8 @@
-(ns finagle-clojure.server
+(ns finagle-clojure.builder.server
   "Functions for creating and altering `com.twitter.finagle.Server` objects independent
-  of any particular codec. To start an Http server specifically, see
-  `finagle-clojure.http.server/http-server`."
+  of any particular codec. Generally speaking codec-specific server functions
+  should be preferred, but these are included for comptability with older systems
+  configured at the server level."
   (:import (com.twitter.finagle.builder ServerBuilder Server)
            (com.twitter.finagle Service)
            (java.net InetSocketAddress)
