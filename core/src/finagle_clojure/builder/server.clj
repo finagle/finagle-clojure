@@ -117,12 +117,21 @@
   [^ServerBuilder b cdc]
   (.codec b cdc))
 
-(defn max-concurrent-requests
-  "Configures the given ServerBuilder to accept a maximum number of concurrent requests."
+(defn ^ServerBuilder max-concurrent-requests
+  "Configures the given ServerBuilder to accept a maximum number of concurrent requests.
+
+  *Arguments*:
+
+    * `b`: a ServerBuilder
+    * `mcr`: the maximum number of concurrent requests
+
+  *Returns*:
+
+    a ServerBuilder configured with a maximum number of concurrent requests"
   [^ServerBuilder b mcr]
   (.maxConcurrentRequests b (int mcr)))
 
-(defn tracer
+(defn ^ServerBuilder tracer
   "Configures the given ServerBuilder to use a Tracer.
 
   *Arguments*:
@@ -136,7 +145,7 @@
   [^ServerBuilder b ^Tracer tracer]
   (.tracer b tracer))
 
-(defn report-to
+(defn ^ServerBuilder report-to
   "Configures the given ServerBuilder to report to a stats receiver.
 
   *Arguments*:
