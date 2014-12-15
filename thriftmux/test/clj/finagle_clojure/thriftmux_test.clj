@@ -7,15 +7,6 @@
 ;; set *warn-on-reflection* after loading midje to skip its reflection warnings
 (set! *warn-on-reflection* true)
 
-(fact "finagle-interface"
-  (thriftmux/finagle-interface 'some.Service) => 'some.Service$ServiceIface
-  (thriftmux/finagle-interface 'some.Service$ServiceIface) => 'some.Service$ServiceIface
-  (thriftmux/finagle-interface 'test.DogBreedService) => 'test.DogBreedService$ServiceIface
-  (thriftmux/finagle-interface test.DogBreedService) => 'test.DogBreedService$ServiceIface
-  (thriftmux/finagle-interface 'DogBreedService) => 'test.DogBreedService$ServiceIface
-  (thriftmux/finagle-interface 'DogBreedService$ServiceIface) => 'DogBreedService$ServiceIface
-  (thriftmux/finagle-interface DogBreedService) => 'test.DogBreedService$ServiceIface)
-
 ;;; This is a high level integration test of finagle-clojure/thriftmux
 ;;; See the Thrift service definition in test/resources/service.thrift
 ;;; It has been compiled into finagled Java classes at test/java/

@@ -5,30 +5,12 @@
   The lein-finagle-clojure plugin can be used to compile Thrift definitions to Java with Scrooge.
   
   See:
-  * test/clj/finagle_clojure/thriftmux_test.clj
-  * https://github.com/samn/finagle-clojure-examples/tree/master/dog-breed-info"
+  * test/clj/finagle_clojure/thriftmux_test.clj"
+  (:require [finagle-clojure.thrift :as thrift])
   (:import [com.twitter.finagle ListeningServer Service ThriftMux]))
 
-(defn- ^:no-doc ^String canonical-class-name
-  "Take a class-name, which can be a String, Symbol or Class and returns
-  the canonical class name for it (package + class).
-  If class-name is a symbol the ns-imports for the current ns are checked.
-  If there's no import matching the class-name symbol the symbol is returned
-  as a String."
-  [class-name]
-  (if-let [^Class class (get (ns-imports *ns*) class-name)]
-    (.getCanonicalName class)
-    (if (class? class-name)
-      (.getCanonicalName ^Class class-name)
-      (str class-name))))
-
-(defn ^:no-doc finagle-interface
-  "Service -> 'package.canonical.Service$ServiceIface"
-  [service-class-name]
-  (let [canonical-service-class-name (canonical-class-name service-class-name)]
-    (if (.endsWith canonical-service-class-name "$ServiceIface")
-      (symbol canonical-service-class-name)
-      (symbol (str canonical-service-class-name "$ServiceIface")))))
+;; TODO should thriftmux serve a thrift service? or is it ok that service is pretty much duplicated from thrift
+;; since it makes the interface a little easier to use.
 
 (defmacro service
   "Sugar for implementing a com.twitter.finagle.Service based on the
@@ -50,8 +32,8 @@
   A new `Service`."
   [service-class-name & body]
   `(do
-     (import ~(finagle-interface service-class-name))
-     (proxy [~(finagle-interface service-class-name)] []
+     (import ~(thrift/finagle-interface service-class-name))
+     (proxy [~(thrift/finagle-interface service-class-name)] []
        ~@body)))
 
 (defn serve
@@ -100,7 +82,7 @@
   ````
 
   *Arguments*:
-  * `path`: a String represent the path on the load balancer
+  * `path`: a String representing the path on the load balancer
   * `server`: a ListeningServer (returned by [serve])
   
   *Returns*:
@@ -133,5 +115,5 @@
   A new client."
   [addr client-iterface-class]
   `(do
-     (import ~(finagle-interface client-iterface-class))
-     (ThriftMux/newIface ~addr ~(finagle-interface client-iterface-class))))
+     (import ~(thrift/finagle-interface client-iterface-class))
+     (ThriftMux/newIface ~addr ~(thrift/finagle-interface client-iterface-class))))

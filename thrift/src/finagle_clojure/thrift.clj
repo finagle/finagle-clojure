@@ -74,7 +74,7 @@
   "Announce this server to the configured load balancer.
 
   *Arguments*:
-  * `path`: a String represent the path on the load balancer
+  * `path`: a String representing the path on the load balancer
   * `server`: a ListeningServer (returned by [serve])
   
   *Returns*:
