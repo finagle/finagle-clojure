@@ -1,84 +1,84 @@
 (ns finagle-clojure.http.client
-  (:import (com.twitter.finagle.exp HttpClient HttpClient$)
+  (:import (com.twitter.finagle Http Http$Client)
            (com.twitter.finagle Stack$Param Service)
            (com.twitter.util StorageUnit)))
 
 (defn- ^Stack$Param param [p]
   (reify Stack$Param (default [this] p)))
 
-(defn ^HttpClient with-tls
-  "Configures the given `HttpClient` with TLS.
+(defn ^Http$Client with-tls
+  "Configures the given `Http.Client` with TLS.
 
   *Arguments*:
 
-    * `client`: an HttpClient
+    * `client`: an Http.Client
     * `cfg-or-hostname`: a `Netty3TransporterTLSConfig` config or hostname string
 
   *Returns*:
 
-    the given `HttpClient`"
-  [^HttpClient client cfg-or-hostname]
+    the given `Http.Client`"
+  [^Http$Client client cfg-or-hostname]
   (.withTls client cfg-or-hostname))
 
-(defn ^HttpClient with-tls-without-validation
-  "Configures the given `HttpClient` with TLS without validatioon..
+(defn ^Http$Client with-tls-without-validation
+  "Configures the given `Http.Client` with TLS without validatioon..
 
   *Arguments*:
 
-    * `client`: an HttpClient
+    * `client`: an Http.Client
 
   *Returns*:
 
-    the given `HttpClient`"
-  [^HttpClient client]
+    the given `Http.Client`"
+  [^Http$Client client]
   (.withTlsWithoutValidation client))
 
-(defn ^HttpClient with-max-request-size
-  "Configures the given `HttpClient` with a max request size.
+(defn ^Http$Client with-max-request-size
+  "Configures the given `Http.Client` with a max request size.
 
   *Arguments*:
 
-    * `client`: an HttpClient
+    * `client`: an Http.Client
     * `size`: a `StorageUnit` of the desired request size
 
   *Returns*:
 
-    the given `HttpClient`"
-  [^HttpClient client ^StorageUnit size]
+    the given `Http.Client`"
+  [^Http$Client client ^StorageUnit size]
   (.withMaxRequestSize client size))
 
-(defn ^HttpClient with-max-response-size
-  "Configures the given `HttpClient` with a max response size.
+(defn ^Http$Client with-max-response-size
+  "Configures the given `Http.Client` with a max response size.
 
   *Arguments*:
 
-    * `client`: an HttpClient
+    * `client`: an Http.Client
     * `size`: a `StorageUnit` of the desired response size
 
   *Returns*:
 
-    the given `HttpClient`"
-  [^HttpClient client ^StorageUnit size]
+    the given `Http.Client`"
+  [^Http$Client client ^StorageUnit size]
   (.withMaxResponseSize client size))
 
-(defn ^HttpClient configured
-  "Configures the given `HttpClient` with the desired Stack.Param. Generally, prefer one of the
+(defn ^Http$Client configured
+  "Configures the given `Http.Client` with the desired Stack.Param. Generally, prefer one of the
   explicit configuration functions over this.
 
   *Arguments*:
 
-    * `client`: an HttpClient
+    * `client`: an Http.Client
     * `p`: a parameter that will be subsequently wrapped with `Stack.Param`
 
   *Returns*:
 
-    the given `HttpClient`"
-  [^HttpClient client p]
+    the given `Http.Client`"
+  [^Http$Client client p]
   (.configured client p (param p)))
 
-(def ^HttpClient http-client
+(def ^Http$Client http-client
   "The base HTTP client. Call `service` on this once configured to convert it to a full-fledged service."
-  HttpClient$/MODULE$)
+  (Http/client))
 
 (defn ^Service service
   "Creates a new HTTP client structured as a Finagle `Service`.
@@ -86,12 +86,12 @@
   *Arguments*:
 
     * `dest`: a comma-separated string of one or more destinations with the form `\"hostname:port\"`
-    * `client` (optional): a preconfigured `HttpClient`
+    * `client` (optional): a preconfigured `Http.Client`
 
   *Returns*:
 
     a Finagle `Service`"
   ([dest]
     (service http-client dest))
-  ([^HttpClient client dest]
+  ([^Http$Client client dest]
     (.newService client dest)))
