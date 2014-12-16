@@ -21,7 +21,7 @@
   (.withTls client cfg-or-hostname))
 
 (defn ^Http$Client with-tls-without-validation
-  "Configures the given `Http.Client` with TLS without validatioon..
+  "Configures the given `Http.Client` with TLS without validation.
 
   *Arguments*:
 

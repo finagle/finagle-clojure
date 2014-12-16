@@ -1,6 +1,7 @@
 (ns finagle-clojure.options
   "Functions for working with `scala.Option` objects."
-  (:import (scala Option)))
+  (:import (scala Option))
+  (:refer-clojure :exclude [get empty?]))
 
 (defn ^Option option
   "Returns an Option with the given value `v`.

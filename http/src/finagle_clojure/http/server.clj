@@ -64,8 +64,6 @@
   [^Http$Server server p]
   (.configured server p (param p)))
 
-
-
 (def ^Http$Server http-server
   "The base HTTP server. Call `serve` on this once configured to begin listening to requests."
   (Http/server))

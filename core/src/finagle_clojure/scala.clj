@@ -2,7 +2,9 @@
   "Utilities for interop with JVM classes generated from Scala code.
   Scala functions & methods expect Scala collection & function instances,
   not Java Collections or Clojure IFns."
-  (:import [scala.collection JavaConversions]))
+  (:import [scala.collection JavaConversions]
+           (scala Product)
+           (scala.runtime BoxedUnit)))
 
 ;; TODO: @samn: 06/11/14 add more wrappers for JavaConversions
 
@@ -31,6 +33,25 @@
     A PersistentVector with the contents of `scala-seq`."
   [scala-seq]
   (into [] (JavaConversions/seqAsJavaList scala-seq)))
+
+(defn tuple->vec [^Product p]
+  "Convert a Scala Tuple to a vector.
+
+  *Arguments*:
+
+    * `p`: a Scala Product, generally a tuple
+
+  *Returns*:
+
+    A PersistentVector with the conents of `p`."
+  (->> (.productArity p)
+       (range)
+       (map #(.productElement p %))
+       (into [])))
+
+(def unit
+  "The Scala Unit value."
+  BoxedUnit/UNIT)
 
 (defn ^com.twitter.util.Function Function*
   ([apply-fn] (Function* apply-fn nil))
