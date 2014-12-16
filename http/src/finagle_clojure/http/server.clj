@@ -2,7 +2,7 @@
   (:import (com.twitter.finagle Http Http$Server)
            (com.twitter.finagle Stack$Param ListeningServer)
            (com.twitter.finagle.netty3 Netty3ListenerTLSConfig)
-           (com.twitter.util StorageUnit)))
+           (com.twitter.util StorageUnit Future)))
 
 (defn- ^Stack$Param param [p]
   (reify Stack$Param (default [this] p)))
@@ -64,8 +64,17 @@
   [^Http$Server server p]
   (.configured server p (param p)))
 
-(def ^Http$Server http-server
-  "The base HTTP server. Call `serve` on this once configured to begin listening to requests."
+(defn ^Http$Server http-server
+  "The base HTTP server. Call `serve` on this once configured to begin listening to requests.
+
+  *Arguments*:
+
+    * None.
+
+  *Returns*:
+
+    an instance of `Http.Server`"
+  []
   (Http/server))
 
 (defn ^ListeningServer serve
@@ -83,6 +92,19 @@
 
     a running `ListeningServer`"
   ([address service]
-    (serve http-server address service))
+    (serve (http-server) address service))
   ([^Http$Server server address service]
     (.serve server address service)))
+
+(defn ^Future close!
+  "Stops the given Server.
+
+  *Arguments*:
+
+    * `server`: an Http.Server
+
+  *Returns*:
+
+    a Future that closes when the server stops"
+  [^Http$Server server]
+  (.close server))

@@ -22,19 +22,19 @@
 
 (facts "HTTP server"
   (facts "during configuration"
-    (tls-hostname http-client)
+    (tls-hostname (http-client))
     => nil
 
-    (tls-client-engine http-client)
+    (tls-client-engine (http-client))
     => nil
 
-    (-> http-client
+    (-> (http-client)
         (with-tls "example.com")
         (tls-hostname)
         (opt/get))
     => "example.com"
 
-    (-> http-client
+    (-> (http-client)
         (with-tls "example.com")
         (tls-client-engine)
         (opt/get)
@@ -42,12 +42,12 @@
         (ancestors))
     => (contains scala.Function1)
 
-    (-> http-client
+    (-> (http-client)
         (with-tls-without-validation)
         (tls-hostname))
     => nil
 
-    (-> http-client
+    (-> (http-client)
         (with-tls-without-validation)
         (tls-client-engine)
         (opt/get)
@@ -55,16 +55,16 @@
         (ancestors))
     => (contains scala.Function1)
 
-    (max-request-size http-client)
+    (max-request-size (http-client))
     => nil
 
     (max-request-size
-      (with-max-request-size http-client (StorageUnit. 1024)))
+      (with-max-request-size (http-client) (StorageUnit. 1024)))
     => (StorageUnit. 1024)
 
-    (max-response-size http-client)
+    (max-response-size (http-client))
     => nil
 
     (max-response-size
-      (with-max-response-size http-client (StorageUnit. 1024)))
+      (with-max-response-size (http-client) (StorageUnit. 1024)))
     => (StorageUnit. 1024)))

@@ -1,7 +1,7 @@
 (ns finagle-clojure.http.client
   (:import (com.twitter.finagle Http Http$Client)
            (com.twitter.finagle Stack$Param Service)
-           (com.twitter.util StorageUnit)))
+           (com.twitter.util StorageUnit Future)))
 
 (defn- ^Stack$Param param [p]
   (reify Stack$Param (default [this] p)))
@@ -76,8 +76,17 @@
   [^Http$Client client p]
   (.configured client p (param p)))
 
-(def ^Http$Client http-client
-  "The base HTTP client. Call `service` on this once configured to convert it to a full-fledged service."
+(defn ^Http$Client http-client
+  "The base HTTP client. Call `service` on this once configured to convert it to a full-fledged service.
+
+  *Arguments*:
+
+    * None.
+
+  *Returns*:
+
+    an instance of `Http.Client`"
+  []
   (Http/client))
 
 (defn ^Service service
@@ -92,6 +101,19 @@
 
     a Finagle `Service`"
   ([dest]
-    (service http-client dest))
+    (service (http-client) dest))
   ([^Http$Client client dest]
     (.newService client dest)))
+
+(defn ^Future close!
+  "Stops the given client.
+
+  *Arguments*:
+
+    * `client`: an instance of [[com.twitter.finagle.Client]]
+
+  *Returns*:
+
+    a Future that closes when the client stops"
+  [^Http$Client client]
+  (.close client))

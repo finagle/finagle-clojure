@@ -21,25 +21,25 @@
 (facts "HTTP server"
   (facts "during configuration"
     (tls-server-engine
-      http-server) => nil
+      (http-server)) => nil
 
-    (-> http-server
+    (-> (http-server)
         (with-tls (Netty3ListenerTLSConfig. (scala/Function0 nil)))
         (tls-server-engine)
         (opt/get)
         (.apply))
     => nil
 
-    (max-request-size http-server)
+    (max-request-size (http-server))
     => nil
 
     (max-request-size
-      (with-max-request-size http-server (StorageUnit. 1024)))
+      (with-max-request-size (http-server) (StorageUnit. 1024)))
     => (StorageUnit. 1024)
 
-    (max-response-size http-server)
+    (max-response-size (http-server))
     => nil
 
     (max-response-size
-      (with-max-response-size http-server (StorageUnit. 1024)))
+      (with-max-response-size (http-server) (StorageUnit. 1024)))
     => (StorageUnit. 1024)))
