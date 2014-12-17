@@ -9,16 +9,20 @@
             [finagle-clojure.options :as opt]))
 
 (defn- tls-hostname [^Http$Client client]
-  (some-> client (extract-param Transporter$TLSHostname) (.hostname)))
+  (when-let [p (extract-param client Transporter$TLSHostname)]
+    (.hostname p)))
 
 (defn- tls-client-engine [^Http$Client client]
-  (some-> client (extract-param Transport$TLSClientEngine) (.e)))
+  (when-let [p (extract-param client Transport$TLSClientEngine)]
+    (.e p)))
 
 (defn- max-request-size [^Http$Client client]
-  (some-> client (extract-param Http$param$MaxRequestSize) (.size)))
+  (when-let [p (extract-param client Http$param$MaxRequestSize)]
+    (.size p)))
 
 (defn- max-response-size [^Http$Client client]
-  (some-> client (extract-param Http$param$MaxResponseSize) (.size)))
+  (when-let [p (extract-param client Http$param$MaxResponseSize)]
+    (.size p)))
 
 (facts "HTTP server"
   (facts "during configuration"

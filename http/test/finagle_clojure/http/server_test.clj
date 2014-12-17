@@ -10,13 +10,16 @@
             [finagle-clojure.scala :as scala]))
 
 (defn- tls-server-engine [^Http$Server server]
-  (some-> server (extract-param Transport$TLSServerEngine) (.e)))
+  (when-let [p (extract-param server Transport$TLSServerEngine)]
+    (.e p)))
 
 (defn- max-request-size [^Http$Server server]
-  (some-> server (extract-param Http$param$MaxRequestSize) (.size)))
+  (when-let [p (extract-param server Http$param$MaxRequestSize)]
+    (.size p)))
 
 (defn- max-response-size [^Http$Server server]
-  (some-> server (extract-param Http$param$MaxResponseSize) (.size)))
+  (when-let [p (extract-param server Http$param$MaxResponseSize)]
+    (.size p)))
 
 (facts "HTTP server"
   (facts "during configuration"
