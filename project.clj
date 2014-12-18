@@ -6,12 +6,13 @@
   :scm {:name "git" :url "http://github.com/finagle/finagle-clojure"}
   :dependencies [[finagle-clojure/core "0.1.2-SNAPSHOT"]
                  [finagle-clojure/thrift "0.1.2-SNAPSHOT"]
-                 [finagle-clojure/thriftmux "0.1.2-SNAPSHOT"]]
+                 [finagle-clojure/thriftmux "0.1.2-SNAPSHOT"]
+                 [finagle-clojure/http "0.1.2-SNAPSHOT"]]
   :plugins [[lein-sub "0.3.0"]
             [codox "0.8.10"]
             [lein-midje "3.1.3"]]
-  :sub ["core" "thrift"]
-  :codox {:sources ["core/src" "thrift/src" "thriftmux/src"]
+  :sub ["core" "thrift" "http"]
+  :codox {:sources ["core/src" "thrift/src" "thriftmux/src" "http/src"]
           :defaults {:doc/format :markdown}
           :output-dir "doc/codox"
           :src-dir-uri "https://github.com/finagle/finagle-clojure/blob/master/"
