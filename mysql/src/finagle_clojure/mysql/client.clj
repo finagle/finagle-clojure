@@ -1,21 +1,22 @@
 (ns finagle-clojure.mysql.client
   (:import (com.twitter.finagle Stack$Param)
-           (com.twitter.finagle.exp Mysql MysqlClient)
-           (com.twitter.finagle.exp.mysql Row Value ByteValue ShortValue IntValue LongValue DoubleValue FloatValue StringValue DateValue Type RawValue BigDecimalValue NullValue EmptyValue NullValue$ EmptyValue$ Client)
-           (scala Option)
-           (com.twitter.finagle.tracing Tracer)
-           (com.twitter.finagle.stats StatsReceiver))
-  (:require [finagle-clojure.scala :as scala]))
+           (com.twitter.finagle.exp.mysql Client PreparedStatement)
+           (com.twitter.finagle.exp.mysql Row Value ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
+                                          StringValue DateValue Type RawValue BigDecimalValue NullValue EmptyValue
+                                          NullValue$ EmptyValue$ Client)
+           (com.twitter.finagle.exp Mysql$Client Mysql)
+           (com.twitter.util Future))
+  (:require [finagle-clojure.scala :as scala]
+            [finagle-clojure.options :as opt]))
 
+(defmulti unbox-raw-value
+  (fn [^RawValue v] (.typ v)))
 
-(defn or-nil [^Option o] (if (.isEmpty o) nil (.get o)))
+(defmethod unbox-raw-value (Type/Date) [^RawValue val]
+  (-> val (DateValue/unapply) (opt/get)))
 
-(defn raw-type [^RawValue v] (.typ v))
-(defmulti unbox-raw-value raw-type)
-
-(defmethod unbox-raw-value (Type/Date) [^RawValue val] (or-nil (DateValue/unapply val)))
 (defmethod unbox-raw-value (Type/NewDecimal) [^RawValue val]
-  (when-let [^scala.math.BigDecimal bd (or-nil (BigDecimalValue/unapply val))]
+  (when-let [^scala.math.BigDecimal bd (-> val (BigDecimalValue/unapply) (opt/get))]
     (.underlying bd)))
 
 (defmulti unbox-value class)
@@ -37,46 +38,42 @@
     (map #(.name %)  (scala/scala-seq->vec (.fields row)))
     (map unbox-value (scala/scala-seq->vec (.values row)))))
 
-(defprotocol MysqlFinagleClojureClient
-  (query [this sql])
-  (select [this sql f])
-  (prepare [this sql])
-  (ping [this]))
-
-(defn builder []
-  Mysql)
+(defn ^Mysql$Client mysql-client []
+  (Mysql/client))
 
 (defn- param [p]
   (reify Stack$Param (default [this] p)))
 
-(defn ^MysqlClient with-credentials [client user pwd]
+(defn ^Mysql$Client with-credentials [^Mysql$Client client user pwd]
   (.withCredentials client user pwd))
 
-(defn ^MysqlClient with-database [client db]
+(defn ^Mysql$Client with-database [^Mysql$Client client db]
   (.withDatabase client db))
 
-(defn ^MysqlClient configured [client stack-param]
+(defn ^Mysql$Client with-charset [^Mysql$Client client charset]
+  (.withCharset client charset))
+
+(defn ^Mysql$Client configured [^Mysql$Client client stack-param]
   (.configured client stack-param (param stack-param)))
 
-(defn ^MysqlClient set-tracer [client ^Tracer tracer]
-  (configured client (com.twitter.finagle.package$param$Tracer. tracer)))
+(defn ^Client rich-client
+  ([^Mysql$Client client dest]
+    (.newRichClient client dest))
+  ([^Mysql$Client client dest label]
+    (.newRichClient client dest label)))
 
-(defn ^MysqlClient set-stats-receiver [client ^StatsReceiver rcvr]
-  (configured client (com.twitter.finagle.package$param$Stats. rcvr)))
+;; Future[Result]
+(defn ^Future query [^Client client sql]
+  (.query client sql))
 
-(defn ^MysqlClient set-label [client label]
-  (configured client (com.twitter.finagle.package$param$Label. label)))
+;; Future[Seq[T]]
+;; TODO wrap fn1?
+(defn ^Future select [^Client client sql fn1]
+  (.select client sql fn1))
 
-(defn mysql-client [^Client client]
-  (reify MysqlFinagleClojureClient
-    (query [this sql]
-      (.query client sql))
-    (select [this sql f]
-      (.select client sql (scala/Function* f)))
-    (prepare [this sql]
-      (.prepare client sql))
-    (ping [this]
-      (.ping client))))
+(defn ^PreparedStatement prepare [^Client client sql]
+  (.prepare client sql))
 
-(defn ^Client build [^MysqlClient client server]
-  (-> client (.newRichClient server) (mysql-client)))
+;; Future[Result]
+(defn ^Future ping [^Client client]
+  (.ping client))

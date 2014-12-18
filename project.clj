@@ -7,8 +7,8 @@
   :dependencies [[finagle-clojure/core "0.1.2-SNAPSHOT"]
                  [finagle-clojure/thrift "0.1.2-SNAPSHOT"]
                  [finagle-clojure/thriftmux "0.1.2-SNAPSHOT"]
-<<<<<<< HEAD
-                 [finagle-clojure/http "0.1.2-SNAPSHOT"]]
+                 [finagle-clojure/http "0.1.2-SNAPSHOT"]
+                 [finagle-clojure/mysql "0.1.2-SNAPSHOT"]]
   :plugins [[lein-sub "0.3.0"]
             [codox "0.8.10"]
             [lein-midje "3.1.3"]]
