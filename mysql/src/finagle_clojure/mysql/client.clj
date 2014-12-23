@@ -38,25 +38,87 @@
     (map #(.name %)  (scala/scala-seq->vec (.fields row)))
     (map unbox-value (scala/scala-seq->vec (.values row)))))
 
-(defn ^Mysql$Client mysql-client []
-  (Mysql/client))
-
 (defn- param [p]
   (reify Stack$Param (default [this] p)))
 
-(defn ^Mysql$Client with-credentials [^Mysql$Client client user pwd]
+(defn ^Mysql$Client mysql-client
+  "Initialize a configurable MySQL stack client. The `rich-client` function must be called once configured
+  in order to execute live queries against this, like so:
+
+  ```
+  (-> (mysql-client)
+      (with-database \"somedb\")
+      (with-credentials \"test\" \"test\")
+      (rich-client))
+  ```
+
+  *Arguments:*
+
+    * None.
+
+  *Returns:*
+
+    A new [[com.twitter.finagle.exp.Mysql$Client]]."
+  []
+  (Mysql/client))
+
+(defn ^Mysql$Client with-credentials
+  "Configure the given `Mysql.Client` with connection credentials.
+
+  *Arguments:*
+
+    * `client`: a `Mysql.Client`
+    * `user`: a database username
+    * `pwd`: a database password
+
+  *Returns:*
+
+    the given `Mysql.Client`"
+  [^Mysql$Client client user pwd]
   (.withCredentials client user pwd))
 
-(defn ^Mysql$Client with-database [^Mysql$Client client db]
+(defn ^Mysql$Client with-database
+  "Configure the given `Mysql.Client` with a database.
+
+  *Arguments:*
+
+    * `client`: a `Mysql.Client`
+    * `db`: the name of a database
+
+  *Returns:*
+
+    the given `Mysql.Client`"
+  [^Mysql$Client client db]
   (.withDatabase client db))
 
-(defn ^Mysql$Client with-charset [^Mysql$Client client charset]
-  (.withCharset client charset))
+(defn ^Mysql$Client with-charset
+  "Configure the given `Mysql.Client` with a charset.
+
+  *Arguments:*
+
+    * `client`: a `Mysql.Client`
+    * `charset`: a number representing the charset
+
+  *Returns:*
+
+    the given `Mysql.Client`"
+  [^Mysql$Client client charset]
+  (.withCharset client (short charset)))
 
 (defn ^Mysql$Client configured [^Mysql$Client client stack-param]
   (.configured client stack-param (param stack-param)))
 
 (defn ^Client rich-client
+  "Converts the given `Mysql.Client` into a rich client, which is used for actually performing queries.
+
+  *Arguments:*
+
+    * `client`: a `Mysql.Client`
+    * `dest`:
+
+  *Returns:*
+
+    a new [[com.twitter.finagle.exp.mysql.Client]] used for real queries"
   ([^Mysql$Client client dest]
     (.newRichClient client dest))
   ([^Mysql$Client client dest label]
