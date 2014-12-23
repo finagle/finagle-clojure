@@ -1,13 +1,16 @@
 (ns finagle-clojure.mysql.client
   (:import (com.twitter.finagle Stack$Param)
-           (com.twitter.finagle.exp.mysql Client PreparedStatement)
+           (com.twitter.finagle.exp.mysql Client PreparedStatement Result OK ResultSet Field)
            (com.twitter.finagle.exp.mysql Row Value ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
                                           StringValue DateValue Type RawValue BigDecimalValue NullValue EmptyValue
                                           NullValue$ EmptyValue$ Client)
            (com.twitter.finagle.exp Mysql$Client Mysql)
-           (com.twitter.util Future))
+           (com.twitter.util Future)
+           (scala Function1)
+           (scala.collection Seq))
   (:require [finagle-clojure.scala :as scala]
-            [finagle-clojure.options :as opt]))
+            [finagle-clojure.options :as opt]
+            [finagle-clojure.futures :as f]))
 
 (defmulti unbox-raw-value
   (fn [^RawValue v] (.typ v)))
@@ -33,10 +36,18 @@
 (defmethod unbox-value RawValue    [^RawValue val]    (unbox-raw-value val))
 (defmethod unbox-value Value       [^Value val]       (throw (RuntimeException. (str "Unknown value type: " val))))
 
-(defn Row->map [^Row row]
+(defn- Field->keyword [^Field f]
+  (-> f (.name) (keyword)))
+
+(defn- Row->map [^Row row]
   (zipmap
-    (map #(.name %)  (scala/scala-seq->vec (.fields row)))
+    (map Field->keyword  (scala/scala-seq->vec (.fields row)))
     (map unbox-value (scala/scala-seq->vec (.values row)))))
+
+(defn ResultSet->vec [^ResultSet rs]
+  (->> (.rows rs)
+       (scala/scala-seq->vec)
+       (map Row->map)))
 
 (defn- param [p]
   (reify Stack$Param (default [this] p)))
@@ -129,13 +140,27 @@
   (.query client sql))
 
 ;; Future[Seq[T]]
-;; TODO wrap fn1?
-(defn ^Future select [^Client client sql fn1]
+(defmulti ^Future select class)
+
+(defmethod select PreparedStatement
+  [^PreparedStatement stmt params ^Function1 fn1]
+  (.select stmt (scala/seq->scala-buffer params) fn1))
+
+(defmethod select Client
+  [^Client client sql ^Function1 fn1]
   (.select client sql fn1))
 
 (defn ^PreparedStatement prepare [^Client client sql]
   (.prepare client sql))
 
-;; Future[Result]
 (defn ^Future ping [^Client client]
   (.ping client))
+
+(defn ^Future exec [^PreparedStatement stmt & params]
+  (.apply stmt (scala/seq->scala-buffer params)))
+
+(defn ^Future ok? [^Result result]
+  (instance? OK result))
+
+(defn ^Future affected-rows [^Result result]
+  (.affectedRows result))
