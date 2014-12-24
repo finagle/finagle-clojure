@@ -38,7 +38,7 @@
 
       (-> (prepare db "INSERT INTO widgets (name, description, price)
                        VALUES (?, ?, ?)")
-          (exec "fizzbuzz" "a fizzy buzzy" (BigDecimalValue/apply (scala.math.BigDecimal. 10.2M)))
+          (exec "fizzbuzz" "a fizzy buzzy" 10.2M)
           (mapfn affected-rows)
           (f/await))
       => 1
