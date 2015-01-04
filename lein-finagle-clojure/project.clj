@@ -6,5 +6,5 @@
   :scm {:name "git" :url "http://github.com/finagle/finagle-clojure"}
   :min-lein-version "2.0.0"
   :repositories [["sonatype" "https://oss.sonatype.org/content/groups/public/"]]
-  :dependencies [[com.twitter/scrooge-generator_2.10 "3.16.3"]]
+  :dependencies [[com.twitter/scrooge-generator_2.10 "3.17.0"]]
   :eval-in-leiningen true)
