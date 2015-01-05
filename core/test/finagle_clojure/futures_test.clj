@@ -3,12 +3,15 @@
   (:import [com.twitter.util NoFuture])
   (:require [finagle-clojure.futures :refer :all]
             [finagle-clojure.scala :as scala]
-            [finagle-clojure.timer :as timer]
             [finagle-clojure.duration :refer [->Duration]]
             [midje.sweet :refer :all]))
 
 ;; set *warn-on-reflection* after loading midje to skip its reflection warnings
 (set! *warn-on-reflection* true)
+
+(fact "flatmap*"
+  (await (flatmap* (value "hi") (fn [s] (value (.toUpperCase ^String s))))) => "HI"
+  (await (flatmap* (value "hi") (scala/Function [s] (value (.toUpperCase ^String s))))) => "HI")
 
 (fact "flatmap"
   (await (flatmap (value "hi") [s] (value (.toUpperCase ^String s)))) => "HI")
@@ -16,27 +19,43 @@
 (fact "nested flatmap"
   (await (flatmap (value "hi") [s] (flatmap (value "bob") [t] (value (str s " " t)))))  => "hi bob")
 
+(fact "map*"
+  (await (map* (value "hi") (fn [s] (.toUpperCase ^String s)))) => "HI"
+  (await (map* (value "hi") (scala/Function [s] (.toUpperCase ^String s)))) => "HI")
+
 (fact "map"
   (await (map (value "hi") [s] (.toUpperCase ^String s))) => "HI")
 
 (fact "for"
-  (await (for [a (value 1)
-             b (value 2)]
-    (value (+ a b)))) => 3)
+  (await
+    (for [a (value 1)
+          b (value 2)]
+      (value (+ a b))))
+  => 3)
 
 (fact "for chain"
-  (await (for [a (value 1)
-             b (value (inc a))]
-    (value (+ a b)))) => 3)
+  (await
+    (for [a (value 1)
+          b (value (inc a))]
+      (value (+ a b))))
+  => 3)
 
 (fact "exception"
   (await (exception (Exception.))) => (throws Exception))
+
+(facts "rescue*"
+  (await (rescue* (exception (Exception.)) (constantly (value 1)))) => 1
+  (await (rescue* (exception (Exception.)) (scala/Function [_] (value 1)))) => 1)
 
 (facts "rescue"
   (await (rescue (exception (Exception.)) [^Throwable t] (value 1))) => 1
   (await (rescue (exception (Exception.)) [t] (value 1))) => 1
   ;; this throws because the domain of the Function passed to rescue doesn't include Throwable
   (await (rescue (exception (Exception.)) [^String s] (value 1))) => (throws Exception))
+
+(facts "handle*"
+  (await (handle* (exception (Exception.)) (constantly 1))) => 1
+  (await (handle* (exception (Exception.)) (scala/Function [_] 1))) => 1)
 
 (facts "handle"
   (await (handle (exception (Exception.)) [^Throwable t] 1)) => 1
@@ -49,6 +68,10 @@
   (await (collect [(value 1) (value nil)])) => [1 nil]
   (await (collect '())) => []
   (collect nil) => (throws AssertionError))
+
+(facts "ensure*"
+  (await (ensure* (value 1) (constantly 1))) => 1
+  (await (ensure* (value 1) (scala/Function0 1))) => 1)
 
 (facts "ensure"
   (await (ensure (value 1) 1)) => 1

@@ -4,6 +4,9 @@ Minor release before 1.0.0 may include breaking changes and will explicitly mark
 
 ## Next Release
 
+* [core] Add support for automatically lifting Clojure fns to Scala Functions. This allows wrappers like `finagle-clojure.futures/flatmap*` to accept either Clojure or Scala functions.
+Ordinary Clojure fns can be used with any desugared wrapper over a method that ordinarily accepts a Scala function.
+
 ### Version 0.2.0
 
 There are no breaking changes in this release.
