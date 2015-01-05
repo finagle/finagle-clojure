@@ -9,73 +9,7 @@
            (scala Function1)
            (java.util TimeZone))
   (:require [finagle-clojure.scala :as scala]
-            [finagle-clojure.options :as opt]))
-
-(defmulti unbox-raw-value
-  (fn [^RawValue val] (.typ val)))
-
-(def utc-zone
-  (TimeZone/getTimeZone "UTC"))
-
-;; Punting on arbitrary timezone conversions for now, as UTC<->UTC is almost always the right thing to do.
-(def utc-timestamp-value
-  (TimestampValue. utc-zone utc-zone))
-
-(defmethod unbox-raw-value (Type/NewDecimal) [^RawValue val]
-  (when-let [^scala.math.BigDecimal bd (-> val (BigDecimalValue/unapply) (opt/get))]
-    (.underlying bd)))
-
-(defmethod unbox-raw-value (Type/Date) [^RawValue val]
-  (-> (.unapply DateValue$/MODULE$ val) (opt/get)))
-
-(defmethod unbox-raw-value (Type/Time) [^RawValue val]
-  (-> (.unapply utc-timestamp-value val) (opt/get)))
-
-(defmethod unbox-raw-value (Type/DateTime) [^RawValue val]
-  (-> (.unapply utc-timestamp-value val) (opt/get)))
-
-(defmethod unbox-raw-value (Type/Timestamp) [^RawValue val]
-  (-> (.unapply utc-timestamp-value val) (opt/get)))
-
-(defmethod unbox-raw-value :default [o]
-  (throw (RuntimeException. (str "Don't know how to unbox value: " o))))
-
-(defmulti unbox-value class)
-
-(defmethod unbox-value ByteValue   [^ByteValue val]   (-> val (.b)))
-(defmethod unbox-value ShortValue  [^ShortValue val]  (-> val (.s)))
-(defmethod unbox-value IntValue    [^IntValue val]    (-> val (.i)))
-(defmethod unbox-value LongValue   [^LongValue val]   (-> val (.l)))
-(defmethod unbox-value FloatValue  [^FloatValue val]  (-> val (.f)))
-(defmethod unbox-value DoubleValue [^DoubleValue val] (-> val (.d)))
-(defmethod unbox-value StringValue [^StringValue val] (-> val (.s)))
-(defmethod unbox-value NullValue$  [^NullValue _]     nil)
-(defmethod unbox-value EmptyValue$ [^EmptyValue _]    nil)
-(defmethod unbox-value RawValue    [^RawValue val]
-  (unbox-raw-value val))
-(defmethod unbox-value Value       [^Value val]
-  (throw (RuntimeException. (str "Don't know how to unbox value: " val))))
-
-(defmulti box-value class)
-
-(defmethod box-value Byte           [b] (ByteValue. b))
-(defmethod box-value Short          [s] (ShortValue. s))
-(defmethod box-value Integer        [i] (IntValue. i))
-(defmethod box-value Long           [l] (LongValue. l))
-(defmethod box-value Float          [f] (FloatValue. f))
-(defmethod box-value Double         [d] (DoubleValue. d))
-(defmethod box-value String         [s] (StringValue. s))
-(defmethod box-value nil            [_] NullValue$/MODULE$)
-(defmethod box-value BigDecimal     [d]
-  (BigDecimalValue/apply (scala.math.BigDecimal. d)))
-(defmethod box-value java.util.Date [d]
-  (box-value (java.sql.Date. (.getTime d))))
-(defmethod box-value java.sql.Date  [d]
-  (.apply DateValue$/MODULE$ d))
-(defmethod box-value java.sql.Timestamp [t]
-  (.apply utc-timestamp-value t))
-(defmethod box-value :default [val]
-  (throw (RuntimeException. (str "Don't know how to box value: " val))))
+            [finagle-clojure.mysql.value :as value]))
 
 (defn- Field->keyword [^Field f]
   (-> f (.name) (keyword)))
@@ -95,7 +29,7 @@
   [^Row row]
   (zipmap
     (map Field->keyword  (scala/scala-seq->vec (.fields row)))
-    (map unbox-value (scala/scala-seq->vec (.values row)))))
+    (map value/unbox (scala/scala-seq->vec (.values row)))))
 
 (defn ResultSet->vec [^ResultSet rs]
   "Given a Finagle MySQL result set, convert it to a vector of Clojure maps using `Row->map`. Raises
@@ -209,7 +143,6 @@
   ([^Mysql$Client client dest label]
     (.newRichClient client dest label)))
 
-;; Future[Result]
 (defn ^Future query
   "Given a rich client and a SQL string, executes the SQL and returns the result as a Future[Result].
 
@@ -232,8 +165,6 @@
 (defn ^Future select
   "Given a rich client, a SQL string, and a mapping function, executes the SQL and returns the result as a
   Future[Seq[T]], where T is the type yielded by the given mapping function.
-
-
   *Arguments:*
 
     * `client`: a rich MySQL `Client`
@@ -260,7 +191,7 @@
 
     a `Future` containing a Scala Seq whose contents are derived from the given function"
   [^PreparedStatement stmt params ^Function1 fn1]
-  (.select stmt (scala/seq->scala-buffer (map box-value params)) (wrap-fn fn1)))
+  (.select stmt (scala/seq->scala-buffer (map value/box params)) (wrap-fn fn1)))
 
 (defn ^PreparedStatement prepare
   "Given a rich client and a SQL string, returns a `PreparedStatement` ready to be parameterized and executed.
@@ -302,7 +233,7 @@
     a `Future` containing a [[com.twitter.finagle.exp.mysql.Result]]"
   [^PreparedStatement stmt & params]
   (->> (or params [])
-       (map box-value)
+       (map value/box)
        (scala/seq->scala-buffer)
        (.apply stmt)))
 

@@ -127,6 +127,4 @@
           (f/await))
       => true)
 
-    )
-
-  (-> (mysql-client) (with-credentials "root" "") (with-database "finagle_clojure_test") (rich-client "localhost:3306")))
+    ))
