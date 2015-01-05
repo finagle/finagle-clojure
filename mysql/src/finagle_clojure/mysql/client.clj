@@ -162,20 +162,23 @@
     (scala/Function* f)
     f))
 
-(defn ^Future select
+(defn ^Future select-sql
   "Given a rich client, a SQL string, and a mapping function, executes the SQL and returns the result as a
   Future[Seq[T]], where T is the type yielded by the given mapping function.
   *Arguments:*
 
     * `client`: a rich MySQL `Client`
     * `sql`: a SQL string
-    * `fn1`: a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.exp.mysql.Row]] and returns an arbitrary type
+    * `fn1` (optional): a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.exp.mysql.Row]]
 
   *Returns:*
 
-    a `Future` containing a Scala Seq whose contents are derived from the given function"
-  [^Client client sql ^Function1 fn1]
-  (.select client sql (wrap-fn fn1)))
+    a `Future` containing a Scala Seq whose contents are derived from `fn1` (if given) or mapped to a
+    Clojure hashmap of column/value pairs (if not)"
+  ([^Client client sql]
+    (select-sql client sql Row->map))
+  ([^Client client sql ^Function1 fn1]
+    (.select client sql (wrap-fn fn1))))
 
 (defn ^Future select-stmt
   "Given a `PreparedStatement`, a vector of params, and a mapping function, executes the parameterized statement
@@ -185,13 +188,16 @@
 
     * `stmt`: a `PreparedStatement`, generally derived from the `prepare` function
     * `params`: a Clojure vector of params
-    * `fn1`: a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.exp.mysql.Row]] and returns an arbitrary type
+    * `fn1` (optional): a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.exp.mysql.Row]]
 
   *Returns:*
 
-    a `Future` containing a Scala Seq whose contents are derived from the given function"
-  [^PreparedStatement stmt params ^Function1 fn1]
-  (.select stmt (scala/seq->scala-buffer (map value/box params)) (wrap-fn fn1)))
+    a `Future` containing a Scala Seq whose contents are derived from `fn1` (if given) or mapped to a
+    Clojure hashmap of column/value pairs (if not)"
+  ([^PreparedStatement stmt params]
+    (select-stmt stmt params Row->map))
+  ([^PreparedStatement stmt params ^Function1 fn1]
+    (.select stmt (scala/seq->scala-buffer (map value/box params)) (wrap-fn fn1))))
 
 (defn ^PreparedStatement prepare
   "Given a rich client and a SQL string, returns a `PreparedStatement` ready to be parameterized and executed.

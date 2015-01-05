@@ -99,7 +99,7 @@
         ))
 
     (fact "it can select from the table using the rich client"
-      (let [rows (-> (select db "SELECT * FROM widgets" Row->map)
+      (let [rows (-> (select-sql db "SELECT * FROM widgets" Row->map)
                      (mapfn scala/scala-seq->vec)
                      (f/await))]
         (count rows)
@@ -107,7 +107,14 @@
 
         (-> rows (first) (select-keys [:id :name]))
         => {:id 1 :name "fizzbuzz"}
-        ))
+        )
+
+      (-> (select-sql db "SELECT * FROM widgets")
+          (mapfn scala/scala-seq->vec)
+          (f/await)
+          (first)
+          (select-keys [:id :name]))
+      => {:id 1 :name "fizzbuzz"})
 
     (fact "it can select from the table using a prepared statement"
       (let [rows (-> (prepare db "SELECT * FROM widgets")
@@ -119,7 +126,15 @@
 
         (-> rows (first) (select-keys [:id :name]))
         => {:id 1 :name "fizzbuzz"}
-        ))
+        )
+
+      (-> (prepare db "SELECT * FROM widgets")
+          (select-stmt [])
+          (mapfn scala/scala-seq->vec)
+          (f/await)
+          (first)
+          (select-keys [:id :name]))
+      => {:id 1 :name "fizzbuzz"})
 
     (fact "it can clean up after the tests by deleting a table"
       (-> (query db "DROP TABLE widgets")
