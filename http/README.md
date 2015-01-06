@@ -4,7 +4,7 @@ This module contains wrappers for `com.twitter.finagle.HttpServer` and HTTP mess
 
 ### Dependency
 
-    [finagle-clojure/http "0.1.2"]
+    [finagle-clojure/http "0.2.1-SNAPSHOT"]
 
 ### Namespaces
 

@@ -3,7 +3,7 @@
             [leiningen.core.main :as main]
             [camel-snake-kebab.core :refer [->CamelCase]]))
 
-(def finagle-clojure-version "0.1.1")
+(def finagle-clojure-version "0.2.1-SNAPSHOT")
 (def valid-project-types #{"thrift" "thriftmux"})
 
 (def render (renderer "finagle-clojure"))
@@ -11,27 +11,27 @@
 (defn thrift-namespace
   [name]
   (-> name
-      sanitize
+      (sanitize)
       (clojure.string/replace "/" ".")
       (str ".thrift")))
 
 (defn name-from-package
   [name]
   (-> name
-      project-name
+      (project-name)
       (clojure.string/split #"\.")
-      last))
+      (last)))
 
 (defn service-name
   [name]
   (-> name
-      name-from-package
-      ->CamelCase))
+      (name-from-package)
+      (->CamelCase)))
 
 (defn module-name
   [name suffix]
   (-> name
-      name-from-package
+      (name-from-package)
       (str "-" suffix)))
 
 (defn project-type->dependency-symbol
@@ -96,35 +96,37 @@
      :ns service-ns
      :sanitized (name-to-path name)}))
 
-(def project-type-flag? #{"project-type" ":project-type"})
+(def project-type-flag? #{"project-type" ":project-type" "--project-type"})
 
 (defn parse-project-type
   [project-type]
   (when-not (valid-project-types project-type)
-    (throw (IllegalArgumentException. (str project-type " is not a valid project type. Expected one of " valid-project-types))))
+    (main/abort (str project-type " is not a valid project type. Expected one of " valid-project-types)))
   [:project-type project-type])
 
 (defn dispatch-arg-parser
   [[flag arg]]
   (condp apply [flag]
-    project-type-flag? (parse-project-type arg)))
+    project-type-flag? (parse-project-type arg)
+    (main/abort (str "Unrecognized template argument " flag))))
 
 (def default-args {:project-type "thrift"})
 
+;; TODO it might be worth using leiningen.core.main/parse-options someday
 (defn parse-args
   [args]
   (->> args
        (partition 2)
        (map dispatch-arg-parser)
        (remove nil?)
-       flatten
+       (flatten)
        (apply hash-map)
        (merge default-args)))
 
 (defn finagle-clojure
   "Create a new finagle-clojure project using Thrift by default.
    To create a project of a different type pass :project-type {thrift,thriftmux}
-     E.g. lein new finagle-clojure $NAME :project-type thriftmux"
+     E.g. lein new finagle-clojure $NAME -- :project-type thriftmux"
   [name & args]
   (let [{:keys [project-type]} (parse-args args)]
     (main/info "Generating fresh 'lein new' finagle-clojure" project-type "project.")

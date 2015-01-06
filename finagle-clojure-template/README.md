@@ -6,6 +6,9 @@ Create a new finagle-clojure project like this:
 
     lein new finagle-clojure project-name
 
+Specify the project type (thrift or thriftmux) like this:
+
+    lein new finagle-clojure project-name -- :project-type thriftmux
 
 The generated project will contain 3 modules:
 

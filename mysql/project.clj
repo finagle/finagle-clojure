@@ -1,4 +1,4 @@
-(defproject finagle-clojure/mysql "0.1.2-SNAPSHOT"
+(defproject finagle-clojure/mysql "0.2.1-SNAPSHOT"
   :description "A light wrapper around Finagle MySQL support"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
@@ -9,5 +9,5 @@
              :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
-  :dependencies [[finagle-clojure/core "0.1.2-SNAPSHOT"]
+  :dependencies [[finagle-clojure/core "0.2.1-SNAPSHOT"]
                  [com.twitter/finagle-mysql_2.10 "6.24.0"]])
