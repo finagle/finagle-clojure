@@ -1,5 +1,5 @@
 (ns finagle-clojure.mysql.client-test
-  (:import (com.twitter.finagle.exp.mysql Handshake$Database Handshake$Credentials Handshake$Charset)
+  (:import (com.twitter.finagle.exp.mysql Handshake$Database Handshake$Credentials Handshake$Charset OK)
            (com.twitter.finagle Stack$Parameterized)
            (scala.collection JavaConversions)
            (com.twitter.finagle.exp Mysql$Client))
@@ -58,5 +58,49 @@
         (with-charset 1)
         (charset))
     => 1
+    )
+
+  (facts "parsing responses"
+    (facts "given an OK result"
+      (-> (OK. 1 0 (int 0) (int 0) "")
+          (affected-rows))
+      => 1
+
+      (-> (OK. 0 2 (int 0) (int 0) "")
+          (insert-id))
+      => 2
+
+      (-> (OK. 0 0 (int 3) (int 0) "")
+          (server-status))
+      => 3
+
+      (-> (OK. 0 0 (int 0) (int 4) "")
+          (warning-count))
+      => 4
+
+      (-> (OK. 0 0 (int 0) (int 0) "a message")
+          (message))
+      => "a message"
+
+      (-> (OK. 0 0 (int 0) (int 0) "a message")
+          (ok?))
+      => true)
+
+    (facts "given an error result"
+      (-> (com.twitter.finagle.exp.mysql.Error. (short 1) "" "")
+          (error-code))
+      => 1
+
+      (-> (com.twitter.finagle.exp.mysql.Error. (short 0) "" "an error message")
+          (message))
+      => "an error message"
+
+      (-> (com.twitter.finagle.exp.mysql.Error. (short 0) "a SQL state" "")
+          (sql-state))
+      => "a SQL state"
+
+      (-> (com.twitter.finagle.exp.mysql.Error. (short 0) "" "")
+          (ok?))
+      => false)
     )
   )

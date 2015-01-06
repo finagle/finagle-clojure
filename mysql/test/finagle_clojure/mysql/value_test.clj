@@ -1,6 +1,6 @@
 (ns finagle-clojure.mysql.value-test
   (:import (com.twitter.finagle.exp.mysql LongValue FloatValue IntValue ShortValue ByteValue DoubleValue StringValue
-                                          BigDecimalValue EmptyValue$ NullValue$ DateValue))
+                                          BigDecimalValue EmptyValue$ NullValue$ DateValue TimestampValue))
   (:require [midje.sweet :refer :all]
             [finagle-clojure.mysql.value :refer :all]
             [finagle-clojure.options :as opt]))
@@ -37,15 +37,16 @@
     (unbox NullValue$/MODULE$)
     => nil
 
-    (let [dv (DateValue/apply (java.sql.Date/valueOf "2014-12-23"))]
-      (-> dv (unbox) (.getYear))
-      => 114
+    (-> (java.sql.Date/valueOf "2014-12-23")
+        (DateValue/apply)
+        (unbox)
+        (.toString))
+    => "2014-12-23"
 
-      (-> dv (unbox) (.getMonth))
-      => 11
-
-      (-> dv (unbox) (.getDate))
-      => 23)
+    (->> (java.sql.Timestamp/valueOf "2014-12-23 11:12:13")
+         (.apply utc-timestamp-value)
+         (unbox))
+    => (java.sql.Timestamp/valueOf "2014-12-23 11:12:13")
     )
 
   (facts "when boxing values"
@@ -67,18 +68,18 @@
     (box "test")
     => (StringValue. "test")
 
-    42.42M
-    => (-> (box 42.42M)
-           (BigDecimalValue/unapply)
-           (opt/get)
-           (.underlying))
+    (-> (box 42.42M)
+        (BigDecimalValue/unapply)
+        (opt/get)
+        (.underlying))
+    => 42.42M
 
     (box nil)
     => NullValue$/MODULE$
 
-    114
-    => (-> (box (java.sql.Date/valueOf "2014-12-23"))
-           (DateValue/unapply)
-           (opt/get)
-           (.getYear)))
+    (-> (box (java.sql.Date/valueOf "2014-12-23"))
+        (DateValue/unapply)
+        (opt/get)
+        (.toString))
+    => "2014-12-23")
   )

@@ -157,7 +157,9 @@
   [^Client client sql]
   (.query client sql))
 
-(defn- ^com.twitter.util.Function wrap-fn [f]
+
+;; TODO Replace this with core version of lift-fn once merged.
+(defn- ^com.twitter.util.Function lift-fn [f]
   (if-not (instance? scala.Function f)
     (scala/Function* f)
     f))
@@ -178,7 +180,7 @@
   ([^Client client sql]
     (select-sql client sql Row->map))
   ([^Client client sql ^Function1 fn1]
-    (.select client sql (wrap-fn fn1))))
+    (.select client sql (lift-fn fn1))))
 
 (defn ^Future select-stmt
   "Given a `PreparedStatement`, a vector of params, and a mapping function, executes the parameterized statement
@@ -197,7 +199,7 @@
   ([^PreparedStatement stmt params]
     (select-stmt stmt params Row->map))
   ([^PreparedStatement stmt params ^Function1 fn1]
-    (.select stmt (scala/seq->scala-buffer (map value/box params)) (wrap-fn fn1))))
+    (.select stmt (scala/seq->scala-buffer (map value/box params)) (lift-fn fn1))))
 
 (defn ^PreparedStatement prepare
   "Given a rich client and a SQL string, returns a `PreparedStatement` ready to be parameterized and executed.
@@ -258,14 +260,92 @@
   (or (instance? OK result) (instance? ResultSet result)))
 
 (defn affected-rows
-  "Given a `Result`, returns the number of rows affected (deleted, inserted, created) by that query.
+  "Given a `OK` result, returns the number of rows affected (deleted, inserted, created) by that query.
 
    *Arguments:*
 
-     * `result`: a [[com.twitter.finagle.exp.mysql.Result]]
+     * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
 
    *Returns:*
 
      the number of rows affected by the query that generated the given `Result`"
-  [^Result result]
+  [^OK result]
   (.affectedRows result))
+
+(defn insert-id
+  "Given an `OK` result from an insert operation, return the ID of the inserted row.
+
+  *Arguments:*
+
+    * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+
+  *Returns:*
+
+    the ID of the newly-inserted row"
+  [^OK result]
+  (.insertId result))
+
+(defn server-status
+  "Given an `OK` result, return the server status.
+
+  *Arguments:*
+
+    * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+
+  *Returns:*
+
+    the current server status, as an int"
+  [^OK result]
+  (.serverStatus result))
+
+(defn warning-count
+  "Given an `OK` result, returns the count of warnings associated with the result.
+
+  *Arguments:*
+
+    * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+
+  *Returns:*
+
+    the warning count of the result"
+  [^OK result]
+  (.warningCount result))
+
+(defn message
+  "Given a `Result` of subtype `OK` or `Error`, returns any message associated with that result.
+
+  *Arguments:*
+
+    * `result`: a [[com.twitter.finagle.exp.mysql.OK]] or [[com.twitter.finagle.exp.mysql.Error]]
+
+  *Returns:*
+
+    any message associated with the given `result`"
+  [^Result result]
+  (.message result))
+
+(defn error-code
+  "Given an `Error` result, returns the error code.
+
+  *Arguments:*
+
+    * `result`: a [[com.twitter.finagle.exp.mysql.Error]]
+
+  *Returns:*
+
+    the error code of the result"
+  [^com.twitter.finagle.exp.mysql.Error result]
+  (.code result))
+
+(defn sql-state
+  "Given an `Error` result, returns the SQL state.
+
+  *Arguments:*
+
+    * `result`: a [[com.twitter.finagle.exp.mysql.Error]]
+
+  *Returns:*
+
+    the SQL state of the result"
+  [^com.twitter.finagle.exp.mysql.Error result]
+  (.sqlState result))
