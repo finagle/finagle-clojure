@@ -1,55 +1,52 @@
 (ns finagle-clojure.mysql.value
-  "A collection of helpers for polymorphically boxing and unboxing Finagle-MySQL values,
+  "A collection of private helpers for polymorphically boxing and unboxing Finagle-MySQL values,
   which is to say, subclasses of [[com.twitter.finagle.exp.mysql.Value]]."
   (:import (com.twitter.finagle.exp.mysql Value ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
                                           StringValue Type RawValue BigDecimalValue NullValue EmptyValue
                                           NullValue$ EmptyValue$ DateValue$ TimestampValue)
-           (java.util TimeZone Date))
+           (java.util TimeZone))
   (:require [finagle-clojure.options :as opt]))
 
-(defn- raw-type [^RawValue val] (.typ val))
+(defprotocol BoxValue
+  (box [v]))
 
-;; These might reasonably be named apply and unapply, but I'm cautious of clashing with Clojure core.
-(defmulti box class)
-(defmulti unbox class)
+(defprotocol UnboxValue
+  (unbox [v]))
+
+(defn- raw-type [^RawValue val] (.typ val))
 (defmulti unbox-raw raw-type)
 
 (def utc-zone
   (TimeZone/getTimeZone "UTC"))
 
-;; Punting on arbitrary timezone conversions for now, as UTC<->UTC is almost always the right thing to do.
 (def utc-timestamp-value
   (TimestampValue. utc-zone utc-zone))
 
-(defmethod box Byte           [b] (ByteValue. b))
-(defmethod box Short          [s] (ShortValue. s))
-(defmethod box Integer        [i] (IntValue. i))
-(defmethod box Long           [l] (LongValue. l))
-(defmethod box Float          [f] (FloatValue. f))
-(defmethod box Double         [d] (DoubleValue. d))
-(defmethod box String         [s] (StringValue. s))
-(defmethod box nil            [_] NullValue$/MODULE$)
-(defmethod box BigDecimal     [d] (-> d (scala.math.BigDecimal.) (BigDecimalValue/apply)))
-(defmethod box java.util.Date [d] (-> d (.getTime) (java.sql.Date.) (box)))
-(defmethod box java.sql.Date  [d] (.apply DateValue$/MODULE$ d))
-(defmethod box java.sql.Timestamp [t] (.apply utc-timestamp-value t))
+(extend-protocol BoxValue
+  Byte               (box [b] (ByteValue. b))
+  Short              (box [s] (ShortValue. s))
+  Integer            (box [i] (IntValue. i))
+  Long               (box [l] (LongValue. l))
+  Float              (box [f] (FloatValue. f))
+  Double             (box [d] (DoubleValue. d))
+  String             (box [s] (StringValue. s))
+  nil                (box [_] NullValue$/MODULE$)
+  BigDecimal         (box [d] (-> d (scala.math.BigDecimal.) (BigDecimalValue/apply)))
+  java.util.Date     (box [d] (-> d (.getTime) (java.sql.Date.) (box)))
+  java.sql.Date      (box [d] (.apply DateValue$/MODULE$ d))
+  java.sql.Timestamp (box [t] (.apply utc-timestamp-value t)))
 
-(defmethod box :default [val]
-  (throw (RuntimeException. (str "Don't know how to box value: " val))))
-
-(defmethod unbox ByteValue   [^ByteValue b]   (-> b (.b)))
-(defmethod unbox ShortValue  [^ShortValue s]  (-> s (.s)))
-(defmethod unbox IntValue    [^IntValue i]    (-> i (.i)))
-(defmethod unbox LongValue   [^LongValue l]   (-> l (.l)))
-(defmethod unbox FloatValue  [^FloatValue f]  (-> f (.f)))
-(defmethod unbox DoubleValue [^DoubleValue d] (-> d (.d)))
-(defmethod unbox StringValue [^StringValue s] (-> s (.s)))
-(defmethod unbox NullValue$  [^NullValue _]   nil)
-(defmethod unbox EmptyValue$ [^EmptyValue _]  nil)
-(defmethod unbox RawValue    [^RawValue val]  (unbox-raw val))
-
-(defmethod unbox :default    [val]
-  (throw (RuntimeException. (str "Don't know how to unbox value: " val))))
+(extend-protocol UnboxValue
+  ByteValue   (unbox [^ByteValue b]   (-> b (.b)))
+  ShortValue  (unbox [^ShortValue s]  (-> s (.s)))
+  IntValue    (unbox [^IntValue i]    (-> i (.i)))
+  LongValue   (unbox [^LongValue l]   (-> l (.l)))
+  FloatValue  (unbox [^FloatValue f]  (-> f (.f)))
+  DoubleValue (unbox [^DoubleValue d] (-> d (.d)))
+  StringValue (unbox [^StringValue s] (-> s (.s)))
+  NullValue$  (unbox [^NullValue _]   nil)
+  EmptyValue$ (unbox [^EmptyValue _]  nil)
+  RawValue    (unbox [^RawValue val]  (unbox-raw val)))
 
 (defmethod unbox-raw (Type/NewDecimal) [^RawValue val]
   (when-let [^scala.math.BigDecimal bd (-> val (BigDecimalValue/unapply) (opt/get))]
