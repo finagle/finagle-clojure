@@ -32,6 +32,7 @@
                        id INT AUTO_INCREMENT PRIMARY KEY,
                        sprockets SMALLINT,
                        name VARCHAR(255),
+                       xyz VARCHAR(255),
                        description TEXT,
                        price DECIMAL(10,2),
                        mfd_on DATE,
@@ -41,14 +42,15 @@
           (f/await))
       => true
 
-      (-> (prepare db "INSERT INTO widgets (name, description, sprockets, price, mfd_on, created_at)
-                       VALUES (?, ?, ?, ?, ?, ?)")
+      (-> (prepare db "INSERT INTO widgets (name, description, sprockets, price, mfd_on, xyz, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?)")
           (exec
             "fizzbuzz"
             "a fizzy buzzy"
             (short 12)
             10.2M
             (Date/valueOf "2014-12-23")
+            nil
             (Timestamp/valueOf "2014-12-24 10:11:12")
             )
           (mapfn affected-rows)
@@ -93,6 +95,9 @@
 
         (-> rows (first) (get :mfd_on) (.getDate))
         => 23
+
+        (-> rows (first) (get :null_value))
+        => nil
 
         (-> rows (first) (get :created_at))
         => (Timestamp/valueOf "2014-12-24 10:11:12")

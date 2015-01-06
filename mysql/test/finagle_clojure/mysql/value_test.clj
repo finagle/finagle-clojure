@@ -75,7 +75,7 @@
     => 42.42M
 
     (box nil)
-    => NullValue$/MODULE$
+    => nil
 
     (-> (box (java.sql.Date/valueOf "2014-12-23"))
         (DateValue/unapply)

@@ -30,7 +30,7 @@
   Float              (box [f] (FloatValue. f))
   Double             (box [d] (DoubleValue. d))
   String             (box [s] (StringValue. s))
-  nil                (box [_] NullValue$/MODULE$)
+  nil                (box [_] nil)
   BigDecimal         (box [d] (-> d (scala.math.BigDecimal.) (BigDecimalValue/apply)))
   java.util.Date     (box [d] (-> d (.getTime) (java.sql.Date.) (box)))
   java.sql.Date      (box [d] (.apply DateValue$/MODULE$ d))
