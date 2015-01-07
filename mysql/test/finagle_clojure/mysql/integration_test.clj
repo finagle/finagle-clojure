@@ -27,30 +27,40 @@
       => true)
 
     (fact "it can create and update a table"
+      (-> (query db "DROP TABLE IF EXISTS widgets")
+          (mapfn ok?)
+          (f/await))
+      => true
 
       (-> (query db "CREATE TABLE widgets (
                        id INT AUTO_INCREMENT PRIMARY KEY,
                        sprockets SMALLINT,
+                       sproings FLOAT,
+                       sprattles BIGINT,
                        name VARCHAR(255),
-                       xyz VARCHAR(255),
+                       blank VARCHAR(255),
                        description TEXT,
                        price DECIMAL(10,2),
                        mfd_on DATE,
+                       in_stock BOOLEAN,
                        created_at TIMESTAMP
                      )")
           (mapfn ok?)
           (f/await))
       => true
 
-      (-> (prepare db "INSERT INTO widgets (name, description, sprockets, price, mfd_on, xyz, created_at)
-                       VALUES (?, ?, ?, ?, ?, ?, ?)")
+      (-> (prepare db "INSERT INTO widgets (name, description, sprockets, sproings, sprattles, price, mfd_on, blank, in_stock, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
           (exec
             "fizzbuzz"
             "a fizzy buzzy"
             (short 12)
+            (float 18.3)
+            432432423432
             10.2M
             (Date/valueOf "2014-12-23")
             nil
+            true
             (Timestamp/valueOf "2014-12-24 10:11:12")
             )
           (mapfn affected-rows)
@@ -80,6 +90,12 @@
         (-> rows (first) (get :sprockets))
         => 12
 
+        (-> rows (first) (get :sproings))
+        => (float 18.3)
+
+        (-> rows (first) (get :sprattles))
+        => 432432423432
+
         ;; TODO  Once bug fix is applied, assert with Date/valueOf rather than constituent parts.
         ;; (-> rows (first) (get :mfd_on))
         ;; => (Date/valueOf "2014-12-23")
@@ -98,6 +114,9 @@
 
         (-> rows (first) (get :null_value))
         => nil
+
+        (-> rows (first) (get :in_stock))
+        => true
 
         (-> rows (first) (get :created_at))
         => (Timestamp/valueOf "2014-12-24 10:11:12")

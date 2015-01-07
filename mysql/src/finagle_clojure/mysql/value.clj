@@ -30,6 +30,7 @@
   Float              (box [f] (FloatValue. f))
   Double             (box [d] (DoubleValue. d))
   String             (box [s] (StringValue. s))
+  Boolean            (box [b] (ByteValue. (if b 1 0)))
   nil                (box [_] nil)
   BigDecimal         (box [d] (-> d (scala.math.BigDecimal.) (BigDecimalValue/apply)))
   java.util.Date     (box [d] (-> d (.getTime) (java.sql.Date.) (box)))
@@ -37,7 +38,7 @@
   java.sql.Timestamp (box [t] (.apply utc-timestamp-value t)))
 
 (extend-protocol UnboxValue
-  ByteValue   (unbox [^ByteValue b]   (-> b (.b)))
+  ByteValue   (unbox [^ByteValue b]   (-> b (.b) (= 1)))
   ShortValue  (unbox [^ShortValue s]  (-> s (.s)))
   IntValue    (unbox [^IntValue i]    (-> i (.i)))
   LongValue   (unbox [^LongValue l]   (-> l (.l)))

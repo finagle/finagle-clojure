@@ -7,8 +7,11 @@
 
 (facts "MySQL client"
   (facts "when unboxing values"
-    (unbox (ByteValue. (byte 42)))
-    => (byte 42)
+    (unbox (ByteValue. (byte 1)))
+    => true
+
+    (unbox (ByteValue. (byte 0)))
+    => false
 
     (unbox (ShortValue. (short 42)))
     => (short 42)
@@ -52,6 +55,9 @@
   (facts "when boxing values"
     (box (byte 42))
     => (ByteValue. (byte 42))
+
+    (box true)
+    => (ByteValue. (byte 1))
 
     (box (short 42))
     => (ShortValue. (short 42))
