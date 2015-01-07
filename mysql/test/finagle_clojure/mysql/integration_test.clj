@@ -43,14 +43,15 @@
                        price DECIMAL(10,2),
                        mfd_on DATE,
                        in_stock BOOLEAN,
+                       part_number CHAR(10),
                        created_at TIMESTAMP
                      )")
           (mapfn ok?)
           (f/await))
       => true
 
-      (-> (prepare db "INSERT INTO widgets (name, description, sprockets, sproings, sprattles, price, mfd_on, blank, in_stock, created_at)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+      (-> (prepare db "INSERT INTO widgets (name, description, sprockets, sproings, sprattles, price, mfd_on, blank, in_stock, part_number, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
           (exec
             "fizzbuzz"
             "a fizzy buzzy"
@@ -61,6 +62,7 @@
             (Date/valueOf "2014-12-23")
             nil
             true
+            "HSC0424PP"
             (Timestamp/valueOf "2014-12-24 10:11:12")
             )
           (mapfn affected-rows)
@@ -117,6 +119,9 @@
 
         (-> rows (first) (get :in_stock))
         => true
+
+        (-> rows (first) (get :part_number))
+        => "HSC0424PP"
 
         (-> rows (first) (get :created_at))
         => (Timestamp/valueOf "2014-12-24 10:11:12")
