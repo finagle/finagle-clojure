@@ -1,18 +1,32 @@
-# core
+# mysql
 
-This module contains wrappers for `com.twitter.util.Future` & core Finagle classes.
+This module contains wrappers for `com.twitter.finagle.exp.mysql.Client` and automatic boxing/unboxing of values
+to idiomatic Clojure vectors of hashmaps.
+
+### Usage
+
+```clojure
+(ns user
+  (:require [finagle-clojure.mysql.client :refer :all]
+            [finagle-clojure.futures :as f]))
+
+(let [db (-> (mysql-client)
+             (with-credentials "test" "test")
+             (with-database "some_database")
+             (rich-client "localhost:3306"))]
+  (-> (prepare "SELECT * FROM widgets WHERE id = ? LIMIT 1")
+      (select-stmt 42)
+      (f/await)
+      (first)) ;; => {:id 42}
+      )
+```
 
 ### Dependency
 
-    [finagle-clojure/core "0.1.1"]
-
+    [finagle-clojure/mysql "0.2.1-SNAPSHOT"]
 
 ### Namespaces
 
-* `finagle-clojure.duration`: wrappers for creating `Duration` & `Time` objects, used for setting timeouts.
-* `finagle-clojure.filter`: wrappers for composing `Filter`.s
-* `finagle-clojure.future-pool`: run an operation on a `ThreadPool` & return a `Future`.
-* `finagle-clojure.futures`: wrappers around `Future` operations.
-* `finagle-clojure.scala`: sugar for Clojure/Scala interop.
-* `finagle-clojure.service`: wrappers for operations on `Service`.
-* `finagle-clojure.server`: wrappers for creating, starting, and stopping `Server`s.
+* `finagle-clojure.mysql.client`: a collection of functions for connecting to a MySQL client and parsing the results
+* `finagle-clojure.mysql.value`: private helpers for translating values between Java/Clojure types and internal
+  finagle-mysql types

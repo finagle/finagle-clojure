@@ -1,6 +1,5 @@
 (ns finagle-clojure.mysql.integration-test
-  (:import (com.twitter.finagle.exp.mysql BigDecimalValue)
-           (com.twitter.util Future)
+  (:import (com.twitter.util Future)
            (java.sql Date Timestamp)
            (java.util TimeZone))
   (:require [midje.sweet :refer :all]
