@@ -15,7 +15,7 @@
 
 (facts "integrating the MySQL client"
   (let [db (-> (mysql-client)
-               (with-credentials "finagle" "finagle")
+               (with-credentials "root" "")
                (with-database "finagle_clojure_test")
                (rich-client "localhost:3306"))]
 
