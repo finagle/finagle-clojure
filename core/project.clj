@@ -5,7 +5,8 @@
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
   :scm {:name "git" :url "http://github.com/finagle/finagle-clojure"}
   :plugins [[lein-midje "3.1.3"]]
-  :profiles {:test {:dependencies [[midje "1.6.3" :exclusions [org.clojure/clojure]]]}
+  :profiles {:test {:dependencies [[midje "1.6.3" :exclusions [org.clojure/clojure]]
+                                   [criterium "0.4.3"]]}
              :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}

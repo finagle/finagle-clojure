@@ -3,8 +3,8 @@
   Scala functions & methods expect Scala collection & function instances,
   not Java Collections or Clojure IFns."
   (:import [scala.collection JavaConversions]
-           (scala Product)
-           (scala.runtime BoxedUnit)))
+           [scala Product]
+           [scala.runtime BoxedUnit]))
 
 ;; TODO: @samn: 06/11/14 add more wrappers for JavaConversions
 
@@ -75,10 +75,33 @@
   (let [arg-tag (-> arg-name meta :tag)]
     `(Function* (fn [~arg-name] ~@body) ~arg-tag)))
 
+(defn ^scala.runtime.AbstractFunction0 Function0*
+  "Create a new scala.Function0.
+  The apply method will be implemented with f."
+  [f]
+  (proxy [scala.runtime.AbstractFunction0] []
+    (apply [] (f))))
+
 (defmacro Function0
   "Create a new scala.Function0.
   The apply method will be implemented with body."
   [& body]
-  `(proxy [scala.runtime.AbstractFunction0] []
-     (apply []
-       ~@body)))
+  `(Function0* (fn [] ~@body)))
+
+(defprotocol LiftToFunction1
+  (lift->fn1 [this]))
+
+(extend-protocol LiftToFunction1
+  scala.Function1
+  (lift->fn1 [this] this)
+  clojure.lang.IFn
+  (lift->fn1 [this] (Function* this)))
+
+(defprotocol LiftToFunction0
+  (lift->fn0 [this]))
+
+(extend-protocol LiftToFunction0
+  scala.Function0
+  (lift->fn0 [this] this)
+  clojure.lang.IFn
+  (lift->fn0 [this] (Function0* this)))
