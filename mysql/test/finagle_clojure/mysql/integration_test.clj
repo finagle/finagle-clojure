@@ -125,7 +125,6 @@
 
     (fact "it can select from the table using the rich client"
       (let [rows (-> (select-sql db "SELECT * FROM widgets" Row->map)
-                     (f/map* scala/scala-seq->vec)
                      (f/await))]
         (count rows)
         => 1
@@ -135,7 +134,6 @@
         )
 
       (-> (select-sql db "SELECT * FROM widgets")
-          (f/map* scala/scala-seq->vec)
           (f/await)
           (first)
           (select-keys [:id :name]))
@@ -144,7 +142,6 @@
     (fact "it can select from the table using a prepared statement"
       (let [rows (-> (prepare db "SELECT * FROM widgets")
                      (select-stmt [] Row->map)
-                     (f/map* scala/scala-seq->vec)
                      (f/await))]
         (count rows)
         => 1
@@ -155,7 +152,6 @@
 
       (-> (prepare db "SELECT * FROM widgets")
           (select-stmt [])
-          (f/map* scala/scala-seq->vec)
           (f/await)
           (first)
           (select-keys [:id :name]))

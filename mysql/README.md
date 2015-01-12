@@ -17,7 +17,6 @@ to idiomatic Clojure vectors of hashmaps.
              (rich-client "localhost:3306"))]
   (-> (prepare db "SELECT * FROM widgets WHERE manufacturer_id = ? AND sold_count > ?")
       (select-stmt [12 5])
-      (f/map* scala/scala-seq->vec)
       (f/await)) ;; => [{:id 1 :manufacturer_id 12 :sold_count 12} ...]
       )
 ```

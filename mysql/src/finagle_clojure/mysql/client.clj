@@ -9,7 +9,8 @@
            (scala Function1)
            (java.util TimeZone))
   (:require [finagle-clojure.scala :as scala]
-            [finagle-clojure.mysql.value :as value]))
+            [finagle-clojure.mysql.value :as value]
+            [finagle-clojure.futures :as f]))
 
 (defn- Field->keyword [^Field f]
   (-> f (.name) (keyword)))
@@ -168,12 +169,14 @@
 
   *Returns:*
 
-    a `Future` containing a Scala Seq whose contents are derived from `fn1` (if given) or mapped to a
+    a `Future` containing a Clojure vector whose contents are derived from `fn1` (if given) or mapped to a
     Clojure hashmap of column/value pairs (if not)"
   ([^Client client sql]
     (select-sql client sql Row->map))
   ([^Client client sql fn1]
-    (.select client sql (scala/lift->fn1 fn1))))
+    (-> client
+        (.select sql (scala/lift->fn1 fn1))
+        (f/map* scala/scala-seq->vec))))
 
 (defn ^Future select-stmt
   "Given a `PreparedStatement`, a vector of params, and a mapping function, executes the parameterized statement
@@ -187,12 +190,16 @@
 
   *Returns:*
 
-    a `Future` containing a Scala Seq whose contents are derived from `fn1` (if given) or mapped to a
+    a `Future` containing a Clojure vector whose contents are derived from `fn1` (if given) or mapped to a
     Clojure hashmap of column/value pairs (if not)"
   ([^PreparedStatement stmt params]
     (select-stmt stmt params Row->map))
   ([^PreparedStatement stmt params fn1]
-    (.select stmt (scala/seq->scala-buffer (map value/box params)) (scala/lift->fn1 fn1))))
+    (let [params (scala/seq->scala-buffer (map value/box params))
+          fn1    (scala/lift->fn1 fn1)]
+      (-> stmt
+          (.select params fn1)
+          (f/map* scala/scala-seq->vec)))))
 
 (defn ^PreparedStatement prepare
   "Given a rich client and a SQL string, returns a `PreparedStatement` ready to be parameterized and executed.
