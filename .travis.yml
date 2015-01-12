@@ -8,4 +8,4 @@ jdk:
 services:
     - mysql
 before_script:
-    - mysql -e 'create database finagle_clojure_test; create user \'finagle\'@\'localhost\' identified by \'finagle\'; grant all privileges on finagle_clojure_test.* to \'finagle\'@\'localhost\'; flush privileges'
+    - mysql -e "create database finagle_clojure_test; create user 'finagle'@'localhost' identified by 'finagle'; grant all privileges on finagle_clojure_test.* to 'finagle'@'localhost'; flush privileges;"
