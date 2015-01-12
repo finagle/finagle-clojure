@@ -10,24 +10,21 @@
 (System/setProperty "java.net.preferIPv4Stack" "true")
 (TimeZone/setDefault (TimeZone/getTimeZone "UTC"))
 
-(defn mapfn [^Future fut func]
-  (f/map* fut (scala/Function* func)))
-
 (facts "integrating the MySQL client"
   (let [db (-> (mysql-client)
-               (with-credentials "root" "")
+               (with-credentials "finagle" "finagle")
                (with-database "finagle_clojure_test")
                (rich-client "localhost:3306"))]
 
     (fact "it can ping the database"
       (-> (ping db)
-          (mapfn ok?)
+          (f/map* ok?)
           (f/await))
       => true)
 
     (fact "it can create and update a table"
       (-> (query db "DROP TABLE IF EXISTS widgets")
-          (mapfn ok?)
+          (f/map* ok?)
           (f/await))
       => true
 
@@ -45,7 +42,7 @@
                        part_number CHAR(10),
                        created_at TIMESTAMP
                      )")
-          (mapfn ok?)
+          (f/map* ok?)
           (f/await))
       => true
 
@@ -64,14 +61,14 @@
             "HSC0424PP"
             (Timestamp/valueOf "2014-12-24 10:11:12")
             )
-          (mapfn affected-rows)
+          (f/map* affected-rows)
           (f/await))
       => 1)
 
     (fact "it understands how to unbox a wide range of data types"
       (let [rows (-> (prepare db "SELECT * FROM WIDGETS")
                      (exec)
-                     (mapfn ResultSet->vec)
+                     (f/map* ResultSet->vec)
                      (f/await))]
         (count rows)
         => 1
@@ -128,7 +125,7 @@
 
     (fact "it can select from the table using the rich client"
       (let [rows (-> (select-sql db "SELECT * FROM widgets" Row->map)
-                     (mapfn scala/scala-seq->vec)
+                     (f/map* scala/scala-seq->vec)
                      (f/await))]
         (count rows)
         => 1
@@ -138,7 +135,7 @@
         )
 
       (-> (select-sql db "SELECT * FROM widgets")
-          (mapfn scala/scala-seq->vec)
+          (f/map* scala/scala-seq->vec)
           (f/await)
           (first)
           (select-keys [:id :name]))
@@ -147,7 +144,7 @@
     (fact "it can select from the table using a prepared statement"
       (let [rows (-> (prepare db "SELECT * FROM widgets")
                      (select-stmt [] Row->map)
-                     (mapfn scala/scala-seq->vec)
+                     (f/map* scala/scala-seq->vec)
                      (f/await))]
         (count rows)
         => 1
@@ -158,7 +155,7 @@
 
       (-> (prepare db "SELECT * FROM widgets")
           (select-stmt [])
-          (mapfn scala/scala-seq->vec)
+          (f/map* scala/scala-seq->vec)
           (f/await)
           (first)
           (select-keys [:id :name]))
@@ -166,7 +163,7 @@
 
     (fact "it can clean up after the tests by deleting a table"
       (-> (query db "DROP TABLE widgets")
-          (mapfn ok?)
+          (f/map* ok?)
           (f/await))
       => true)
 

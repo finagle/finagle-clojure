@@ -157,13 +157,6 @@
   [^Client client sql]
   (.query client sql))
 
-
-;; TODO Replace this with core version of lift-fn once merged.
-(defn- ^com.twitter.util.Function lift-fn [f]
-  (if-not (instance? scala.Function f)
-    (scala/Function* f)
-    f))
-
 (defn ^Future select-sql
   "Given a rich client, a SQL string, and a mapping function, executes the SQL and returns the result as a
   Future[Seq[T]], where T is the type yielded by the given mapping function.
@@ -179,8 +172,8 @@
     Clojure hashmap of column/value pairs (if not)"
   ([^Client client sql]
     (select-sql client sql Row->map))
-  ([^Client client sql ^Function1 fn1]
-    (.select client sql (lift-fn fn1))))
+  ([^Client client sql fn1]
+    (.select client sql (scala/lift->fn1 fn1))))
 
 (defn ^Future select-stmt
   "Given a `PreparedStatement`, a vector of params, and a mapping function, executes the parameterized statement
@@ -198,8 +191,8 @@
     Clojure hashmap of column/value pairs (if not)"
   ([^PreparedStatement stmt params]
     (select-stmt stmt params Row->map))
-  ([^PreparedStatement stmt params ^Function1 fn1]
-    (.select stmt (scala/seq->scala-buffer (map value/box params)) (lift-fn fn1))))
+  ([^PreparedStatement stmt params fn1]
+    (.select stmt (scala/seq->scala-buffer (map value/box params)) (scala/lift->fn1 fn1))))
 
 (defn ^PreparedStatement prepare
   "Given a rich client and a SQL string, returns a `PreparedStatement` ready to be parameterized and executed.
