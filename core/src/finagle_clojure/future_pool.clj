@@ -27,13 +27,13 @@
   (ExecutorServiceFuturePool. executor-service))
 
 (defn ^Future run*
-  "Run scala.Function0 `fn0` on FuturePool `future-pool`.
+  "Run scala.Function0 or Clojure fn `fn0` on FuturePool `future-pool`.
   A Future will be returned representing the async application of `fn0`.
 
   *Arguments*:
 
     * `future-pool`: the FuturePool on which `fn0` will run
-    * `fn0`: a scala.Function0 to apply asynchronously
+    * `fn0`: a scala.Function0 or Clojure fn to apply asynchronously
 
   *Returns*:
 
@@ -41,8 +41,8 @@
     Its value will be the result of applying `fn0`, or a thrown exception.
 
   See: [[scala/Function0]] & [[run]]"
-  [^FuturePool future-pool ^scala.Function0 fn0]
-  (.apply future-pool fn0))
+  [^FuturePool future-pool fn0]
+  (.apply future-pool (scala/lift->fn0 fn0)))
 
 (defmacro run
   "Sugar for creating a scala.Function0 and passing it to [[run*]].

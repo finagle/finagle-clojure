@@ -18,8 +18,7 @@
   * (isAvailable []) ; => boolean
   * (map [fn1]) ; => Service[new-response-type]"
   (:refer-clojure :exclude [apply])
-  (:require [finagle-clojure.scala :as scala]
-            [finagle-clojure.duration :as duration])
+  (:require [finagle-clojure.scala :as scala])
   (:import [com.twitter.finagle Service Service$]
            [com.twitter.util Time]))
 
@@ -29,15 +28,15 @@
 
   *Arguments*:
 
-    * `fn1`: a scala.Function1 that will be used to implement `apply`.
+    * `f`: a scala.Function1 or Clojure IFn that will be used to implement `apply`.
 
   *Returns*:
 
     a new Service.
 
   See: [[mk]]"
-  [^scala.Function1 fn1]
-  (.mk Service$/MODULE$ fn1))
+  [f]
+  (.mk Service$/MODULE$ (scala/lift->fn1 f)))
 
 (defmacro mk
   "Sugar for creating a scala.Function and calling `mk*`.

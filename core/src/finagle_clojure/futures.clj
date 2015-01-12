@@ -82,13 +82,10 @@
   E.g. calling to a RPC service with the result of a previous call.
   [[map*]] or [[map]] can be used to run synchronous transformations of the successful value of a Future.
 
-  Note that flatmap* accepts a scala.Function1, which is not the same as a Clojure IFn.
-  Use [[scala/Function]] to create a Function1, or use [[flatmap]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `fn1`: a scala.Function1 that will execute when the (non-error) value of `f` is defined.
+    * `fn1`: a scala.Function1 or Clojure fn that will execute when the (non-error) value of `f` is defined.
       Its result should be a Future.
 
   *Returns*:
@@ -97,8 +94,8 @@
     If `f` results in an error then `fn1` won't run.
 
   See [[scala/Function]], [[flatmap]]"
-  [^Future f ^scala.Function1 fn1]
-  (.flatMap f fn1))
+  [^Future f fn1]
+  (.flatMap f (scala/lift->fn1 fn1)))
 
 (defmacro flatmap
   "Sugar for constructing a scala.Function1 & applying [[flatmap*]] with it.
@@ -127,13 +124,10 @@
   No blocking operations should be run with map.
   [[flatmap*]] or [[flatmap]] can be used to run asynchronous transformations of the successful value of a Future.
 
-  Note that map* accepts a scala.Function1, which is not the same as a Clojure IFn.
-  Use [[scala/Function]] to create a Function1, or use [[map]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `fn1`: a scala.Function1 that will execute when the (non-error) value of `f` is defined.
+    * `fn1`: a scala.Function1 or Clojure fn that will execute when the (non-error) value of `f` is defined.
 
   *Returns*:
 
@@ -142,8 +136,8 @@
     If `f` results in an error then `fn1` won't run.
 
   See [[scala/Function]], [[map]]"
-  [^Future f ^scala.Function1 fn1]
-  (.map f fn1))
+  [^Future f fn1]
+  (.map f (scala/lift->fn1 fn1)))
 
 (defmacro map
   "Sugar for constructing a scala.Function1 & applying [[map*]] with it.
@@ -204,13 +198,10 @@
   rescue* is used to represent asynchronous transformations of the unsuccessful result of a Future.
   [[handle*]] or [[handle]] can be used to run synchronous transformations of the unsuccessful value of a Future.
 
-  Note that rescue* accepts a scala.PartialFunction, which is not the same as a Clojure IFn.
-  Use [[scala/Function]] to create a PartialFunction, or use [[rescue]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `pfn`: a scala.PartialFunction that will execute when the value of `f` is defined with an unsuccessful value.
+    * `pfn`: a scala.PartialFunction or Clojure fn that will execute when the value of `f` is defined with an unsuccessful value.
       The return value should be a Future.
 
   *Returns*:
@@ -219,8 +210,8 @@
     If `f` is successful then `pfn` won't run.
 
   See [[scala/Function]], [[rescue]]"
-  [^Future f ^scala.PartialFunction pfn]
-  (.rescue f pfn))
+  [^Future f pfn]
+  (.rescue f (scala/lift->fn1 pfn)))
 
 (defmacro rescue
   "Sugar for constructing a scala.PartialFunction & applying [[rescue*]] with it.
@@ -251,13 +242,10 @@
   No blocking operations should be run with handle*.
   [[rescue*]] or [[rescue]] can be used to run asynchronous transformations of the unsuccessful value of a Future.
 
-  Note that handle* accepts a scala.PartialFunction, which is not the same as a Clojure IFn.
-  Use [[scala/Function]] to create a PartialFunction, or use [[handle]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `pfn`: a scala.PartialFunction that will execute when the value of `f` is defined with an unsuccessful value.
+    * `pfn`: a scala.PartialFunction or Clojure fn that will execute when the value of `f` is defined with an unsuccessful value.
 
   *Returns*:
 
@@ -265,8 +253,8 @@
     If `f` is successful then `pfn` won't run.
 
   See [[scala/Function]], [[handle]]"
-  [^Future f ^scala.PartialFunction pfn]
-  (.handle f pfn))
+  [^Future f pfn]
+  (.handle f (scala/lift->fn1 pfn)))
 
 (defmacro handle
   "Sugar for constructing a scala.PartialFunction & applying [[handle*]] with it.
@@ -291,21 +279,18 @@
   "Apply scala.Function0 `fn0` when Future `f` is defined whether it is successful or not.
   This is primarily used for side-effects, the return value of `fn0` is ignored.
 
-  Note that ensure* accepts a scala.Function0, which is not the same as a Clojure IFn.
-  Use [[scala/Function0]] to create a Function0, or use [[ensure]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `fn0`: a scala.Function0 that will execute when `f` is defined.
+    * `fn0`: a scala.Function0 or Clojure fn that will execute when `f` is defined.
 
   *Returns*:
 
     A new Future that will be defined when `f` is defined and `fn0` has executed.
 
   See [[scala/Function0]], [[ensure]]"
-  [^Future f ^scala.Function0 fn0]
-  (.ensure f fn0))
+  [^Future f fn0]
+  (.ensure f (scala/lift->fn0 fn0)))
 
 (defmacro ensure
   [^Future f & body]
@@ -435,22 +420,19 @@
   The return value of `fn1` is ignored.
   While this is used for side effects it still should not block the thread on which it runs.
 
-  Note that on-success* accepts a scala.Function1, which is not the same as a Clojure IFn.
-  Use [[scala/Function]] to create a Function1, or use [[on-success]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `fn1`: a scala.Function1 that will execute when the (non-error) value of `f` is defined.
+    * `fn1`: a scala.Function1 or Clojure fn that will execute when the (non-error) value of `f` is defined.
       `fn1` should return `scala.Unit`.
 
   *Returns*:
 
   A Future that will run `fn1` when it is defined with a successful value.
 
-  See [[scala/Function]], [[on-success]]"
-  [^Future f ^scala.Function1 fn1]
-  (.onSuccess f fn1))
+  See [[scala/Function]], [[scala/unit]], [[on-success]]"
+  [^Future f fn1]
+  (.onSuccess f (scala/lift->fn1 fn1)))
 
 (defmacro on-success
   "Sugar for constructing a scala.Function1 & applying [[on-success*]] with it.
@@ -475,22 +457,19 @@
   The return value of `fn1` is ignored.
   While this is used for side effects it still should not block the thread on which it runs.
 
-  Note that on-failure* accepts a scala.Function1, which is not the same as a Clojure IFn.
-  Use [[scala/Function]] to create a Function1, or use [[on-failure]].
-
   *Arguments*:
 
     * `f`: a Future
-    * `fn1`: a scala.Function1 that will execute when the error value of `f` is defined.
+    * `fn1`: a scala.Function1 or Clojure fn that will execute when the error value of `f` is defined.
       `fn1` should return scala.Unit.
 
   *Returns*:
 
   A `Future` that will run `fn1` when it is defined with an error value.
 
-  See [[scala/Function]], [[on-failure]]"
-  [^Future f ^scala.Function1 fn1]
-  (.onFailure f fn1))
+  See [[scala/Function]], [[scala/unit]], [[on-failure]]"
+  [^Future f fn1]
+  (.onFailure f (scala/lift->fn1 fn1)))
 
 (defmacro on-failure
   "Sugar for constructing a `scala.Function1` & applying [[on-failure*]] with it.
