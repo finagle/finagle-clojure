@@ -8,6 +8,7 @@
             [lein-finagle-clojure "0.2.1-SNAPSHOT" :hooks false]]
   :profiles {:test {:dependencies [[midje "1.6.3" :exclusions [org.clojure/clojure]]]}
              :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
+             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha5"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
   :finagle-clojure {:thrift-source-path "test/resources" :thrift-output-path "test/java"}
