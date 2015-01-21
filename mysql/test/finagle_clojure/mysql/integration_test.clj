@@ -1,6 +1,5 @@
 (ns finagle-clojure.mysql.integration-test
-  (:import (com.twitter.util Future)
-           (java.sql Date Timestamp)
+  (:import (java.sql Date Timestamp)
            (java.util TimeZone))
   (:require [midje.sweet :refer :all]
             [finagle-clojure.mysql.client :refer :all]
@@ -10,42 +9,42 @@
 (System/setProperty "java.net.preferIPv4Stack" "true")
 (TimeZone/setDefault (TimeZone/getTimeZone "UTC"))
 
-(facts "integrating the MySQL client"
-  (let [db (-> (mysql-client)
-               (with-credentials "finagle" "finagle")
-               (with-database "finagle_clojure_test")
-               (rich-client "localhost:3306"))]
+(defn create-table [db]
+  (f/await
+    (query db "CREATE TABLE IF NOT EXISTS widgets (
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     sprockets SMALLINT,
+                     sproings FLOAT,
+                     sprattles BIGINT,
+                     name VARCHAR(255),
+                     blank VARCHAR(255),
+                     description TEXT,
+                     price DECIMAL(10,2),
+                     mfd_on DATE,
+                     in_stock BOOLEAN,
+                     part_number CHAR(10),
+                     created_at TIMESTAMP
+                   )")))
 
-    (fact "it can ping the database"
+(defn drop-table [db]
+  (f/await
+    (query db "DROP TABLE widgets")))
+
+(let [db (-> (mysql-client)
+             (with-credentials "finagle" "finagle")
+             (with-database "finagle_clojure_test")
+             (rich-client "localhost:3306"))]
+
+  (against-background [(before :contents (create-table db))
+                       (after  :contents (drop-table db))]
+
+    (fact :mysql "it can ping the database"
       (-> (ping db)
           (f/map* ok?)
           (f/await))
       => true)
 
-    (fact "it can create and update a table"
-      (-> (query db "DROP TABLE IF EXISTS widgets")
-          (f/map* ok?)
-          (f/await))
-      => true
-
-      (-> (query db "CREATE TABLE widgets (
-                       id INT AUTO_INCREMENT PRIMARY KEY,
-                       sprockets SMALLINT,
-                       sproings FLOAT,
-                       sprattles BIGINT,
-                       name VARCHAR(255),
-                       blank VARCHAR(255),
-                       description TEXT,
-                       price DECIMAL(10,2),
-                       mfd_on DATE,
-                       in_stock BOOLEAN,
-                       part_number CHAR(10),
-                       created_at TIMESTAMP
-                     )")
-          (f/map* ok?)
-          (f/await))
-      => true
-
+    (fact :mysql "it can create and update a table"
       (-> (prepare db "INSERT INTO widgets (name, description, sprockets, sproings, sprattles, price, mfd_on, blank, in_stock, part_number, created_at)
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
           (exec
@@ -65,7 +64,7 @@
           (f/await))
       => 1)
 
-    (fact "it understands how to unbox a wide range of data types"
+    (fact :mysql "it understands how to unbox a wide range of data types"
       (let [rows (-> (prepare db "SELECT * FROM WIDGETS")
                      (exec)
                      (f/map* ResultSet->vec)
@@ -123,7 +122,7 @@
         => (Timestamp/valueOf "2014-12-24 10:11:12")
         ))
 
-    (fact "it can select from the table using the rich client"
+    (fact :mysql "it can select from the table using the rich client"
       (let [rows (-> (select-sql db "SELECT * FROM widgets" Row->map)
                      (f/await))]
         (count rows)
@@ -139,7 +138,7 @@
           (select-keys [:id :name]))
       => {:id 1 :name "fizzbuzz"})
 
-    (fact "it can select from the table using a prepared statement"
+    (fact :mysql "it can select from the table using a prepared statement"
       (let [rows (-> (prepare db "SELECT * FROM widgets")
                      (select-stmt [] Row->map)
                      (f/await))]
@@ -156,11 +155,5 @@
           (first)
           (select-keys [:id :name]))
       => {:id 1 :name "fizzbuzz"})
-
-    (fact "it can clean up after the tests by deleting a table"
-      (-> (query db "DROP TABLE widgets")
-          (f/map* ok?)
-          (f/await))
-      => true)
 
     ))
