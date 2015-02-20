@@ -1,13 +1,8 @@
 (ns finagle-clojure.mysql.client
   (:import (com.twitter.finagle Stack$Param)
-           (com.twitter.finagle.exp.mysql Row Value ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
-                                          StringValue Type RawValue BigDecimalValue NullValue EmptyValue
-                                          NullValue$ EmptyValue$ Client PreparedStatement Result OK ResultSet Field
-                                          DateValue$ TimestampValue)
+           (com.twitter.finagle.exp.mysql Row Client PreparedStatement Result OK ResultSet Field)
            (com.twitter.finagle.exp Mysql$Client Mysql)
-           (com.twitter.util Future)
-           (scala Function1)
-           (java.util TimeZone))
+           (com.twitter.util Future))
   (:require [finagle-clojure.scala :as scala]
             [finagle-clojure.mysql.value :as value]
             [finagle-clojure.futures :as f]))
@@ -29,7 +24,7 @@
     a Clojure map of field/value pairs"
   [^Row row]
   (zipmap
-    (map Field->keyword  (scala/scala-seq->vec (.fields row)))
+    (map Field->keyword (scala/scala-seq->vec (.fields row)))
     (map value/unbox (scala/scala-seq->vec (.values row)))))
 
 (defn ResultSet->vec [^ResultSet rs]

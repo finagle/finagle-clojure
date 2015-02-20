@@ -6,7 +6,6 @@
             [finagle-clojure.futures :as f]
             [finagle-clojure.scala :as scala]))
 
-(System/setProperty "java.net.preferIPv4Stack" "true")
 (TimeZone/setDefault (TimeZone/getTimeZone "UTC"))
 
 (defn create-table [db]
@@ -28,12 +27,12 @@
 
 (defn drop-table [db]
   (f/await
-    (query db "DROP TABLE widgets")))
+    (query db "DROP TABLE IF EXISTS widgets")))
 
 (let [db (-> (mysql-client)
              (with-credentials "finagle" "finagle")
              (with-database "finagle_clojure_test")
-             (rich-client "localhost:3306"))]
+             (rich-client "127.0.0.1:3306"))]
 
   (against-background [(before :contents (create-table db))
                        (after  :contents (drop-table db))]
@@ -65,7 +64,7 @@
       => 1)
 
     (fact :mysql "it understands how to unbox a wide range of data types"
-      (let [rows (-> (prepare db "SELECT * FROM WIDGETS")
+      (let [rows (-> (prepare db "SELECT * FROM widgets")
                      (exec)
                      (f/map* ResultSet->vec)
                      (f/await))]
