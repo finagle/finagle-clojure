@@ -4,19 +4,22 @@ Minor release before 1.0.0 may include breaking changes and will explicitly mark
 
 ## Next Release
 
+* [mysql] Add support for finagle-mysql (thanks [@bguthrie](http://github.com/bguthrie)!). [PR](https://github.com/finagle/finagle-clojure/pull/6)
+  * finagle-clojure/mysql wraps the fully featured Finagle compatible MySQL client [finagle-mysql](https://github.com/twitter/finagle/tree/master/finagle-mysql).
+  * Check out the docs or [integration test](https://github.com/finagle/finagle-clojure/blob/31a8c0ceb4301e33b0cc700d40b8d67075076e29/mysql/test/finagle_clojure/mysql/integration_test.clj) for examples.
 * [core] Add support for automatically lifting Clojure fns to Scala Functions. This allows wrappers like `finagle-clojure.futures/flatmap*` to accept either Clojure or Scala functions.
-Ordinary Clojure fns can be used with any desugared wrapper over a method that ordinarily accepts a Scala function.
+  * Ordinary Clojure fns can be used with any desugared wrapper over a method that ordinarily accepts a Scala function.
 
 ### Version 0.2.0
 
 There are no breaking changes in this release.
 
-* lein-finagle-clojure now correctly ignores Emacs temp files in the thrift directory (thanks @derekslager!). [PR](https://github.com/finagle/finagle-clojure/pull/2)
-* Add support for finagle-http (thanks @bguthrie!). [PR](https://github.com/finagle/finagle-clojure/pull/4)
+* lein-finagle-clojure now correctly ignores Emacs temp files in the thrift directory (thanks [@derekslager](https://github.com/derekslager)!). [PR](https://github.com/finagle/finagle-clojure/pull/2)
+* Add support for finagle-http (thanks [@bguthrie](http://github.com/bguthrie)!). [PR](https://github.com/finagle/finagle-clojure/pull/4)
   * finagle-clojure/http can be used to make asynchronous HTTP requests or to build HTTP servers.
   * Check out the [integration test](https://github.com/finagle/finagle-clojure/blob/8d8fd428c24bfcb5d8dab37fb42be6cba6d8f7dd/http/test/finagle_clojure/http/integration_test.clj) for example usage.
-* Add helpers in finagle-clojure/core for working with `scala.Option` objects (in the `finagle-clojure.options` ns, thanks @bguthrie!).
-* New Scala interop helper `tuple->vec`, converts Scala Tuples to Clojure Vectors (thanks @bguthrie!).
+* Add helpers in finagle-clojure/core for working with `scala.Option` objects (in the `finagle-clojure.options` ns, thanks [@bguthrie](http://github.com/bguthrie)!).
+* New Scala interop helper `tuple->vec`, converts Scala Tuples to Clojure Vectors (thanks [@bguthrie](http://github.com/bguthrie)!).
 * Add [ThriftMux](http://twitter.github.io/finagle/docs/index.html#com.twitter.finagle.mux.package) support in finagle-clojure/thriftmux
   * thriftmux projects can be generated using the finagle-clojure-template lein template by passing the template arg `project-type thriftmux`
   * e.g. `lein new finagle-clojure dogs -- project-type thriftmux`

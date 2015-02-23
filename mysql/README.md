@@ -30,3 +30,9 @@ to idiomatic Clojure vectors of hashmaps.
 * `finagle-clojure.mysql.client`: a collection of functions for connecting to a MySQL client and parsing the results
 * `finagle-clojure.mysql.value`: private helpers for translating values between Java/Clojure types and internal
   finagle-mysql types
+
+### Tests
+
+There are integration tests that require a running MySQL server. You can skip running these tests like this (they'll still run in CI):
+
+    lein midje :filter -mysql

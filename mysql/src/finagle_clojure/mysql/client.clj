@@ -40,7 +40,7 @@
     a Clojure vector of maps"
   (->> (.rows rs)
        (scala/scala-seq->vec)
-       (map Row->map)))
+       (mapv Row->map)))
 
 (defn- param [p]
   (reify Stack$Param (default [this] p)))
