@@ -4,6 +4,8 @@ Minor release before 1.0.0 may include breaking changes and will explicitly mark
 
 ## Next Release
 
+## Version 0.3.0
+
 * [mysql] Add support for finagle-mysql (thanks [@bguthrie](http://github.com/bguthrie)!). [PR](https://github.com/finagle/finagle-clojure/pull/6)
   * finagle-clojure/mysql wraps the fully featured Finagle compatible MySQL client [finagle-mysql](https://github.com/twitter/finagle/tree/master/finagle-mysql).
   * Check out the docs or [integration test](https://github.com/finagle/finagle-clojure/blob/31a8c0ceb4301e33b0cc700d40b8d67075076e29/mysql/test/finagle_clojure/mysql/integration_test.clj) for examples.
