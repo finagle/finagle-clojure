@@ -43,5 +43,5 @@
   (f/await (beautiful-dog? "pit bull")) =>  true
   (f/await (beautiful-dog? "pomeranian")) =>  false)
 
-;; shut down the thrift server so midje :autorun will work
+;; shut down the thrift server so midje :autotest will work
 (f/await (.close dog-breed-server))

@@ -7,7 +7,7 @@ If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
 ## Building
 
-    lein sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http" install
+    lein sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http:mysql" install
 
 
 ## Running Tests
@@ -21,7 +21,8 @@ The readmes in each sub-library have more information.
 
 * `core`: convenience fns for interacting with Futures.
 * `thrift`: create Thrift clients & servers.
-* `http`: create HTTP servers, requests, and responses
+* `http`: create HTTP servers, requests, and responses.
+* `mysql`: a fully featured asynchronous MySQL client.
 * `lein-finagle-clojure`: a lein plugin for automatically compiling Thrift definitions using [Scrooge](https://twitter.github.io/scrooge/index.html).
 * `finagle-clojure-template`: a lein template for creating new projects using finagle-clojure & Thrift.
 
