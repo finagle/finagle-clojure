@@ -1,7 +1,11 @@
 language: clojure
 sudo: false
 lein: lein2
-install: lein2 sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift" install
+install: lein2 sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http:mysql" install
 script: lein2 sub with-profile dev:1.5,test:1.4,test midje
 jdk:
     - openjdk7
+services:
+    - mysql
+before_script:
+    - mysql -uroot -e "create database finagle_clojure_test; create user 'finagle'@'127.0.0.1' identified by 'finagle'; grant all privileges on finagle_clojure_test.* to 'finagle'@'127.0.0.1'; flush privileges;"
