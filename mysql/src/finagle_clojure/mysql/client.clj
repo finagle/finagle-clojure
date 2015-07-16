@@ -1,6 +1,6 @@
 (ns finagle-clojure.mysql.client
   (:import (com.twitter.finagle Stack$Param)
-           (com.twitter.finagle.exp.mysql Row Client PreparedStatement Result OK ResultSet Field)
+           (com.twitter.finagle.exp.mysql Row Client PreparedStatement Result OK ResultSet Field Parameter$)
            (com.twitter.finagle.exp Mysql$Client Mysql)
            (com.twitter.util Future))
   (:require [finagle-clojure.scala :as scala]
@@ -208,7 +208,7 @@
 
     a [[com.twitter.finagle.exp.mysql.PreparedStatement]]"
   [^Client client sql]
-  (.prepare client sql))
+  (.prepare client (.unsafeWrap Parameter$/MODULE$ sql)))
 
 (defn ^Future ping
   "Given a rich client, pings it to verify connectivity.
