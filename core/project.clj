@@ -7,9 +7,9 @@
   :plugins [[lein-midje "3.1.3"]]
   :profiles {:test {:dependencies [[midje "1.6.3" :exclusions [org.clojure/clojure]]
                                    [criterium "0.4.3"]]}
-             :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha5"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
-             :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
-  :dependencies [[com.twitter/finagle-core_2.10 "6.24.0"]
+             :dev [:test {:dependencies [[org.clojure/clojure "1.7.0"]]}]
+             :1.6 [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
+             :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]
+             :1.4 [:test {:dependencies [[org.clojure/clojure "1.4.0"]]}]}
+  :dependencies [[com.twitter/finagle-core_2.10 "6.26.0"]
                  [org.clojure/algo.monads "0.1.5"]])
