@@ -7,5 +7,5 @@
   :min-lein-version "2.0.0"
   :repositories [["sonatype" "https://oss.sonatype.org/content/groups/public/"]
                  ["twitter" {:url "https://maven.twttr.com/" :checksum :warn}]]
-  :dependencies [[com.twitter/scrooge-generator_2.10 "3.20.0"]]
+  :dependencies [[com.twitter/scrooge-generator_2.11 "3.20.0"]]
   :eval-in-leiningen true)

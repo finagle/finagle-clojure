@@ -17,4 +17,4 @@
   :test-paths ["test/clj/"]
   :repositories [["twitter" {:url "http://maven.twttr.com/"}]]
   :dependencies [[finagle-clojure/thrift "0.3.1-SNAPSHOT"]
-                 [com.twitter/finagle-thriftmux_2.10 "6.27.0"]])
+                 [com.twitter/finagle-thriftmux_2.11 "6.27.0"]])

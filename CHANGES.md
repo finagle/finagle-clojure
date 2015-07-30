@@ -1,12 +1,14 @@
 # Changes
 
-Minor release before 1.0.0 may include breaking changes and will explicitly mark them as such.
+Minor releases before 1.0.0 may include breaking changes and will explicitly mark them as such.
 
 ## Next Release
 
 * [core] Add a `algo.monad` instance for Finagle futures. Also add a `dofuture` macro which is a thin layer over `domonad` from `algo.monads`. 
   This is intended to serve as a replacement for [the custom sequencing macro](https://github.com/finagle/finagle-clojure/blob/v0.1.1/core/src/finagle_clojure/futures.clj#L169-L181)
-  that we have at present.
+  that we have at present. (Thanks [@missingfaktor](https://github.com/missingfaktor)!)
+* Upgrade to Finagle 6.27.0, Scrooge 3.20.0, Scala 2.11, Clojure 1.7
+  * Note that if you're using other Scala libraries finagle-clojure they will also need to be compiled against Scala 2.11
 
 ## Version 0.3.0
 

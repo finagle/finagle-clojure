@@ -43,7 +43,7 @@
   (let [module-name (module-name name "core")
         java-source-paths ["src/java"]
         dependencies `[{:dependency [~(project-type->dependency-symbol project-type) ~finagle-clojure-version]}
-                       {:dependency [com.twitter/scrooge-core_2.10 "3.20.0"]}]]
+                       {:dependency [com.twitter/scrooge-core_2.11 "3.20.0"]}]]
     {:name name
      :project-name (str name "-core")
      :project-type project-type
