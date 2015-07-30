@@ -14,6 +14,8 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
   * unbounded-future-pool (& interruptible-unbounded-future-pool) are backed by a cached thread pool executor.
   * immediate-future-pool executes tasks on the calling thread, useful for tests.
 * [core] add raise & raise-within to finagle-clojure.futures. Used to cancel the underlying operation that will define a Future.
+* [lein-finagle-clojure] Add support for running Scrooge's [linter](https://twitter.github.io/scrooge/Linter.html) before compilation.
+  * Run `lein help finagle-clojure scrooge` for more info
 
 ## Version 0.3.0
 
