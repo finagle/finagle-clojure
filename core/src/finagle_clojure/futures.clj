@@ -9,7 +9,7 @@
   (:require [finagle-clojure.scala :as scala]
             [finagle-clojure.timer :as timer]
             [finagle-clojure.duration :refer [->Duration]])
-  (:import [com.twitter.util Await Duration Future Timer]))
+  (:import [com.twitter.util Await Duration Future Timer Futures$]))
 
 (def ^:no-doc default-timer (timer/java-timer true))
 
@@ -187,9 +187,7 @@
     The value of that Future will be a Clojure seq of the values of the Futures in `future-seq`."
   [future-seq]
   {:pre [(not (nil? future-seq))]}
-  (map (Future/collect (scala/seq->scala-buffer future-seq))
-    [scala-seq]
-    (scala/scala-seq->vec scala-seq)))
+  (.collect Futures$/MODULE$ future-seq))
 
 (defn ^Future rescue*
   "Apply scala.PartialFunction `pfn` with the value of Future `f` when `f` is defined with an unsuccessful value (a Throwable).
@@ -488,3 +486,64 @@
   See [[on-failure*]] & [[scala/Function]]"
   [^Future f arg-binding & body]
   `(on-failure* ~f (scala/Function ~arg-binding (do ~@body) scala.runtime.BoxedUnit/UNIT)))
+
+(defn raise
+  "Signal to the 'producer' of a Future that the computation is no longer needed.
+  This will not change the visible state of the Future (e.g. it won't cause it to be failed)
+  and is rather used to attempt to cancel an in-flight operation.
+
+  *Arguments*:
+
+    * `f`: a Future
+    * `t`: a Throwable that will be delivered to the interrupted Future.
+
+  *Returns*:
+
+  nil"
+  [^Future f ^Throwable t]
+  (.raise f t))
+
+(defn raise-within*
+  "Interrupt this Future if it doesn't complete within timeout-duration.
+  This is like composing [[raise*]] & [[within*]] together.
+
+  *Arguments*:
+
+    * `f`: a `Future`
+    * `timeout-duration`: a com.twitter.util.Duration indicating how long to wait before erroring.
+    * `timer` (optional): a com.twitter.util.Timer that schedules the check to see if `f` isn't defined after `timeout-duration`.
+      When not specified a default Timer is used.
+
+  *Returns*:
+
+  A new Future that will be defined with a TimeoutException if it isn't otherwise defined within `timeout-duration`.
+  An attempt will also be made to interrupt the underlying operation.
+
+  See [[finagle-clojure.duration/->Duration]], [[raise]], [[within*]], [[raise-within]]"
+  ([^Future f timeout-duration]
+   (raise-within* f timeout-duration default-timer))
+  ([^Future f ^Duration timeout-duration ^Timer timer]
+   (.raiseWithin f timeout-duration timer)))
+
+(defn raise-within
+  "Interrupt this Future if it doesn't complete within timeout-duration.
+  This is like composing [[raise]] & [[within]] together.
+
+  *Arguments*:
+
+    * `f`: a `Future`
+    * `timeout-value`
+    * `timeout-unit`: the unit for the timeout Duration (see [[finagle-clojure.duration/->Duration]]).
+    * `timer` (optional): a com.twitter.util.Timer that schedules the check to see if `f` isn't defined after `timeout-duration`.
+      When not specified a default Timer is used.
+
+  *Returns*:
+
+  A new Future that will be defined with a TimeoutException if it isn't otherwise defined within `timeout-duration`.
+  An attempt will also be made to interrupt the underlying operation.
+
+  See [[raise]], [[within]], [[raise-within*]]"
+  ([^Future f timeout-value timeout-unit]
+   (raise-within f timeout-value timeout-unit default-timer))
+  ([^Future f timeout-value timeout-unit timer]
+   (raise-within* f (->Duration timeout-value timeout-unit) timer)))

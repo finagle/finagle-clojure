@@ -137,3 +137,6 @@
       (pipeline (value 1)) => 1)
     (fact "on-failure"
       (pipeline (exception (Exception.))) => -1)))
+
+(fact "raise"
+  (raise (value 1) (Exception.)) => nil)
