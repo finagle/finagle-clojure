@@ -7,14 +7,14 @@
   :plugins [[lein-midje "3.1.3"]
             [lein-finagle-clojure "0.3.1-SNAPSHOT" :hooks false]]
   :profiles {:test {:dependencies [[midje "1.6.3" :exclusions [org.clojure/clojure]]]}
-             :dev [:test {:dependencies [[org.clojure/clojure "1.7.0"]]}]
-             :1.6 [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
-             :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]
-             :1.4 [:test {:dependencies [[org.clojure/clojure "1.4.0"]]}]}
+             :dev [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
+             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha5"]]}
+             :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
+             :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}}
   :finagle-clojure {:thrift-source-path "test/resources" :thrift-output-path "test/java"}
   :java-source-paths ["test/java"]
   :jar-exclusions [#"test"]
   :test-paths ["test/clj/"]
   :repositories [["twitter" {:url "http://maven.twttr.com/"}]]
   :dependencies [[finagle-clojure/thrift "0.3.1-SNAPSHOT"]
-                 [com.twitter/finagle-thriftmux_2.10 "6.26.0"]])
+                 [com.twitter/finagle-thriftmux_2.10 "6.24.0"]])
