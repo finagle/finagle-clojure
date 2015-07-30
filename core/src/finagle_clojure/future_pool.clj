@@ -4,10 +4,8 @@
   This allows synchronous libraries to be used asynchronously in an application using Finagle.
   A Future will be returned which allows for easy integration to other asynchronous Finagle code."
   (:require [finagle-clojure.scala :as scala])
-  (:import [com.twitter.util ExecutorServiceFuturePool Future FuturePool]
+  (:import [com.twitter.util Future FuturePool FuturePools]
            [java.util.concurrent ExecutorService]))
-
-;; TODO: @samn 06/17/14 add support for InterruptibleExecutorServiceFuturePool
 
 (defn ^FuturePool future-pool
   "FuturePools can be used to run synchronous code on a thread pool.
@@ -24,7 +22,81 @@
 
   See: [[run*]] & [[run]]"
   [^ExecutorService executor-service]
-  (ExecutorServiceFuturePool. executor-service))
+  (FuturePools/newFuturePool executor-service))
+
+(defn ^FuturePool interruptible-future-pool
+  "FuturePools can be used to run synchronous code on a thread pool.
+  Once a FuturePool has been created tasks can be run on it, a Future
+  will be returned representing its completion.
+
+  This function returns an InterruptibleExecutorServiceFuturePool, similar to an ExecutorServiceFuturePool
+  but interrupts on the Futures returned by [[run*]] or [[run]] will attempt to propagate to
+  the backing ExecutorService.
+
+  *Arguments*:
+
+    * `executor-service`: the `java.util.concurrent.ExecutorService` that will back the returned FuturePool.
+
+  *Returns*:
+
+    A new InterruptibleExecutorServiceFuturePool.
+
+  See: [[run*]] & [[run]]"
+  [^ExecutorService executor-service]
+  (FuturePools/newInterruptibleFuturePool executor-service))
+
+(defn ^FuturePool unbounded-future-pool
+  "FuturePools can be used to run synchronous code on a thread pool.
+  Once a FuturePool has been created tasks can be run on it, a Future
+  will be returned representing its completion.
+
+  This function will return a FuturePool backed by an unbounded, cached, thread pool.
+  While this FuturePool may be suitable for IO concurrency, computational concurrency
+  may require finer tuning (see [[future-pool]]).
+
+  *Returns*:
+
+    A new FuturePool.
+
+  See: [[run*]] & [[run]]"
+  []
+  (FuturePools/unboundedPool))
+
+(defn ^FuturePool interruptible-unbounded-future-pool
+  "FuturePools can be used to run synchronous code on a thread pool.
+  Once a FuturePool has been created tasks can be run on it, a Future
+  will be returned representing its completion.
+
+  This function will return a FuturePool backed by an unbounded, cached, thread pool.
+  While this FuturePool may be suitable for IO concurrency, computational concurrency
+  may require finer tuning (see [[interruptible-future-pool]]).
+
+  Interrupts on the Futures returned by [[run*]] or [[run]] will attempt to propagate to
+  the backing thread pool.
+
+  *Arguments*:
+
+    * `executor-service`: the `java.util.concurrent.ExecutorService` that will back the returned FuturePool.
+
+  *Returns*:
+
+    A new InterruptibleExecutorServiceFuturePool.
+
+  See: [[run*]] & [[run]]"
+  [^ExecutorService executor-service]
+  (FuturePools/newInterruptibleFuturePool executor-service))
+
+(defn ^FuturePool immediate-future-pool
+  "This function returns a FuturePool that will execute tasks on the calling thread,
+  rather than asynchronously. This should really only be used in tests.
+
+  *Returns*:
+
+    A new FuturePool that will execute on the calling thread.
+
+  See: [[run*]] & [[run]]"
+  []
+  (FuturePools/IMMEDIATE_POOL))
 
 (defn ^Future run*
   "Run scala.Function0 or Clojure fn `fn0` on FuturePool `future-pool`.

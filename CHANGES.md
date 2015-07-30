@@ -9,6 +9,10 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
   that we have at present. (Thanks [@missingfaktor](https://github.com/missingfaktor)!)
 * Upgrade to Finagle 6.27.0, Scrooge 3.20.0, Scala 2.11, Clojure 1.7
   * Note that if you're using other Scala libraries finagle-clojure they will also need to be compiled against Scala 2.11
+* [core] Add support for creating other FuturePool types in finagle-clojure.future-pool
+  * interruptible FuturePools attempt to propagate Future interrupts to the backing thread pool. This can help control resource utilization.
+  * unbounded-future-pool (& interruptible-unbounded-future-pool) are backed by a cached thread pool executor.
+  * immediate-future-pool executes tasks on the calling thread, useful for tests.
 
 ## Version 0.3.0
 
