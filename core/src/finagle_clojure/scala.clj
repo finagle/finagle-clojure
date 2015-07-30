@@ -75,11 +75,11 @@
   (let [arg-tag (-> arg-name meta :tag)]
     `(Function* (fn [~arg-name] ~@body) ~arg-tag)))
 
-(defn ^scala.runtime.AbstractFunction0 Function0*
+(defn ^com.twitter.util.Function0 Function0*
   "Create a new scala.Function0.
   The apply method will be implemented with f."
   [f]
-  (proxy [scala.runtime.AbstractFunction0] []
+  (proxy [com.twitter.util.Function0] []
     (apply [] (f))))
 
 (defmacro Function0
