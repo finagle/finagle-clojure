@@ -43,7 +43,7 @@
   (let [module-name (module-name name "core")
         java-source-paths ["src/java"]
         dependencies `[{:dependency [~(project-type->dependency-symbol project-type) ~finagle-clojure-version]}
-                       {:dependency [com.twitter/scrooge-core_2.10 "3.16.3"]}]]
+                       {:dependency [com.twitter/scrooge-core_2.10 "3.20.0"]}]]
     {:name name
      :project-name (str name "-core")
      :project-type project-type
@@ -51,7 +51,7 @@
      :misc-config [{:key :plugins :value [['lein-finagle-clojure finagle-clojure-version]]}
                    {:key :java-source-paths :value java-source-paths}
                    {:key :finagle-clojure :value {:thrift-source-path "src/thrift" :thrift-output-path "src/java"}}
-                   {:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.6.0"]]}}}]
+                   {:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.7.0"]]}}}]
      :dependencies dependencies
      :service-name (service-name name)
      :thrift-ns (thrift-namespace name)
@@ -68,7 +68,7 @@
      :project-name (str name "-client")
      :project-type project-type
      :module-name module-name
-     :misc-config [{:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.6.0"]]}}}]
+     :misc-config [{:key :profiles :value '{:dev {:dependencies [[org.clojure/clojure "1.7.0"]]}}}]
      :dependencies dependencies
      :service-name (service-name name)
      :thrift-ns (thrift-namespace name)
@@ -80,7 +80,7 @@
   [name project-type]
   (let [module-name (module-name name "service")
         core-dependency (symbol (str name "-core"))
-        dependencies `[{:dependency [org.clojure/clojure "1.6.0"]}
+        dependencies `[{:dependency [org.clojure/clojure "1.7.0"]}
                        {:dependency [~core-dependency "0.1.0-SNAPSHOT"]}
                        {:dependency [~(project-type->dependency-symbol project-type) ~finagle-clojure-version]}]
         service-ns (str (sanitize-ns name) ".service")]
