@@ -15,6 +15,6 @@
   :java-source-paths ["test/java"]
   :jar-exclusions [#"test"]
   :test-paths ["test/clj/"]
-  :repositories [["twitter" {:url "http://maven.twttr.com/"}]]
+  :repositories [["twitter" {:url "https://maven.twttr.com/"}]]
   :dependencies [[finagle-clojure/thrift "0.3.1-SNAPSHOT"]
                  [com.twitter/finagle-thriftmux_2.11 "6.27.0"]])

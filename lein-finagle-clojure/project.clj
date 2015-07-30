@@ -3,7 +3,7 @@
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
-  :scm {:name "git" :url "http://github.com/finagle/finagle-clojure"}
+  :scm {:name "git" :url "https://github.com/finagle/finagle-clojure"}
   :min-lein-version "2.0.0"
   :repositories [["sonatype" "https://oss.sonatype.org/content/groups/public/"]
                  ["twitter" {:url "https://maven.twttr.com/" :checksum :warn}]]

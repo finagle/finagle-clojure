@@ -13,6 +13,7 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
   * interruptible FuturePools attempt to propagate Future interrupts to the backing thread pool. This can help control resource utilization.
   * unbounded-future-pool (& interruptible-unbounded-future-pool) are backed by a cached thread pool executor.
   * immediate-future-pool executes tasks on the calling thread, useful for tests.
+* [core] add raise & raise-within to finagle-clojure.futures. Used to cancel the underlying operation that will define a Future.
 
 ## Version 0.3.0
 
