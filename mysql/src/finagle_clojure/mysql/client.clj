@@ -1,6 +1,6 @@
 (ns finagle-clojure.mysql.client
   (:import (com.twitter.finagle Stack$Param)
-           (com.twitter.finagle.exp.mysql Row Client PreparedStatement Result OK ResultSet Field)
+           (com.twitter.finagle.exp.mysql Row Client PreparedStatement Result OK ResultSet Field Parameter$ BigDecimalValue)
            (com.twitter.finagle.exp Mysql$Client Mysql)
            (com.twitter.util Future))
   (:require [finagle-clojure.scala :as scala]
@@ -223,6 +223,14 @@
   [^Client client]
   (.ping client))
 
+(defprotocol ToParameter
+  (->Parameter [v]))
+
+(extend-protocol ToParameter
+  BigDecimal (->Parameter [d] (->> d (scala.math.BigDecimal.) (BigDecimalValue/apply) (.unsafeWrap Parameter$/MODULE$)))
+  nil        (->Parameter [_] (.unsafeWrap Parameter$/MODULE$ nil))
+  Object     (->Parameter [o] (.unsafeWrap Parameter$/MODULE$ o)))
+
 (defn ^Future exec
   "Given a prepared statement and a set of parameters, executes the statement and returns the result as a future.
 
@@ -236,7 +244,7 @@
     a `Future` containing a [[com.twitter.finagle.exp.mysql.Result]]"
   [^PreparedStatement stmt & params]
   (->> (or params [])
-       (map value/box)
+       (map ->Parameter)
        (scala/seq->scala-buffer)
        (.apply stmt)))
 
