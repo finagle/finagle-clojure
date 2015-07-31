@@ -4,10 +4,9 @@ A thin wrapper around Finagle & Twitter Future.
 This library assumes you are familiar with Finagle.
 If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
-
 ## Building
 
-    lein sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http:mysql" install
+    lein sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http:mysql:thriftmux" install
 
 
 ## Running Tests
@@ -21,6 +20,7 @@ The readmes in each sub-library have more information.
 
 * `core`: convenience fns for interacting with Futures.
 * `thrift`: create Thrift clients & servers.
+* `thriftmux`: create ThriftMux clients & servers.
 * `http`: create HTTP servers, requests, and responses.
 * `mysql`: a fully featured asynchronous MySQL client.
 * `lein-finagle-clojure`: a lein plugin for automatically compiling Thrift definitions using [Scrooge](https://twitter.github.io/scrooge/index.html).
