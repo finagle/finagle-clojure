@@ -1,9 +1,9 @@
 (ns finagle-clojure.mysql.value
   "A collection of private helpers for polymorphically boxing and unboxing Finagle-MySQL values,
   which is to say, subclasses of [[com.twitter.finagle.exp.mysql.Value]]."
-  (:import (com.twitter.finagle.exp.mysql Value ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
+  (:import (com.twitter.finagle.exp.mysql ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
                                           StringValue Type RawValue BigDecimalValue NullValue EmptyValue
-                                          NullValue$ EmptyValue$ DateValue$ TimestampValue)
+                                          NullValue$ EmptyValue$ DateValue$ TimestampValue Parameter$)
            (java.util TimeZone))
   (:require [finagle-clojure.options :as opt]))
 
@@ -48,6 +48,9 @@
   NullValue$  (unbox [^NullValue _]   nil)
   EmptyValue$ (unbox [^EmptyValue _]  nil)
   RawValue    (unbox [^RawValue val]  (unbox-raw val)))
+
+(defn parameterize [v]
+  (.unsafeWrap Parameter$/MODULE$ v))
 
 (defmethod unbox-raw (Type/NewDecimal) [^RawValue val]
   (when-let [^scala.math.BigDecimal bd (-> val (BigDecimalValue/unapply) (opt/get))]

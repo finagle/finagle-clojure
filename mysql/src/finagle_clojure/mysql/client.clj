@@ -190,7 +190,7 @@
   ([^PreparedStatement stmt params]
     (select-stmt stmt params Row->map))
   ([^PreparedStatement stmt params fn1]
-    (let [params (scala/seq->scala-buffer (map value/box params))
+    (let [params (scala/seq->scala-buffer (map value/parameterize params))
           fn1    (scala/lift->fn1 fn1)]
       (-> stmt
           (.select params fn1)
