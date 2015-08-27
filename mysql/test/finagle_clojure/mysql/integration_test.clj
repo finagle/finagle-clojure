@@ -140,8 +140,8 @@
 
       (fact :mysql "it can select from the table using a prepared statement"
         (let [rows (-> (prepare db "SELECT * FROM widgets")
-                      (select-stmt [] Row->map)
-                      (f/await))]
+                       (select-stmt [] Row->map)
+                       (f/await))]
           (count rows)
           => 1
 
@@ -151,6 +151,13 @@
 
         (-> (prepare db "SELECT * FROM widgets")
             (select-stmt [])
+            (f/await)
+            (first)
+            (select-keys [:id :name]))
+        => {:id 1 :name "fizzbuzz"}
+
+        (-> (prepare db "SELECT * FROM widgets WHERE id = ?")
+            (select-stmt [1])
             (f/await)
             (first)
             (select-keys [:id :name]))
