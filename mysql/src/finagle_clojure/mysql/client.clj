@@ -173,6 +173,14 @@
         (.select sql (scala/lift->fn1 fn1))
         (f/map* scala/scala-seq->vec))))
 
+(defprotocol ToParameter
+  (->Parameter [v]))
+
+(extend-protocol ToParameter
+  BigDecimal (->Parameter [d] (->> d (scala.math.BigDecimal.) (BigDecimalValue/apply) (.unsafeWrap Parameter$/MODULE$)))
+  nil        (->Parameter [_] (.unsafeWrap Parameter$/MODULE$ nil))
+  Object     (->Parameter [o] (.unsafeWrap Parameter$/MODULE$ o)))
+
 (defn ^Future select-stmt
   "Given a `PreparedStatement`, a vector of params, and a mapping function, executes the parameterized statement
   and returns the result as a `Future[Seq[T]]`, where T is the type yielded by the given mapping function.
@@ -190,7 +198,7 @@
   ([^PreparedStatement stmt params]
     (select-stmt stmt params Row->map))
   ([^PreparedStatement stmt params fn1]
-    (let [params (scala/seq->scala-buffer (map value/parameterize params))
+    (let [params (scala/seq->scala-buffer (map ->Parameter params))
           fn1    (scala/lift->fn1 fn1)]
       (-> stmt
           (.select params fn1)
@@ -222,14 +230,6 @@
     a `Future` containing a [[com.twitter.finagle.exp.mysql.Result]]"
   [^Client client]
   (.ping client))
-
-(defprotocol ToParameter
-  (->Parameter [v]))
-
-(extend-protocol ToParameter
-  BigDecimal (->Parameter [d] (->> d (scala.math.BigDecimal.) (BigDecimalValue/apply) (.unsafeWrap Parameter$/MODULE$)))
-  nil        (->Parameter [_] (.unsafeWrap Parameter$/MODULE$ nil))
-  Object     (->Parameter [o] (.unsafeWrap Parameter$/MODULE$ o)))
 
 (defn ^Future exec
   "Given a prepared statement and a set of parameters, executes the statement and returns the result as a future.

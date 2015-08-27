@@ -49,9 +49,6 @@
   EmptyValue$ (unbox [^EmptyValue _]  nil)
   RawValue    (unbox [^RawValue val]  (unbox-raw val)))
 
-(defn parameterize [v]
-  (.unsafeWrap Parameter$/MODULE$ v))
-
 (defmethod unbox-raw (Type/NewDecimal) [^RawValue val]
   (when-let [^scala.math.BigDecimal bd (-> val (BigDecimalValue/unapply) (opt/get))]
     (.underlying bd)))
