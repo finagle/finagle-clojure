@@ -4,6 +4,10 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
 
 ## Next Release
 
+## Version 0.4.1
+
+*  [mysql] `finagle-clojure.mysql.client/select-stmt`: wrap PreparedStatement parameters correctly (thanks [@bguthrie](http://github.com/bguthrie). [PR](https://github.com/finagle/finagle-clojure/pull/9)
+
 ## Version 0.4.0
 
 * [core] Add a `algo.monad` instance for Finagle futures. Also add a `dofuture` macro which is a thin layer over `domonad` from `algo.monads`. 
