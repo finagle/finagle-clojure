@@ -36,7 +36,7 @@
               (rich-client "127.0.0.1:3306"))]
 
     (against-background [(before :contents (create-table db))
-                        (after  :contents (drop-table db))]
+                         (after  :contents (drop-table db))]
 
       (fact :mysql "it can ping the database"
         (-> (ping db)
