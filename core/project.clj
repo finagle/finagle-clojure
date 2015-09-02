@@ -1,4 +1,4 @@
-(defproject finagle-clojure/core "0.4.1-SNAPSHOT"
+(defproject finagle-clojure/core "0.4.1"
   :description "A light wrapper around Finagle & Twitter Util for Clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
