@@ -23,7 +23,7 @@
   (-> (request "/") (set-content-string "test") (content-string))
   => "test")
 
-(fact "content type"
+(fact "content type and charset"
   (-> (response) (content-type))
   => nil
 
@@ -31,5 +31,30 @@
   => "application/json;charset=utf-8"
 
   (-> (response) (set-content-type "application/json" "us-ascii") (content-type))
-  => "application/json;charset=us-ascii")
+  => "application/json;charset=us-ascii"
 
+  (-> (request "/") (set-charset "utf-8") (set-content-type "application/json") (charset))
+  => "utf-8")
+
+(fact "headers"
+  (-> (response) (headers))
+  => {}
+
+  (-> (response) (set-header "X-Test" "test") (header "X-Test"))
+  => "test"
+
+  (-> (response) (set-header "X-Test" "test") (headers))
+  => {"X-Test" "test"})
+
+(fact "params"
+  (-> (request "/foo") (params))
+  => {}
+
+  (-> (request "/foo?bar=baz") (params))
+  => {"bar" "baz"}
+
+  (-> (request "/foo?bar=baz") (param "bar"))
+  => "baz"
+
+  (-> (request "/foo?bar=baz") (param "quux"))
+  => nil)
