@@ -5,8 +5,10 @@
   `Request` objects are passed to services bound to a Finagle HTTP server, and `Response` objects must be passed back
   (wrapped in a `Future`) in turn. Most requests are constructed by Finagle, but the functions here to may be helpful
   to create `MockRequest`s for service testing purposes."
-  (:import (com.twitter.finagle.http Response Request Message)
-           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod))
+  (:import (com.twitter.finagle.http Response Request Message ParamMap)
+           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod HttpHeaders DefaultHttpHeaders$HeaderEntry)
+           (java.io InputStream)
+           (java.util Map$Entry))
   (:require [finagle-clojure.options :as opt]))
 
 (defn- ^HttpResponseStatus int->HttpResponseStatus [c]
@@ -42,9 +44,9 @@
   *Returns*:
 
     an instance of [[com.twitter.finagle.http.Request]], specifically a MockRequest"
-  ([uri]
+  ([^String uri]
     (Request/apply uri))
-  ([uri method]
+  ([^String uri method]
     (Request/apply (str->HttpMethod method) uri)))
 
 (defn ^Response set-status-code
@@ -134,6 +136,34 @@
   [^Message msg]
   (opt/get (.contentType msg)))
 
+(defn ^Message set-charset
+  "Sets the charset of the given message.
+
+  *Arguments*:
+
+    * `msg`: a [[com.twitter.finagle.http.Message]]
+    * `charset`: a string charset
+
+  *Returns*:
+
+    the given message"
+  [^Message msg charset]
+  (.charset_$eq msg charset)
+  msg)
+
+(defn ^String charset
+  "Gets the charset of the given message.
+
+  *Arguments*:
+
+    * `msg`: a [[com.twitter.finagle.http.Message]]
+
+  *Returns*:
+
+    the charset of the message"
+  [^Message msg]
+  (opt/get (.charset msg)))
+
 (defn ^Request set-http-method
   "Sets the HTTP method of the given request.
 
@@ -149,7 +179,7 @@
   (.setMethod req (str->HttpMethod meth))
   req)
 
-(defn http-method
+(defn ^String http-method
   "Gets the HTTP method of the given request.
 
   *Arguments*:
@@ -161,3 +191,85 @@
     the HTTP method of the request as an uppercase string"
   [^Request req]
   (-> req (.method) (.getName)))
+
+(defn ^Message set-header
+  "Sets the named header in the given message.
+
+  *Arguments*:
+
+    * `msg`: a [[com.twitter.finagle.http.Message]]
+    * `name`: a string containing the header name
+    * `value`: a stringable object containing the value
+
+    *Returns*:
+
+      the given message"
+  [^Message msg name value]
+  (.set (.headers msg) name value)
+  msg)
+
+(defn ^String header
+  "Gets the named header from the given message.
+
+  *Arguments*:
+
+    * `msg`: a [[com.twitter.finagle.http.Message]]
+    * `header`: a string containing the header name
+
+  *Returns*:
+
+    the string contents of the named header in the given message"
+  [^Message msg header]
+  (.get (.headers msg) header))
+
+(defn headers
+  "Returns this message's headers as a Clojure map.
+
+  *Arguments*:
+
+    * `msg`: a [[com.twitter.finagle.http.Message]]
+
+  *Returns*:
+
+    this request's headers as a Clojure map"
+  [^Message msg]
+  (reduce (fn [h ^DefaultHttpHeaders$HeaderEntry e] (assoc h (.getKey e) (.getValue e))) {} (.headers msg)))
+
+(defn ^InputStream input-stream
+  "Returns this message's content as an input stream.
+
+  *Arguments*:
+
+    * `msg`: a [[com.twitter.finagle.http.Message]]
+
+  *Returns*:
+
+    this request's content as an input stream"
+  [^Message msg]
+  (.getInputStream msg))
+
+(defn params
+  "Returns this request's params as a Clojure map.
+
+  *Arguments*:
+
+    * `req`: a [[com.twitter.finagle.http.Request]]
+
+  *Returns*:
+
+    this request's params as a Clojure map"
+  [^Request req]
+  (reduce (fn [h ^Map$Entry e] (assoc h (.getKey e) (.getValue e))) {} (.getParams req)))
+
+(defn ^String param
+  "Returns the named param from the given request.
+
+  *Arguments*:
+
+    * `req`: a [[com.twitter.finagle.http.Request]]
+
+  *Returns*:
+
+    the string contents of the named param"
+  [^Request req param]
+  (.getParam req param))
