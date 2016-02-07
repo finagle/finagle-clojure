@@ -4,7 +4,7 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
 
 ## Next Release
 
-* Upgrade to [Finagle 6.33.0](https://github.com/twitter/finagle/blob/develop/CHANGES), [Scrooge 4.5.0](https://github.com/twitter/scrooge/blob/develop/CHANGES)
+* Upgrade to [Finagle 6.33.0](https://github.com/twitter/finagle/blob/develop/CHANGES), [Scrooge 4.5.0](https://github.com/twitter/scrooge/blob/develop/CHANGES), and Clojure 1.8
 * Add `finagle-clojure.scala/scala-map->map`, converts `scala.collection.Map` to a Clojure persistent map.
 
 ## Version 0.4.1
