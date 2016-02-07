@@ -5,17 +5,17 @@
   `Request` objects are passed to services bound to a Finagle HTTP server, and `Response` objects must be passed back
   (wrapped in a `Future`) in turn. Most requests are constructed by Finagle, but the functions here to may be helpful
   to create `MockRequest`s for service testing purposes."
-  (:import (com.twitter.finagle.http Response Request Message ParamMap)
-           (org.jboss.netty.handler.codec.http HttpResponseStatus HttpMethod HttpHeaders DefaultHttpHeaders$HeaderEntry)
+  (:import (com.twitter.finagle.http Response Request Status Method Method$ Message ParamMap HeaderMap)
            (java.io InputStream)
            (java.util Map$Entry))
-  (:require [finagle-clojure.options :as opt]))
+  (:require [finagle-clojure.options :as opt]
+            [finagle-clojure.scala :as s]))
 
-(defn- ^HttpResponseStatus int->HttpResponseStatus [c]
-  (HttpResponseStatus/valueOf (int c)))
+(defn- ^Status int->Status [c]
+  (Status/fromCode (int c)))
 
-(defn- ^HttpMethod str->HttpMethod [m]
-  (HttpMethod/valueOf (-> m (name) (.toUpperCase))))
+(defn- ^Method str->Method [m]
+  (.apply Method$/MODULE$ (-> m (name) (.toUpperCase))))
 
 (defn ^Response response
   "Constructs a `Response`, required for Finagle services that interact with an `HttpServer`.
@@ -30,7 +30,7 @@
   ([]
     (Response/apply))
   ([code]
-    (Response/apply (int->HttpResponseStatus code))))
+    (Response/apply (int->Status code))))
 
 (defn ^Request request
   "Constructs a `Request`. Usually this will be constructed on your behalf for incoming requests;
@@ -47,7 +47,7 @@
   ([^String uri]
     (Request/apply uri))
   ([^String uri method]
-    (Request/apply (str->HttpMethod method) uri)))
+    (Request/apply (str->Method method) uri)))
 
 (defn ^Response set-status-code
   "Sets the status code of the given response.
@@ -176,7 +176,7 @@
 
     the given request"
   [^Request req meth]
-  (.setMethod req (str->HttpMethod meth))
+  (.method_$eq req (str->Method meth))
   req)
 
 (defn ^String http-method
@@ -190,7 +190,7 @@
 
     the HTTP method of the request as an uppercase string"
   [^Request req]
-  (-> req (.method) (.getName)))
+  (-> req (.method) (.toString)))
 
 (defn ^Message set-header
   "Sets the named header in the given message.
@@ -204,11 +204,11 @@
     *Returns*:
 
       the given message"
-  [^Message msg name value]
-  (.set (.headers msg) name value)
+  [^Message msg ^String name ^String value]
+  (.add (.headerMap msg) name value)
   msg)
 
-(defn ^String header
+(defn header
   "Gets the named header from the given message.
 
   *Arguments*:
@@ -218,9 +218,9 @@
 
   *Returns*:
 
-    the string contents of the named header in the given message"
-  [^Message msg header]
-  (.get (.headers msg) header))
+    A seq of strings that are the values for the named header in the given message"
+  [^Message msg ^String header]
+  (s/scala-seq->vec (.getAll (.headerMap msg) header)))
 
 (defn headers
   "Returns this message's headers as a Clojure map.
@@ -233,7 +233,7 @@
 
     this request's headers as a Clojure map"
   [^Message msg]
-  (reduce (fn [h ^DefaultHttpHeaders$HeaderEntry e] (assoc h (.getKey e) (.getValue e))) {} (.headers msg)))
+  (s/scala-map->map (.headerMap msg)))
 
 (defn ^InputStream input-stream
   "Returns this message's content as an input stream.
@@ -259,7 +259,7 @@
 
     this request's params as a Clojure map"
   [^Request req]
-  (reduce (fn [h ^Map$Entry e] (assoc h (.getKey e) (.getValue e))) {} (.getParams req)))
+  (s/scala-map->map (.params req)))
 
 (defn ^String param
   "Returns the named param from the given request.
