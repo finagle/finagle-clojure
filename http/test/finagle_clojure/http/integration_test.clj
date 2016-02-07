@@ -1,5 +1,5 @@
 (ns finagle-clojure.http.integration-test
-  (:import (com.twitter.finagle.http Request Response)
+  (:import (com.twitter.finagle.http Request)
            (com.twitter.finagle Service))
   (:require [midje.sweet :refer :all]
             [finagle-clojure.scala :as scala]
@@ -49,7 +49,6 @@
               (builder-client/hosts "localhost:3000")
               (builder-client/build))]
       (-> (s/apply c (m/request "/"))
-          (f/map [rep] (Response/apply rep))
           (f/await)
           (m/content-string))
       => "Hello, World"

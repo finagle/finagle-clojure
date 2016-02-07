@@ -11,4 +11,4 @@
              :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]
              :1.4 [:test {:dependencies [[org.clojure/clojure "1.4.0"]]}]}
   :dependencies [[finagle-clojure/core "0.4.2-SNAPSHOT"]
-                 [com.twitter/finagle-http_2.11 "6.27.0"]])
+                 [com.twitter/finagle-http_2.11 "6.33.0"]])

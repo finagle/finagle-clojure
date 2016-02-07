@@ -2,7 +2,7 @@
   "Utilities for interop with JVM classes generated from Scala code.
   Scala functions & methods expect Scala collection & function instances,
   not Java Collections or Clojure IFns."
-  (:import [scala.collection JavaConversions]
+  (:import [scala.collection JavaConversions Map]
            [scala Product]
            [scala.runtime BoxedUnit]))
 
@@ -48,6 +48,19 @@
        (range)
        (map #(.productElement p %))
        (into [])))
+
+(defn scala-map->map
+  "Convert a Scala Map to a map
+
+  *Arguments*:
+
+    * `m`: a scala.collectin.Map
+
+  *Returns*:
+
+    A PersistentHashMap with the conents of `m`."
+  [^Map m]
+  (into {} (JavaConversions/mapAsJavaMap m)))
 
 (def unit
   "The Scala Unit value."

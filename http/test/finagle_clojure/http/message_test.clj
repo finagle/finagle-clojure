@@ -41,7 +41,7 @@
   => {}
 
   (-> (response) (set-header "X-Test" "test") (header "X-Test"))
-  => "test"
+  => ["test"]
 
   (-> (response) (set-header "X-Test" "test") (headers))
   => {"X-Test" "test"})

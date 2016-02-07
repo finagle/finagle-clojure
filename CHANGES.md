@@ -4,6 +4,9 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
 
 ## Next Release
 
+* Upgrade to [Finagle 6.33.0](https://github.com/twitter/finagle/blob/develop/CHANGES), [Scrooge 4.5.0](https://github.com/twitter/scrooge/blob/develop/CHANGES)
+* Add `finagle-clojure.scala/scala-map->map`, converts `scala.collection.Map` to a Clojure persistent map.
+
 ## Version 0.4.1
 
 *  [mysql] `finagle-clojure.mysql.client/select-stmt`: wrap PreparedStatement parameters correctly (thanks [@bguthrie](http://github.com/bguthrie). [PR](https://github.com/finagle/finagle-clojure/pull/9)
