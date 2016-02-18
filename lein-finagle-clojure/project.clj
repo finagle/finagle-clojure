@@ -1,4 +1,4 @@
-(defproject lein-finagle-clojure "0.5.0"
+(defproject lein-finagle-clojure "0.5.1-SNAPSHOT"
   :description "A lein plugin for working with finagle-clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"

@@ -6,9 +6,9 @@ Generates Java classes that can be used with Finagle & finagle-clojure.
 
 ## Usage
 
-* Add `[lein-finagle-clojure "0.5.0"]` to `:plugins` in your project.clj
+* Add `[lein-finagle-clojure "0.5.1-SNAPSHOT"]` to `:plugins` in your project.clj
     * this will add a hook around `lein-javac` that will compile your Thrift definitions first.
-    * to not add the hook: `[lein-finagle-clojure "0.5.0" :hooks false]`
+    * to not add the hook: `[lein-finagle-clojure "0.5.1-SNAPSHOT" :hooks false]`
 * Run manually: `lein finagle-clojure scrooge`
 
 ## Configuration
