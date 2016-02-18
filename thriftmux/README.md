@@ -4,7 +4,7 @@ This module contains wrappers for creating ThriftMux `Service`s & `Client`s.
 
 ### Dependency
 
-    [finagle-clojure/thriftmux "0.4.2-SNAPSHOT"]
+    [finagle-clojure/thriftmux "0.5.0"]
 
 
 ### Namespaces
