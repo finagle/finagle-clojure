@@ -7,7 +7,15 @@
   See:
   * test/clj/finagle_clojure/thrift_test.clj
   * https://github.com/samn/finagle-clojure-examples/tree/master/dog-breed-info"
-  (:import [com.twitter.finagle ListeningServer Service Thrift]))
+  (:require [finagle-clojure.options :as options]
+            [finagle-clojure.scala :as scala]
+            [clojure.java.io :as io])
+  (:import [com.twitter.finagle ListeningServer Service Thrift]
+           [com.twitter.finagle.transport Transport$TLSServerEngine Transport$TLSClientEngine]
+           [com.twitter.finagle.ssl Ssl]
+           [javax.net.ssl SSLContext X509TrustManager]
+           [java.net InetSocketAddress]
+           [java.security.cert X509Certificate]))
 
 (defn- ^:no-doc ^String canonical-class-name
   "Take a class-name, which can be a String, Symbol or Class and returns
@@ -69,6 +77,34 @@
   A new com.twitter.finagle.ListeningServer."
   [^String addr ^Service service]
   (Thrift/serveIface addr service))
+
+(defn serve-tls
+  "Serve `service` on `addr` over TLS.  Use this to actually run your Thrift Service.
+  Note that this will not block while serving.
+  If you want to wait on this use [[finagle-clojure.futures/await]].
+
+  *Arguments*:
+
+    * `addr`: The port on which to serve.
+    * `service`: The Service that should be served.
+    * `opts`: key/value options for the server, includes:
+      - `:priv`: (required) fully qualified file name for the private key
+                 in PEM format used for running the server
+      - `:pub`: (required) fully qualified file name for the public key
+                in PEM format used for running the server
+
+  *Returns*:
+
+  A new com.twitter.finagle.ListeningServer."
+  [^String addr ^Service service & opts]
+  (let [{:keys [priv pub]} opts]
+    (if (not (and (.exists (io/file priv)) (.exists (io/file pub))))
+      (throw (IllegalArgumentException. "Could not find public and/or private key."))
+      (->
+        (Thrift/server)
+        (.configured (.mk (Transport$TLSServerEngine.
+                            (options/option (scala/Function0 (Ssl/server pub priv nil nil nil))))))
+        (.serveIface addr service)))))
 
 (defn announce*
   "Announce this server to the configured load balancer.
@@ -135,3 +171,63 @@
   `(do
      (import ~(finagle-interface client-iterface-class))
      (Thrift/newIface ~addr ~(finagle-interface client-iterface-class))))
+
+(defn ^:no-doc ssl-context
+  "Creates an SSLContext object that uses the provided TrustManagers"
+  [trust-mgrs]
+  (let [ctx (SSLContext/getInstance "TLS")]
+    (.init ctx nil trust-mgrs nil)
+    ctx))
+
+(defn ^:no-doc get-tls-engine
+  "Returns a TLS enabled Client Engine created from the provided SSLContext.  If nil, will
+  use the default SSLContext."
+  [ssl-ctx]
+  (let [engine-ctx (if (instance? SSLContext ssl-ctx) ssl-ctx (ssl-context nil))]
+    (Transport$TLSClientEngine.
+      (options/option
+        (scala/Function [inet]
+          (if (instance? InetSocketAddress inet)
+            (Ssl/client engine-ctx (.getHostName inet) (.getPort inet))
+            (Ssl/client engine-ctx)))))))
+
+(defn insecure-ssl-context
+  "Returns a naive SSLContext that provides no certificate verification.
+
+  THIS SHOULD ONLY BE USED FOR TESTING."
+  []
+  (ssl-context
+    (into-array
+      (list
+        (proxy [X509TrustManager] []
+          (getAcceptedIssuers [] (make-array X509Certificate 0))
+          (checkClientTrusted [_ _] nil)
+          (checkServerTrusted [_ _] nil))))))
+
+(defmacro client-tls
+  "Sugar for creating a TLS-enabled client for a compiled Thrift service where the server
+  has TLS enabled.  You must use this client for TLS enabled servers.
+
+  The appropriate Finagle interface for that class will automatically be imported.
+  Note that operations on this client will return a Future representing the result of an call
+  This is meant to show that this client can make an RPC call and may be expensive to invoke.
+
+  E.g. if a Thrift service definition has a method called `doStuff` you can call it on a client
+  like this `(.doStuff client)`.
+
+  *Arguments*:
+
+    * `addr`: Where to find the Thrift server.
+    * `qualified-service-class-name`: This class's Finagled interface will automatically be imported.
+        e.g. if you pass MyService then MyService$ServiceIface will be imported and used.
+
+  *Returns*:
+
+  A new client."
+  [addr client-interface-class ssl-ctx]
+  `(do
+     (import ~(finagle-interface client-interface-class))
+     (->
+       (Thrift/client)
+       (.configured (.mk (get-tls-engine ~ssl-ctx)))
+       (.newIface ~addr ~(finagle-interface client-interface-class)))))
