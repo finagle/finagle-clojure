@@ -5,6 +5,7 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
 ## Next Release
 
 * TLS support for thrift (thanks [@manderson202](https://github.com/manderson202)!). [PR](https://github.com/finagle/finagle-clojure/pull/20)
+* Upgrade to [Finagle 6.35.0](https://github.com/twitter/finagle/blob/develop/CHANGES)
 
 ## Version 0.5.0
 
