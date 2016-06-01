@@ -4,8 +4,12 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
 
 ## Next Release
 
+
+## Version 0.6.0
+
 * TLS support for thrift (thanks [@manderson202](https://github.com/manderson202)!). [PR](https://github.com/finagle/finagle-clojure/pull/20)
 * Upgrade to [Finagle 6.35.0](https://github.com/twitter/finagle/blob/develop/CHANGES)
+* This will be the last release that supports Clojure 1.4
 
 ## Version 0.5.0
 
