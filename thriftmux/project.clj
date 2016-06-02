@@ -10,8 +10,7 @@
              :dev [:test {:dependencies [[org.clojure/clojure "1.8.0"]]}]
              :1.7 [:test {:dependencies [[org.clojure/clojure "1.7.0"]]}]
              :1.6 [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
-             :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]
-             :1.4 [:test {:dependencies [[org.clojure/clojure "1.4.0"]]}]}
+             :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]}
   :finagle-clojure {:thrift-source-path "test/resources" :thrift-output-path "test/java"}
   :java-source-paths ["test/java"]
   :jar-exclusions [#"test"]

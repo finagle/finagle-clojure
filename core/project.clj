@@ -10,7 +10,6 @@
              :dev [:test {:dependencies [[org.clojure/clojure "1.8.0"]]}]
              :1.7 [:test {:dependencies [[org.clojure/clojure "1.7.0"]]}]
              :1.6 [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
-             :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]
-             :1.4 [:test {:dependencies [[org.clojure/clojure "1.4.0"]]}]}
+             :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]}
   :dependencies [[com.twitter/finagle-core_2.11 "6.35.0"]
                  [org.clojure/algo.monads "0.1.5"]])
