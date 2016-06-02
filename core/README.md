@@ -1,5 +1,7 @@
 # core
 
+[![Clojars Project](https://img.shields.io/clojars/v/finagle-clojure/core.svg)](https://clojars.org/finagle-clojure/core)
+
 This module contains wrappers for `com.twitter.util.Future` & core Finagle classes.
 
 ### Dependency

@@ -1,5 +1,7 @@
 # lein-finagle-clojure
 
+[![Clojars Project](https://img.shields.io/clojars/v/lein-finagle-clojure.svg)](https://clojars.org/lein-finagle-clojure)
+
 A lein plugin for compiling Thrift definitions using Scrooge.
 Generates Java classes that can be used with Finagle & finagle-clojure.
 

@@ -1,5 +1,7 @@
 # thriftmux
 
+[![Clojars Project](https://img.shields.io/clojars/v/finagle-clojure/thriftmux.svg)](https://clojars.org/finagle-clojure/thriftmux)
+
 This module contains wrappers for creating ThriftMux `Service`s & `Client`s.
 
 ### Dependency

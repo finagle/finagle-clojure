@@ -1,5 +1,7 @@
 # http
 
+[![Clojars Project](https://img.shields.io/clojars/v/finagle-clojure/http.svg)](https://clojars.org/finagle-clojure/http)
+
 This module contains wrappers for `com.twitter.finagle.HttpServer` and HTTP messages.
 
 ### Dependency
