@@ -4,6 +4,8 @@ A thin wrapper around Finagle & Twitter Future.
 This library assumes you are familiar with Finagle.
 If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
+Latest version: 0.6.0
+
 ## Building
 
     lein sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http:mysql:thriftmux" install
