@@ -11,7 +11,7 @@
                  [finagle-clojure/mysql "0.6.1-SNAPSHOT"]]
   :plugins [[lein-sub "0.3.0"]
             [codox "0.8.10"]
-            [lein-midje "3.1.3"]]
+            [lein-midje "3.2"]]
   :sub ["core" "thrift" "thriftmux" "http" "mysql"]
   :codox {:sources ["core/src" "thrift/src" "thriftmux/src" "http/src" "mysql/src"]
           :defaults {:doc/format :markdown}

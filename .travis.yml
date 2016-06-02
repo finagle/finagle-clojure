@@ -2,7 +2,7 @@ language: clojure
 sudo: false
 lein: lein2
 install: lein2 sub -s "lein-finagle-clojure:finagle-clojure-template:core:thrift:http:mysql:thriftmux" install
-script: lein2 sub with-profile dev:1.7:1.6:1.5:1.4 midje
+script: lein2 sub with-profile dev:1.7:1.6:1.5 midje
 jdk:
     - openjdk7
 services:

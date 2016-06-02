@@ -3,7 +3,7 @@
 Minor releases before 1.0.0 may include breaking changes and will explicitly mark them as such.
 
 ## Next Release
-
+* **Breaking** Clojure 1.4 is no longer supported.
 
 ## Version 0.6.0
 
