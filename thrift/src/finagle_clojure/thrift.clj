@@ -1,9 +1,9 @@
 (ns finagle-clojure.thrift
   "Functions for creating Thrift clients & servers from Java classes generated
   from a Thrift service definition using [Scrooge](https://twitter.github.io/scrooge/).
-  
+
   The lein-finagle-clojure plugin can be used to compile Thrift definitions to Java with Scrooge.
-  
+
   See:
   * test/clj/finagle_clojure/thrift_test.clj
   * https://github.com/samn/finagle-clojure-examples/tree/master/dog-breed-info"
@@ -50,8 +50,9 @@
   A new `Service`."
   [service-class-name & body]
   `(do
-     (import ~(finagle-interface service-class-name))
-     (proxy [~(finagle-interface service-class-name)] []
+     (import ~(finagle-interface service-class-name)
+             com.twitter.finagle.Service)
+     (proxy [com.twitter.finagle.Service ~(finagle-interface service-class-name)] []
        ~@body)))
 
 (defn serve
@@ -76,9 +77,9 @@
   *Arguments*:
   * `path`: a String representing the path on the load balancer
   * `server`: a ListeningServer (returned by [serve])
-  
+
   *Returns*:
-  
+
   A Future[Announcement].
 
   *See*:
@@ -102,9 +103,9 @@
   *Arguments*:
   * `path`: a String represent the path on the load balancer
   * `server`: a ListeningServer (returned by [serve])
-  
+
   *Returns*:
-  
+
   `server`
 
   *See*:
@@ -120,7 +121,7 @@
   This is meant to show that this client can make an RPC call and may be expensive to invoke.
 
   E.g. if a Thrift service definition has a method called `doStuff` you can call it on a client
-  like this `(.doStuff client)`. 
+  like this `(.doStuff client)`.
 
   *Arguments*:
 
