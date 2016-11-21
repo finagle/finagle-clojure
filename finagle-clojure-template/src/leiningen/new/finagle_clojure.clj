@@ -3,7 +3,7 @@
             [leiningen.core.main :as main]
             [camel-snake-kebab.core :refer [->PascalCase]]))
 
-(def finagle-clojure-version "0.7.0")
+(def finagle-clojure-version "0.7.1-SNAPSHOT")
 (def valid-project-types #{"thrift" "thriftmux"})
 
 (def render (renderer "finagle-clojure"))

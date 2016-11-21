@@ -4,7 +4,7 @@ A thin wrapper around Finagle & Twitter Future.
 This library assumes you are familiar with Finagle.
 If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
-Latest version: 0.7.0
+Latest version: 0.7.1-SNAPSHOT
 
 ## Building
 
