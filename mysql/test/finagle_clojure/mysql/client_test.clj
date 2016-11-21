@@ -1,8 +1,8 @@
 (ns finagle-clojure.mysql.client-test
-  (:import (com.twitter.finagle.exp.mysql Handshake$Database Handshake$Credentials Handshake$Charset OK)
+  (:import (com.twitter.finagle.mysql Client Handshake$Database Handshake$Credentials Handshake$Charset OK)
            (com.twitter.finagle Stack$Parameterized)
            (scala.collection JavaConversions)
-           (com.twitter.finagle.exp Mysql$Client))
+           (com.twitter.finagle Mysql))
   (:require [midje.sweet :refer :all]
             [finagle-clojure.mysql.client :refer :all]
             [finagle-clojure.scala :as scala]
@@ -18,15 +18,15 @@
        (filter #(instance? cls %))
        (first)))
 
-(defn- database [^Mysql$Client client]
+(defn- database [^Client client]
   (when-let [p (extract-param client Handshake$Database)]
     (opt/get (.db p))))
 
-(defn- charset [^Mysql$Client client]
+(defn- charset [^Client client]
   (when-let [p (extract-param client Handshake$Charset)]
     (.charset p)))
 
-(defn- credentials [^Mysql$Client client]
+(defn- credentials [^Client client]
   (when-let [p (extract-param client Handshake$Credentials)]
     [(opt/get (.username p)) (opt/get (.password p))]))
 
@@ -87,19 +87,19 @@
       => true)
 
     (facts "given an error result"
-      (-> (com.twitter.finagle.exp.mysql.Error. (short 1) "" "")
+      (-> (com.twitter.finagle.mysql.Error. (short 1) "" "")
           (error-code))
       => 1
 
-      (-> (com.twitter.finagle.exp.mysql.Error. (short 0) "" "an error message")
+      (-> (com.twitter.finagle.mysql.Error. (short 0) "" "an error message")
           (message))
       => "an error message"
 
-      (-> (com.twitter.finagle.exp.mysql.Error. (short 0) "a SQL state" "")
+      (-> (com.twitter.finagle.mysql.Error. (short 0) "a SQL state" "")
           (sql-state))
       => "a SQL state"
 
-      (-> (com.twitter.finagle.exp.mysql.Error. (short 0) "" "")
+      (-> (com.twitter.finagle.mysql.Error. (short 0) "" "")
           (ok?))
       => false)
     )

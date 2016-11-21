@@ -4,6 +4,10 @@ Minor releases before 1.0.0 may include breaking changes and will explicitly mar
 
 ## Next Release
 * **Breaking** Clojure 1.4 is no longer supported.
+* Upgrade to finagle 6.39.0
+  * **Breaking** this must run on a JVM >= 1.8
+  * **Breaking** finagle-mysql is no longer experimental and its package has changed.
+  If you depend on any finagle-mysql classes directly you may need to remove `exp` from their package when importing.
 
 ## Version 0.6.0
 

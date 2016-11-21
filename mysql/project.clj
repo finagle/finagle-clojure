@@ -11,4 +11,4 @@
              :1.6 [:test {:dependencies [[org.clojure/clojure "1.6.0"]]}]
              :1.5 [:test {:dependencies [[org.clojure/clojure "1.5.1"]]}]}
   :dependencies [[finagle-clojure/core "0.6.1-SNAPSHOT"]
-                 [com.twitter/finagle-mysql_2.11 "6.35.0"]])
+                 [com.twitter/finagle-mysql_2.11 "6.39.0"]])

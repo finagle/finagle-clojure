@@ -76,7 +76,7 @@
 
   A new com.twitter.finagle.ListeningServer."
   [^String addr ^Service service]
-  (Thrift/serveIface addr service))
+  (.serveIface (Thrift/server) addr service))
 
 (defn serve-tls
   "Serve `service` on `addr` over TLS.  Use this to actually run your Thrift Service.
@@ -170,7 +170,7 @@
   [addr client-iterface-class]
   `(do
      (import ~(finagle-interface client-iterface-class))
-     (Thrift/newIface ~addr ~(finagle-interface client-iterface-class))))
+     (.newIface (Thrift/client) ~addr ~(finagle-interface client-iterface-class))))
 
 (defn ^:no-doc ssl-context
   "Creates an SSLContext object that uses the provided TrustManagers"

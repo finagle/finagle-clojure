@@ -1,7 +1,7 @@
 (ns leiningen.new.finagle-clojure
   (:require [leiningen.new.templates :refer [renderer name-to-path ->files project-name sanitize sanitize-ns]]
             [leiningen.core.main :as main]
-            [camel-snake-kebab.core :refer [->CamelCase]]))
+            [camel-snake-kebab.core :refer [->PascalCase]]))
 
 (def finagle-clojure-version "0.6.1-SNAPSHOT")
 (def valid-project-types #{"thrift" "thriftmux"})
@@ -26,7 +26,7 @@
   [name]
   (-> name
       (name-from-package)
-      (->CamelCase)))
+      (->PascalCase)))
 
 (defn module-name
   [name suffix]

@@ -97,7 +97,7 @@
           ;; (-> rows (first) (get :mfd_on))
           ;; => (Date/valueOf "2014-12-23")
 
-          ;; FIXME There appears to be a bug in com.twitter.finagle.exp.mysql.DateValue.fromBytes that fails to
+          ;; FIXME There appears to be a bug in com.twitter.finagle.mysql.DateValue.fromBytes that fails to
           ;;       zero out time values generated when getting a Calendar instance, leading to a Date object with
           ;;       erroneous time information. This must be fixed upstream in finagle-mysql.
           (-> rows (first) (get :mfd_on) (.getYear) (+ 1900)) ;; Years are post-1900

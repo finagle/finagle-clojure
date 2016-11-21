@@ -2,7 +2,7 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/finagle-clojure/mysql.svg)](https://clojars.org/finagle-clojure/mysql)
 
-This module contains wrappers for `com.twitter.finagle.exp.mysql.Client` and automatic boxing/unboxing of values
+This module contains wrappers for `com.twitter.finagle.mysql.Client` and automatic boxing/unboxing of values
 to idiomatic Clojure vectors of hashmaps.
 
 ### Usage

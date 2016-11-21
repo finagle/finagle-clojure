@@ -1,9 +1,9 @@
 (ns finagle-clojure.mysql.value
   "A collection of private helpers for polymorphically boxing and unboxing Finagle-MySQL values,
-  which is to say, subclasses of [[com.twitter.finagle.exp.mysql.Value]]."
-  (:import (com.twitter.finagle.exp.mysql ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
-                                          StringValue Type RawValue BigDecimalValue NullValue EmptyValue
-                                          NullValue$ EmptyValue$ DateValue$ TimestampValue Parameter$)
+  which is to say, subclasses of [[com.twitter.finagle.mysql.Value]]."
+  (:import (com.twitter.finagle.mysql ByteValue ShortValue IntValue LongValue DoubleValue FloatValue
+                                      StringValue Type RawValue BigDecimalValue NullValue EmptyValue
+                                      NullValue$ EmptyValue$ DateValue$ TimestampValue Parameter$)
            (java.util TimeZone))
   (:require [finagle-clojure.options :as opt]))
 
