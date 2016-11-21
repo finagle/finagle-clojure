@@ -3,6 +3,10 @@
 Minor releases before 1.0.0 may include breaking changes and will explicitly mark them as such.
 
 ## Next Release
+
+
+## Version 0.7.0
+
 * **Breaking** Clojure 1.4 is no longer supported.
 * Upgrade to finagle 6.39.0
   * **Breaking** this must run on a JVM >= 1.8

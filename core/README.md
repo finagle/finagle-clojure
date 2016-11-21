@@ -6,7 +6,7 @@ This module contains wrappers for `com.twitter.util.Future` & core Finagle class
 
 ### Dependency
 
-    [finagle-clojure/core "0.6.1-SNAPSHOT"]
+    [finagle-clojure/core "0.7.0"]
 
 
 ### Namespaces
