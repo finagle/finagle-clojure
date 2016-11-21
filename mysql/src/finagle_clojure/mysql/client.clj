@@ -1,7 +1,7 @@
 (ns finagle-clojure.mysql.client
   (:import (com.twitter.finagle Stack$Param)
-           (com.twitter.finagle.exp.mysql Row Client PreparedStatement Result OK ResultSet Field Parameter$ BigDecimalValue)
-           (com.twitter.finagle.exp Mysql$Client Mysql)
+           (com.twitter.finagle.mysql Row Client PreparedStatement Result OK ResultSet Field Parameter$ BigDecimalValue)
+           (com.twitter.finagle Mysql)
            (com.twitter.util Future))
   (:require [finagle-clojure.scala :as scala]
             [finagle-clojure.mysql.value :as value]
@@ -17,7 +17,7 @@
 
   *Arguments:*
 
-    * `row`: a [[com.twitter.finagle.exp.mysql.Row]]
+    * `row`: a [[com.twitter.finagle.mysql.Row]]
 
   *Returns:*
 
@@ -33,7 +33,7 @@
 
   *Arguments:*
 
-    * `rs`: a [[com.twitter.finagle.exp.mysql.ResultSet]]
+    * `rs`: a [[com.twitter.finagle.mysql.ResultSet]]
 
   *Returns:*
 
@@ -45,7 +45,7 @@
 (defn- param [p]
   (reify Stack$Param (default [this] p)))
 
-(defn ^Mysql$Client mysql-client
+(defn ^Client mysql-client
   "Initialize a configurable MySQL stack client. The `rich-client` function must be called once configured
   in order to execute live queries against this, like so:
 
@@ -62,81 +62,81 @@
 
   *Returns:*
 
-    A new [[com.twitter.finagle.exp.Mysql$Client]]."
+    A new [[com.twitter.finagle.mysql.Client]]."
   []
   (Mysql/client))
 
-(defn ^Mysql$Client with-credentials
-  "Configure the given `Mysql.Client` with connection credentials.
+(defn ^Client with-credentials
+  "Configure the given Mysql `Client` with connection credentials.
 
   *Arguments:*
 
-    * `client`: a `Mysql.Client`
+    * `client`: a Mysql `Client`
     * `user`: a database username
     * `pwd`: a database password
 
   *Returns:*
 
-    the given `Mysql.Client`"
-  [^Mysql$Client client user pwd]
+    the given Mysql `Client`"
+  [^Client client user pwd]
   (.withCredentials client user pwd))
 
-(defn ^Mysql$Client with-database
-  "Configure the given `Mysql.Client` with a database.
+(defn ^Client with-database
+  "Configure the given Mysql `Client` with a database.
 
   *Arguments:*
 
-    * `client`: a `Mysql.Client`
+    * `client`: a Mysql `Client`
     * `db`: the name of a database
 
   *Returns:*
 
-    the given `Mysql.Client`"
-  [^Mysql$Client client db]
+    the given Mysql `Client`"
+  [^Client client db]
   (.withDatabase client db))
 
-(defn ^Mysql$Client with-charset
-  "Configure the given `Mysql.Client` with a charset.
+(defn ^Client with-charset
+  "Configure the given Mysql `Client` with a charset.
 
   *Arguments:*
 
-    * `client`: a `Mysql.Client`
+    * `client`: a Mysql `Client`
     * `charset`: a number representing the charset
 
   *Returns:*
 
-    the given `Mysql.Client`"
-  [^Mysql$Client client charset]
+    the given Mysql `Client`"
+  [^Client client charset]
   (.withCharset client (short charset)))
 
-(defn ^Mysql$Client configured
-  "Configure the given `Mysql.Client` with an arbitrary `Stack.Param`.
+(defn ^Client configured
+  "Configure the given Mysql `Client` with an arbitrary `Stack.Param`.
 
   *Arguments:*
 
-    * `client`: a `Mysql.Client`
+    * `client`: a Mysql `Client`
     * `charset`: an arbitrary `Stack.Param`
 
   *Returns:*
 
-    the given `Mysql.Client`"
-  [^Mysql$Client client stack-param]
+    the given Mysql `Client`"
+  [^Client client stack-param]
   (.configured client stack-param (param stack-param)))
 
 (defn ^Client rich-client
-  "Converts the given `Mysql.Client` into a rich client, which is used for actually performing queries.
+  "Converts the given Mysql `Client` into a rich client, which is used for actually performing queries.
 
   *Arguments:*
 
-    * `client`: a `Mysql.Client`
+    * `client`: a Mysql `Client`
     * `dest`: a string or `Name` of the server location
 
   *Returns:*
 
-    a new [[com.twitter.finagle.exp.mysql.Client]] used for real queries"
-  ([^Mysql$Client client dest]
+    a new [[com.twitter.finagle.mysql.Client]] used for real queries"
+  ([^Client client dest]
     (.newRichClient client dest))
-  ([^Mysql$Client client dest label]
+  ([^Client client dest label]
     (.newRichClient client dest label)))
 
 (defn ^Future query
@@ -149,7 +149,7 @@
 
   *Returns:*
 
-    a `Future` containing a [[com.twitter.finagle.exp.mysql.Result]]"
+    a `Future` containing a [[com.twitter.finagle.mysql.Result]]"
   [^Client client sql]
   (.query client sql))
 
@@ -160,7 +160,7 @@
 
     * `client`: a rich MySQL `Client`
     * `sql`: a SQL string
-    * `fn1` (optional): a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.exp.mysql.Row]]
+    * `fn1` (optional): a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.mysql.Row]]
 
   *Returns:*
 
@@ -189,7 +189,7 @@
 
     * `stmt`: a `PreparedStatement`, generally derived from the `prepare` function
     * `params`: a Clojure vector of params
-    * `fn1` (optional): a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.exp.mysql.Row]]
+    * `fn1` (optional): a Clojure or Scala Function1 that accepts a [[com.twitter.finagle.mysql.Row]]
 
   *Returns:*
 
@@ -214,7 +214,7 @@
 
   *Returns:*
 
-    a [[com.twitter.finagle.exp.mysql.PreparedStatement]]"
+    a [[com.twitter.finagle.mysql.PreparedStatement]]"
   [^Client client sql]
   (.prepare client sql))
 
@@ -227,7 +227,7 @@
 
   *Returns:*
 
-    a `Future` containing a [[com.twitter.finagle.exp.mysql.Result]]"
+    a `Future` containing a [[com.twitter.finagle.mysql.Result]]"
   [^Client client]
   (.ping client))
 
@@ -241,7 +241,7 @@
 
   *Returns:*
 
-    a `Future` containing a [[com.twitter.finagle.exp.mysql.Result]]"
+    a `Future` containing a [[com.twitter.finagle.mysql.Result]]"
   [^PreparedStatement stmt & params]
   (->> (or params [])
        (map ->Parameter)
@@ -253,12 +253,12 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.Result]]
+    * `result`: a [[com.twitter.finagle.mysql.Result]]
 
   *Returns:*
 
-    true if `result` is an instance of [[com.twitter.finagle.exp.mysql.OK]] or
-    [[com.twitter.finagle.exp.mysql.ResultSet]], false otherwise"
+    true if `result` is an instance of [[com.twitter.finagle.mysql.OK]] or
+    [[com.twitter.finagle.mysql.ResultSet]], false otherwise"
   [^Result result]
   (or (instance? OK result) (instance? ResultSet result)))
 
@@ -267,7 +267,7 @@
 
    *Arguments:*
 
-     * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+     * `result`: a [[com.twitter.finagle.mysql.OK]]
 
    *Returns:*
 
@@ -280,7 +280,7 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+    * `result`: a [[com.twitter.finagle.mysql.OK]]
 
   *Returns:*
 
@@ -293,7 +293,7 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+    * `result`: a [[com.twitter.finagle.mysql.OK]]
 
   *Returns:*
 
@@ -306,7 +306,7 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.OK]]
+    * `result`: a [[com.twitter.finagle.mysql.OK]]
 
   *Returns:*
 
@@ -319,7 +319,7 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.OK]] or [[com.twitter.finagle.exp.mysql.Error]]
+    * `result`: a [[com.twitter.finagle.mysql.OK]] or [[com.twitter.finagle.mysql.Error]]
 
   *Returns:*
 
@@ -332,12 +332,12 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.Error]]
+    * `result`: a [[com.twitter.finagle.mysql.Error]]
 
   *Returns:*
 
     the error code of the result"
-  [^com.twitter.finagle.exp.mysql.Error result]
+  [^com.twitter.finagle.mysql.Error result]
   (.code result))
 
 (defn sql-state
@@ -345,10 +345,10 @@
 
   *Arguments:*
 
-    * `result`: a [[com.twitter.finagle.exp.mysql.Error]]
+    * `result`: a [[com.twitter.finagle.mysql.Error]]
 
   *Returns:*
 
     the SQL state of the result"
-  [^com.twitter.finagle.exp.mysql.Error result]
+  [^com.twitter.finagle.mysql.Error result]
   (.sqlState result))

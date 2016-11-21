@@ -50,7 +50,7 @@
 
   A new com.twitter.finagle.ListeningServer."
   [^String addr ^Service service]
-  (ThriftMux/serveIface addr service))
+  (.serveIface (ThriftMux/server) addr service))
 
 (defn announce*
   "Announce this server to the configured load balancer.
@@ -116,4 +116,4 @@
   [addr client-iterface-class]
   `(do
      (import ~(thrift/finagle-interface client-iterface-class))
-     (ThriftMux/newIface ~addr ~(thrift/finagle-interface client-iterface-class))))
+     (.newIface (ThriftMux/client) ~addr ~(thrift/finagle-interface client-iterface-class))))

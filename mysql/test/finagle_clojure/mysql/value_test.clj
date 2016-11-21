@@ -1,6 +1,6 @@
 (ns finagle-clojure.mysql.value-test
-  (:import (com.twitter.finagle.exp.mysql LongValue FloatValue IntValue ShortValue ByteValue DoubleValue StringValue
-                                          BigDecimalValue EmptyValue$ NullValue$ DateValue TimestampValue))
+  (:import (com.twitter.finagle.mysql LongValue FloatValue IntValue ShortValue ByteValue DoubleValue StringValue
+                                      BigDecimalValue EmptyValue$ NullValue$ DateValue TimestampValue))
   (:require [midje.sweet :refer :all]
             [finagle-clojure.mysql.value :refer :all]
             [finagle-clojure.options :as opt]))
