@@ -1,24 +1,25 @@
 (ns finagle-clojure.http.server-test
-  (:import (com.twitter.finagle Http$Server Http$param$MaxRequestSize Http$param$MaxResponseSize)
+  (:import (com.twitter.finagle.http.param MaxRequestSize MaxResponseSize)
            (com.twitter.util StorageUnit)
-           (com.twitter.finagle.transport Transport$TLSServerEngine)
-           (com.twitter.finagle.netty3 Netty3ListenerTLSConfig))
+           (com.twitter.finagle Http$Server)
+           (javax.net.ssl SSLContext)
+           (com.twitter.finagle.transport Transport$ServerSsl)
+           (com.twitter.finagle.ssl.server SslServerConfiguration))
   (:require [finagle-clojure.http.server :refer :all]
             [finagle-clojure.http.stack-helpers :refer :all]
             [finagle-clojure.options :as opt]
-            [midje.sweet :refer :all]
-            [finagle-clojure.scala :as scala]))
+            [midje.sweet :refer :all]))
 
 (defn- tls-server-engine [^Http$Server server]
-  (when-let [p (extract-param server Transport$TLSServerEngine)]
-    (.e p)))
+  (when-let [p (extract-param server Transport$ServerSsl)]
+    (-> p .sslServerConfiguration)))
 
 (defn- max-request-size [^Http$Server server]
-  (when-let [p (extract-param server Http$param$MaxRequestSize)]
+  (when-let [p (extract-param server MaxRequestSize)]
     (.size p)))
 
 (defn- max-response-size [^Http$Server server]
-  (when-let [p (extract-param server Http$param$MaxResponseSize)]
+  (when-let [p (extract-param server MaxResponseSize)]
     (.size p)))
 
 (facts "HTTP server"
@@ -27,11 +28,11 @@
       (http-server)) => nil
 
     (-> (http-server)
-        (with-tls (Netty3ListenerTLSConfig. (scala/Function0 nil)))
+        (with-tls (SSLContext/getDefault))
         (tls-server-engine)
         (opt/get)
-        (.apply))
-    => nil
+        (class))
+    => SslServerConfiguration
 
     (max-request-size (http-server))
     => nil

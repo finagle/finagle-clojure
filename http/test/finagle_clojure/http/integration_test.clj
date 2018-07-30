@@ -9,9 +9,7 @@
             [finagle-clojure.http.client :as http-client]
             [finagle-clojure.http.server :as http-server]
             [finagle-clojure.builder.client :as builder-client]
-            [finagle-clojure.builder.server :as builder-server]
-            [finagle-clojure.http.builder.codec :as http-codec]
-            ))
+            [finagle-clojure.builder.server :as builder-server]))
 
 (def ^Service hello-world
   (s/mk [^Request req]
@@ -39,13 +37,13 @@
   (fact "performs a full-stack integration call"
     (let [s (->
               (builder-server/builder)
-              (builder-server/codec http-codec/http)
+              (builder-server/stack (http-server/http-server))
               (builder-server/bind-to 3000)
               (builder-server/named "test")
               (builder-server/build hello-world))
           c (->
               (builder-client/builder)
-              (builder-client/codec http-codec/http)
+              (builder-client/stack (http-client/http-client))
               (builder-client/hosts "localhost:3000")
               (builder-client/build))]
       (-> (s/apply c (m/request "/"))
