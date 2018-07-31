@@ -7,7 +7,8 @@
            (com.twitter.util Duration Future)
            (com.twitter.finagle.stats StatsReceiver)
            (java.util.logging Logger)
-           (com.twitter.finagle Service Client)))
+           (com.twitter.finagle Service Client)
+           (com.twitter.finagle.client StackBasedClient)))
 
 (defn ^ClientBuilder builder []
   "A builder for constructing `com.twitter.finagle.Client`s. Repeated changes to the builder should be
@@ -42,19 +43,19 @@
   [^ClientBuilder b]
   (.unsafeBuild b))
 
-(defn ^ClientBuilder codec
-  "Configures the given ServerBuilder with a codec.
+(defn ^ClientBuilder stack
+  "Configures the given ServerBuilder with a stack.
 
   *Arguments*:
 
     * `b`: a ClientBuilder
-    * `cdc`: a Codec, CodecFactory, or Function1 that defines the server codec
+    * `sbc`: a StackBasedClient
 
   *Returns*:
 
     a ClientBuilder configured with the given codec"
-  [^ClientBuilder b cdc]
-  (.codec b cdc))
+  [^ClientBuilder b ^StackBasedClient sbc]
+  (.stack b sbc))
 
 (defn ^ClientBuilder hosts
   "Configures the given ClientBuilder with one or more hosts.

@@ -11,8 +11,6 @@
             [finagle-clojure.scala :as scala]
             [clojure.java.io :as io])
   (:import [com.twitter.finagle ListeningServer Service Thrift]
-           [com.twitter.finagle.transport Transport$TLSServerEngine Transport$TLSClientEngine]
-           [com.twitter.finagle.ssl Ssl]
            [javax.net.ssl SSLContext X509TrustManager]
            [java.net InetSocketAddress]
            [java.security.cert X509Certificate]))
@@ -102,8 +100,8 @@
       (throw (IllegalArgumentException. "Could not find public and/or private key."))
       (->
         (Thrift/server)
-        (.configured (.mk (Transport$TLSServerEngine.
-                            (options/option (scala/Function0 (Ssl/server pub priv nil nil nil))))))
+        (.withTransport)
+        (.tls pub priv (options/option) (options/option) (options/option))
         (.serveIface addr service)))))
 
 (defn announce*
@@ -179,17 +177,6 @@
     (.init ctx nil trust-mgrs nil)
     ctx))
 
-(defn ^:no-doc get-tls-engine
-  "Returns a TLS enabled Client Engine created from the provided SSLContext.  If nil, will
-  use the default SSLContext."
-  [ssl-ctx]
-  (let [engine-ctx (if (instance? SSLContext ssl-ctx) ssl-ctx (ssl-context nil))]
-    (Transport$TLSClientEngine.
-      (options/option
-        (scala/Function [inet]
-          (if (instance? InetSocketAddress inet)
-            (Ssl/client engine-ctx (.getHostName inet) (.getPort inet))
-            (Ssl/client engine-ctx)))))))
 
 (defn insecure-ssl-context
   "Returns a naive SSLContext that provides no certificate verification.
@@ -229,5 +216,6 @@
      (import ~(finagle-interface client-interface-class))
      (->
        (Thrift/client)
-       (.configured (.mk (get-tls-engine ~ssl-ctx)))
+       (.withTransport)
+       (.tls ~ssl-ctx)
        (.newIface ~addr ~(finagle-interface client-interface-class)))))

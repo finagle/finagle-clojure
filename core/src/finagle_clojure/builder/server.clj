@@ -8,7 +8,8 @@
            (java.net InetSocketAddress)
            (com.twitter.util Duration Future)
            (com.twitter.finagle.tracing Tracer)
-           (com.twitter.finagle.stats StatsReceiver)))
+           (com.twitter.finagle.stats StatsReceiver)
+           (com.twitter.finagle.server StackBasedServer)))
 
 (defn ^ServerBuilder builder
   "A handy Builder for constructing Servers (i.e., binding Services to a port).
@@ -103,19 +104,19 @@
   [^ServerBuilder b ^Duration d]
   (.requestTimeout b d))
 
-(defn ^ServerBuilder codec
+(defn ^ServerBuilder stack
   "Configures the given ServerBuilder with a codec.
 
   *Arguments*:
 
     * `b`: a ServerBuilder
-    * `cdc`: a Codec, CodecFactory, or Function1 that defines the server codec
+    * `sbs`: a StackBasedServer
 
   *Returns*:
 
     a ServerBuilder configured with the given codec"
-  [^ServerBuilder b cdc]
-  (.codec b cdc))
+  [^ServerBuilder b ^StackBasedServer sbs]
+  (.stack b sbs))
 
 (defn ^ServerBuilder max-concurrent-requests
   "Configures the given ServerBuilder to accept a maximum number of concurrent requests.

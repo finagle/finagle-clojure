@@ -58,9 +58,9 @@
     (spit file-name (slurp resource-uri))
     (io/as-file file-name)))
 
-(def ^java.io.File private-key (resolve-on-filesystem "test-only.key"))
+(def ^java.io.File private-key (resolve-on-filesystem "test-only_key.pem"))
 
-(def ^java.io.File public-key (resolve-on-filesystem "test-only.pem"))
+(def ^java.io.File public-key (resolve-on-filesystem "test-only_cert.pem"))
 
 (fact "keys exist"
   (.exists private-key) => true

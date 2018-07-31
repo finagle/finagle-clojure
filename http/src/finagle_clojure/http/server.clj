@@ -1,8 +1,8 @@
 (ns finagle-clojure.http.server
   (:import (com.twitter.finagle Http Http$Server)
            (com.twitter.finagle Stack$Param ListeningServer)
-           (com.twitter.finagle.netty3 Netty3ListenerTLSConfig)
-           (com.twitter.util StorageUnit Future)))
+           (com.twitter.util StorageUnit Future)
+           (javax.net.ssl SSLContext)))
 
 (defn- ^Stack$Param param [p]
   (reify Stack$Param (default [this] p)))
@@ -18,8 +18,10 @@
   *Returns*:
 
     the given `Http.Server`"
-  [^Http$Server server ^Netty3ListenerTLSConfig cfg]
-  (.withTls server cfg))
+  [^Http$Server server ^SSLContext cfg]
+  (-> server
+      .withTransport
+      (.tls cfg)))
 
 (defn ^Http$Server with-max-request-size
   "Configures the given `Http.Server` with a max request size.
