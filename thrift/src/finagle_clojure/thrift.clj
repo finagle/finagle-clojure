@@ -91,18 +91,27 @@
       - `:pub`: (required) fully qualified file name for the public key
                 in PEM format used for running the server
 
+  *Arguments*:
+
+    * `addr`: The port on which to serve.
+    * `service`: The Service that should be served.
+    * `context`: The SSL context that should be used.
+
   *Returns*:
 
   A new com.twitter.finagle.ListeningServer."
-  [^String addr ^Service service & opts]
-  (let [{:keys [priv pub]} opts]
-    (if (not (and (.exists (io/file priv)) (.exists (io/file pub))))
-      (throw (IllegalArgumentException. "Could not find public and/or private key."))
-      (->
-        (Thrift/server)
-        (.withTransport)
-        (.tls pub priv (options/option) (options/option) (options/option))
-        (.serveIface addr service)))))
+  ([^String addr ^Service service priv pub]
+   (if (not (and (.exists (io/file priv)) (.exists (io/file pub))))
+     (throw (IllegalArgumentException. "Could not find public and/or private key."))
+     (-> (Thrift/server)
+         (.withTransport)
+         (.tls pub priv (options/option) (options/option) (options/option))
+         (.serveIface addr service))))
+  ([^String addr ^Service service ^SSLContext context]
+   (-> (Thrift/server)
+       (.withTransport)
+       (.tls context)
+       (.serveIface addr service))))
 
 (defn announce*
   "Announce this server to the configured load balancer.
