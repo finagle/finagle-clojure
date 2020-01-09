@@ -37,20 +37,6 @@
   [^Http$Server server ^StorageUnit size]
   (.withMaxRequestSize server size))
 
-(defn ^Http$Server with-max-response-size
-  "Configures the given `Http.Server` with a max response size.
-
-  *Arguments*:
-
-    * `server`: an Http.Server
-    * `size`: a `StorageUnit` of the desired response size
-
-  *Returns*:
-
-    the given `Http.Server`"
-  [^Http$Server server ^StorageUnit size]
-  (.withMaxResponseSize server size))
-
 (defn ^Http$Server configured
   "Configures the given `Http.Server` with the desired Stack.Param. Generally, prefer one of the
   explicit configuration functions over this.

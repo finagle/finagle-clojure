@@ -33,20 +33,6 @@
   [^Http$Client client]
   (.withTlsWithoutValidation client))
 
-(defn ^Http$Client with-max-request-size
-  "Configures the given `Http.Client` with a max request size.
-
-  *Arguments*:
-
-    * `client`: an Http.Client
-    * `size`: a `StorageUnit` of the desired request size
-
-  *Returns*:
-
-    the given `Http.Client`"
-  [^Http$Client client ^StorageUnit size]
-  (.withMaxRequestSize client size))
-
 (defn ^Http$Client with-max-response-size
   "Configures the given `Http.Client` with a max response size.
 

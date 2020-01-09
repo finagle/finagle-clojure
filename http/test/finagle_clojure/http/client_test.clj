@@ -58,10 +58,6 @@
     (max-request-size (http-client))
     => nil
 
-    (max-request-size
-      (with-max-request-size (http-client) (StorageUnit. 1024)))
-    => (StorageUnit. 1024)
-
     (max-response-size (http-client))
     => nil
 
