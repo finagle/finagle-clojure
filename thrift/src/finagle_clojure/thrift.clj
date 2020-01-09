@@ -12,7 +12,6 @@
             [clojure.java.io :as io])
   (:import [com.twitter.finagle ListeningServer Service Thrift]
            [javax.net.ssl SSLContext X509TrustManager]
-           [java.net InetSocketAddress]
            [java.security.cert X509Certificate]))
 
 (defn- ^:no-doc ^String canonical-class-name
@@ -85,28 +84,11 @@
 
     * `addr`: The port on which to serve.
     * `service`: The Service that should be served.
-    * `opts`: key/value options for the server, includes:
-      - `:priv`: (required) fully qualified file name for the private key
-                 in PEM format used for running the server
-      - `:pub`: (required) fully qualified file name for the public key
-                in PEM format used for running the server
-
-  *Arguments*:
-
-    * `addr`: The port on which to serve.
-    * `service`: The Service that should be served.
     * `context`: The SSL context that should be used.
 
   *Returns*:
 
   A new com.twitter.finagle.ListeningServer."
-  ([^String addr ^Service service priv pub]
-   (if (not (and (.exists (io/file priv)) (.exists (io/file pub))))
-     (throw (IllegalArgumentException. "Could not find public and/or private key."))
-     (-> (Thrift/server)
-         (.withTransport)
-         (.tls pub priv (options/option) (options/option) (options/option))
-         (.serveIface addr service))))
   ([^String addr ^Service service ^SSLContext context]
    (-> (Thrift/server)
        (.withTransport)
