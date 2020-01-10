@@ -32,7 +32,8 @@ import com.twitter.util.Function2;
 import com.twitter.util.Try;
 import com.twitter.util.Return;
 import com.twitter.util.Throw;
-import com.twitter.finagle.thrift.DeserializeCtx;
+import com.twitter.finagle.thrift.ClientDeserializeCtx;
+import com.twitter.finagle.thrift.ServerToReqRep;
 import com.twitter.finagle.thrift.ThriftClientRequest;
 
 public class DogBreedService {
@@ -173,7 +174,7 @@ public class DogBreedService {
      */
     @Deprecated
     public ServiceToClient(com.twitter.finagle.Service<ThriftClientRequest, byte[]> service, TProtocolFactory protocolFactory, scala.PartialFunction<com.twitter.finagle.service.ReqRep,com.twitter.finagle.service.ResponseClass> responseClassifier) {
-      this(service, new com.twitter.finagle.thrift.RichClientParam(protocolFactory, responseClassifier));
+      this(service, com.twitter.finagle.thrift.RichClientParam.apply(protocolFactory, responseClassifier));
     }
 
     public ServiceToClient(com.twitter.finagle.Service<ThriftClientRequest, byte[]> service, com.twitter.finagle.thrift.RichClientParam clientParam) {
@@ -181,11 +182,11 @@ public class DogBreedService {
       this.service = service;
       this.protocolFactory = clientParam.restrictedProtocolFactory();
       this.responseClassifier = clientParam.responseClassifier();
-      this.tlReusableBuffer = new TReusableBuffer(512, clientParam.maxThriftBufferSize());
+      this.tlReusableBuffer = clientParam.createThriftReusableBuffer();
     }
 
     public ServiceToClient(com.twitter.finagle.Service<ThriftClientRequest, byte[]> service) {
-      this(service, new com.twitter.finagle.thrift.RichClientParam());
+      this(service, com.twitter.finagle.thrift.RichClientParam.apply());
     }
 
     /**
@@ -193,7 +194,7 @@ public class DogBreedService {
      */
     @Deprecated
     public ServiceToClient(com.twitter.finagle.Service<ThriftClientRequest, byte[]> service, TProtocolFactory protocolFactory) {
-      this(service, new com.twitter.finagle.thrift.RichClientParam(protocolFactory, com.twitter.finagle.service.ResponseClassifier.Default()));
+      this(service, com.twitter.finagle.thrift.RichClientParam.apply(protocolFactory, com.twitter.finagle.service.ResponseClassifier.Default()));
     }
 
     public Future<BreedInfoResponse> breedInfo(String breedName) {
@@ -203,12 +204,6 @@ public class DogBreedService {
         __prot__.writeMessageBegin(new TMessage("breedInfo", TMessageType.CALL, 0));
         breedInfo_args __args__ = new breedInfo_args();
         __args__.setBreedName(breedName);
-        __args__.write(__prot__);
-        __prot__.writeMessageEnd();
-
-
-        byte[] __buffer__ = Arrays.copyOf(__memoryTransport__.getArray(), __memoryTransport__.length());
-        final ThriftClientRequest __request__ = new ThriftClientRequest(__buffer__, false);
 
         Function<byte[], com.twitter.util.Try<BreedInfoResponse>> replyDeserializer =
           new Function<byte[], com.twitter.util.Try<BreedInfoResponse>>() {
@@ -222,13 +217,21 @@ public class DogBreedService {
               }
             }
           };
-        DeserializeCtx serdeCtx = new DeserializeCtx<BreedInfoResponse>(__args__, replyDeserializer);
 
+        ClientDeserializeCtx<BreedInfoResponse> serdeCtx = new ClientDeserializeCtx<>(__args__, replyDeserializer);
         return com.twitter.finagle.context.Contexts.local().let(
-          DeserializeCtx.Key(),
+          ClientDeserializeCtx.Key(),
           serdeCtx,
-          new com.twitter.util.Function0<Future<BreedInfoResponse>>() {
-            public Future<BreedInfoResponse> apply() {
+          new com.twitter.util.ExceptionalFunction0<Future<BreedInfoResponse>>() {
+            public Future<BreedInfoResponse> applyE() throws TException {
+              serdeCtx.rpcName("breedInfo");
+              long start = System.nanoTime();
+              __args__.write(__prot__);
+              __prot__.writeMessageEnd();
+              serdeCtx.serializationTime(System.nanoTime() - start);
+
+              byte[] __buffer__ = Arrays.copyOf(__memoryTransport__.getArray(), __memoryTransport__.length());
+              final ThriftClientRequest __request__ = new ThriftClientRequest(__buffer__, false);
 
               Future<byte[]> __done__ = service.apply(__request__);
               return __done__.flatMap(new Function<byte[], Future<BreedInfoResponse>>() {
@@ -313,15 +316,23 @@ public class DogBreedService {
 
   public static class Service extends com.twitter.finagle.Service<byte[], byte[]> {
     private final ServiceIface iface;
+    private final com.twitter.finagle.Filter.TypeAgnostic filters;
     private final TProtocolFactory protocolFactory;
+    private final String serviceName;
     private final TReusableBuffer tlReusableBuffer;
     protected HashMap<String, com.twitter.finagle.Service<scala.Tuple2<TProtocol, Integer>, byte[]>> serviceMap =
       new HashMap<String, com.twitter.finagle.Service<scala.Tuple2<TProtocol, Integer>, byte[]>>();
-    public Service(final ServiceIface iface, final com.twitter.finagle.thrift.RichServerParam serverParam) {
+    public Service(final ServiceIface iface, final com.twitter.finagle.Filter.TypeAgnostic filters, final com.twitter.finagle.thrift.RichServerParam serverParam) {
       this.iface = iface;
+      this.filters = filters;
       this.protocolFactory = serverParam.restrictedProtocolFactory();
+      this.serviceName = serverParam.serviceName();
       this.tlReusableBuffer = new TReusableBuffer(512, serverParam.maxThriftBufferSize());
       createMethods();
+    }
+
+    public Service(final ServiceIface iface, final com.twitter.finagle.thrift.RichServerParam serverParam) {
+      this(iface, com.twitter.finagle.Filter.typeAgnosticIdentity(), serverParam);
     }
 
     public Service(final ServiceIface iface) {
@@ -350,11 +361,14 @@ public class DogBreedService {
                 if (e instanceof TProtocolException) {
                   try {
                     iprot.readMessageEnd();
+                    setReqRepContext(request, new com.twitter.util.Throw(new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage())));
                     return exception("breedInfo", seqid, TApplicationException.PROTOCOL_ERROR, e.getMessage());
                   } catch (Exception e1) {
+                    setReqRepContext(request, new com.twitter.util.Throw(e1));
                     return Future.exception(e1);
                   }
                 } else {
+                  setReqRepContext(request, new com.twitter.util.Throw(e));
                   return Future.exception(e);
                 }
               }
@@ -368,25 +382,42 @@ public class DogBreedService {
             TProtocol iprot = request._1();
             Integer seqid = request._2();
             breedInfo_args args = new breedInfo_args();
+
             try {
+              long start = System.nanoTime();
               args.read(iprot);
               iprot.readMessageEnd();
+              com.twitter.finagle.tracing.Trace.recordBinary("srv/request_deserialization_ns", System.nanoTime() - start);
             } catch (Exception e) {
               return Future.exception(e);
             }
 
-            Future<BreedInfoResponse> res = service.apply(args);
+            Future<BreedInfoResponse> res = com.twitter.finagle.context.Contexts.local().let(
+                com.twitter.finagle.thrift.MethodMetadata.Key(),
+                new com.twitter.finagle.thrift.MethodMetadata(
+                    "breedInfo",
+                    serviceName,
+                    breedInfo_args.class,
+                    breedInfo_result.class),
+                new scala.runtime.AbstractFunction0<Future<BreedInfoResponse>>() {
+                  @Override
+                  public Future<BreedInfoResponse> apply() {
+                    return service.apply(args);
+                  }
+                });
             breedInfo_result result = new breedInfo_result();
             return res.flatMap(new Function<BreedInfoResponse, Future<byte[]>>() {
               @Override
               public Future<byte[]> apply(BreedInfoResponse value) {
                 result.success = value;
                 result.setSuccessIsSet(true);
+                setReqRepContext(args, new com.twitter.util.Return(value));
                 return reply("breedInfo", seqid, result);
               }
             }).rescue(new Function<Throwable, Future<byte[]>>() {
               @Override
               public Future<byte[]> apply(Throwable t) {
+                setReqRepContext(args, new com.twitter.util.Throw(t));
                 return Future.exception(t);
               }
             });
@@ -402,10 +433,17 @@ public class DogBreedService {
         };
 
         private final com.twitter.finagle.Service<scala.Tuple2<TProtocol, Integer>, byte[]> getService =
-          protocolExnFilter.andThen(serdeFilter).andThen(methodService);
+          protocolExnFilter.andThen(serdeFilter).andThen(filters.toFilter()).andThen(methodService);
       }
 
       serviceMap.put("breedInfo", (new breedInfoService()).getService);
+    }
+
+    private void setReqRepContext(Object req, com.twitter.util.Try<Object> rep) {
+      scala.Option<ServerToReqRep> serdeCtx = com.twitter.finagle.context.Contexts.local().get(ServerToReqRep.Key());
+      if (serdeCtx.nonEmpty()) {
+        serdeCtx.get().setReqRep(new com.twitter.finagle.service.ReqRep(req, rep));
+      }
     }
 
     public Future<byte[]> apply(byte[] request) {
@@ -444,12 +482,14 @@ public class DogBreedService {
 
     private Future<byte[]> reply(String name, Integer seqid, TBase result) {
       try {
+        long start = System.nanoTime();
         TReusableMemoryTransport memoryBuffer = tlReusableBuffer.get();
         TProtocol oprot = protocolFactory.getProtocol(memoryBuffer);
 
         oprot.writeMessageBegin(new TMessage(name, TMessageType.REPLY, seqid));
         result.write(oprot);
         oprot.writeMessageEnd();
+        com.twitter.finagle.tracing.Trace.recordBinary("srv/response_serialization_ns", System.nanoTime() - start);
 
         return Future.value(Arrays.copyOf(memoryBuffer.getArray(), memoryBuffer.length()));
       } catch (Exception e) {
