@@ -1,5 +1,6 @@
 (ns finagle-clojure.builder.server-test
-  (:import (com.twitter.finagle.builder Server ServerBuilder IncompleteSpecification))
+  (:import (com.twitter.finagle.builder ServerBuilder IncompleteSpecification)
+           (com.twitter.finagle ListeningServer))
   (:require [midje.sweet :refer :all]
             [finagle-clojure.builder.server :refer :all]
             [finagle-clojure.service :as service]
@@ -35,7 +36,7 @@
               (named "foo")
               (build empty-service))]
     (ancestors (class s))
-    => (contains Server)
+    => (contains ListeningServer)
     (f/await (close! s))
     => scala/unit)
 

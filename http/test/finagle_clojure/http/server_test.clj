@@ -42,8 +42,4 @@
     => (StorageUnit. 1024)
 
     (max-response-size (http-server))
-    => nil
-
-    (max-response-size
-      (with-max-response-size (http-server) (StorageUnit. 1024)))
-    => (StorageUnit. 1024)))
+    => nil))

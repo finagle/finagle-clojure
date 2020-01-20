@@ -61,7 +61,7 @@
 
     the given response"
   [^Response resp code]
-  (.setStatusCode resp code)
+  (.statusCode resp code)
   resp)
 
 (defn status-code

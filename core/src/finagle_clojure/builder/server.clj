@@ -3,8 +3,8 @@
   of any particular codec. Generally speaking codec-specific server functions
   should be preferred, but these are included for comptability with older systems
   configured at the server level."
-  (:import (com.twitter.finagle.builder ServerBuilder Server)
-           (com.twitter.finagle Service)
+  (:import (com.twitter.finagle.builder ServerBuilder)
+           (com.twitter.finagle Service ListeningServer)
            (java.net InetSocketAddress)
            (com.twitter.util Duration Future)
            (com.twitter.finagle.tracing Tracer)
@@ -34,7 +34,7 @@
   []
   (ServerBuilder/apply))
 
-(defn ^Server build
+(defn ^ListeningServer build
   "Given a completed `ServerBuilder` and a `Service`, constructs an `Server` which is capable of
   responding to requests.
 
@@ -59,7 +59,7 @@
   *Returns*:
 
     a Future that closes when the server stops"
-  [^Server server]
+  [^ListeningServer server]
   (.close server))
 
 (defn ^ServerBuilder named

@@ -100,7 +100,7 @@ public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResp
 
   // isset id assignments
   private static final int __BEAUTIFUL_ISSET_ID = 0;
-  private BitSet __isset_bit_vector = new BitSet(1);
+  private final BitSet __isset_bit_vector = new BitSet(1);
 
   public static final Map<_Fields, FieldMetaData> metaDataMap;
   
@@ -275,7 +275,7 @@ public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResp
     case NAME:
       return getName();
     case BEAUTIFUL:
-      return new Boolean(isBeautiful());
+      return Boolean.valueOf(isBeautiful());
     }
     throw new IllegalStateException();
   }

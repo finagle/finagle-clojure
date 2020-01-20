@@ -1,5 +1,6 @@
 (ns finagle-clojure.thrift-test
-  (:import test.DogBreedService)
+  (:import test.DogBreedService
+           br.com.nubank.tls.TlsPublicServerContext)
   (:require [finagle-clojure.thrift :as thrift]
             [finagle-clojure.futures :as f]
             [midje.sweet :refer :all]
@@ -67,7 +68,7 @@
   (.exists public-key) => true)
 
 (def ^com.twitter.finagle.ListeningServer tls-dog-breed-server
-  (thrift/serve-tls ":9998" dog-breed-service (.getAbsolutePath private-key) (.getAbsolutePath public-key)))
+  (thrift/serve-tls ":9998" dog-breed-service (.getSslContext (TlsPublicServerContext.))))
 
 (def ^test.DogBreedService$ServiceIface tls-dog-breed-client
   (thrift/client-tls "localhost:9998" test.DogBreedService (thrift/insecure-ssl-context)))
