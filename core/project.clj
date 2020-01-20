@@ -1,9 +1,9 @@
-(defproject finagle-clojure/core "0.8.0-SNAPSHOT"
+(defproject finagle-clojure/core "0.8.0-NUBANK"
   :description "A light wrapper around Finagle & Twitter Util for Clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
             :url  "https://www.apache.org/licenses/LICENSE-2.0"}
-  :scm {:name "git" :url "http://github.com/finagle/finagle-clojure"}
+  :scm {:name "git" :url "http://github.com/nubank/finagle-clojure" :dir ".."}
   :plugins [[s3-wagon-private "1.3.1"]
             [lein-midje "3.2"]]
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.10.0"]

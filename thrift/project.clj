@@ -1,4 +1,4 @@
-(defproject finagle-clojure/thrift "0.8.0-SNAPSHOT"
+(defproject finagle-clojure/thrift "0.8.0-NUBANK"
   :description "A light wrapper around finagle-thrift for Clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"

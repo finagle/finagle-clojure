@@ -1,4 +1,4 @@
-(defproject finagle-clojure/lein-template "0.7.1-SNAPSHOT"
+(defproject finagle-clojure/lein-template "0.8.0-NUBANK"
   :description "A lein template for creating a new finagle-clojure Thrift project."
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
