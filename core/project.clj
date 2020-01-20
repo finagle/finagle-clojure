@@ -1,4 +1,4 @@
-(defproject finagle-clojure/core "0.8.0-NUBANK"
+(defproject finagle-clojure/core "0.8.0"
   :description "A light wrapper around Finagle & Twitter Util for Clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
