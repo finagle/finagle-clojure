@@ -3,7 +3,7 @@
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0"}
-  :scm {:name "git" :url "https://github.com/finagle/finagle-clojure"}
+  :scm {:name "git" :url "https://github.com/nubank/finagle-clojure"}
   :plugins [[s3-wagon-private "1.3.1"]
             [lein-midje "3.2.1"]]
   :profiles {:dev {:dependencies   [[org.clojure/clojure "1.10.0"]
@@ -23,7 +23,7 @@
   ;; but also to require fewer dependencies in projects that use thrift.
   ;; this is akin to Finagle itself, where depending on finagle-thrift
   ;; pulls in finagle-core as well.
-  :dependencies [[finagle-clojure/core "0.8.0-SNAPSHOT"]
+  :dependencies [[finagle-clojure/core "0.8.0-NUBANK"]
                  [com.twitter/finagle-thrift_2.11 "19.12.0"]
                  [org.apache.thrift/libthrift "0.10.0"]
                  [org.apache.tomcat/tomcat-jni "8.5.0"]])
