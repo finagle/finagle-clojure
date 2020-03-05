@@ -4,3 +4,15 @@ A thin wrapper around Finagle & Twitter Future.
 This library assumes you are familiar with Finagle.
 If not, check out its [docs](https://twitter.github.io/finagle/guide/).
 
+## Testing
+
+First you need to run:
+```
+lein modules install
+```
+
+And then:
+```
+lein modules midje
+```
+
