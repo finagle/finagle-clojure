@@ -1,4 +1,4 @@
-(defproject lein-finagle-clojure "0.8.0-NUBANK"
+(defproject lein-finagle-clojure "0.8.1-SNAPSHOT"
   :description "A lein plugin for working with finagle-clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
