@@ -24,9 +24,11 @@ import org.apache.thrift.meta_data.*;
 import org.apache.thrift.transport.*;
 import org.apache.thrift.protocol.*;
 
+import com.twitter.scrooge.ThriftStructIface;
+
 // No additional import required for struct/union.
 
-public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResponse._Fields>, java.io.Serializable, Cloneable {
+public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResponse._Fields>, java.io.Serializable, Cloneable, ThriftStructIface {
   private static final TStruct STRUCT_DESC = new TStruct("BreedInfoResponse");
 
   private static final TField NAME_FIELD_DESC = new TField("name", TType.STRING, (short)1);
@@ -36,7 +38,7 @@ public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResp
   public String name;
   public boolean beautiful;
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /** The set of fields this object contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements TFieldIdEnum {
     NAME((short)1, "name"),
     BEAUTIFUL((short)2, "beautiful");
@@ -305,6 +307,10 @@ public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResp
   }
 
   public boolean equals(BreedInfoResponse that) {
+    return equalsWithoutPassthrough(that);
+  }
+
+  private boolean equalsWithoutPassthrough(BreedInfoResponse that) {
     if (that == null)
       return false;
     boolean this_present_name = true && this.isSetName();
@@ -323,9 +329,9 @@ public class BreedInfoResponse implements TBase<BreedInfoResponse, BreedInfoResp
       if (this.beautiful != that.beautiful)
         return false;
     }
-
     return true;
   }
+
 
   @java.lang.Override
   public int hashCode() {

@@ -24,8 +24,11 @@ import org.apache.thrift.meta_data.*;
 import org.apache.thrift.transport.*;
 import org.apache.thrift.protocol.*;
 
+import com.twitter.scrooge.ThriftMethodIface;
+import com.twitter.scrooge.ThriftStructIface;
 import com.twitter.scrooge.TReusableBuffer;
 import com.twitter.scrooge.TReusableMemoryTransport;
+import com.twitter.util.ConstFuture;
 import com.twitter.util.Future;
 import com.twitter.util.Function;
 import com.twitter.util.Function2;
@@ -35,6 +38,7 @@ import com.twitter.util.Throw;
 import com.twitter.finagle.thrift.ClientDeserializeCtx;
 import com.twitter.finagle.thrift.ServerToReqRep;
 import com.twitter.finagle.thrift.ThriftClientRequest;
+import com.twitter.finagle.thrift.AbstractThriftService;
 
 public class DogBreedService {
   public interface Iface {
@@ -45,7 +49,7 @@ public class DogBreedService {
     public void breedInfo(String breedName, AsyncMethodCallback<BreedInfoResponse> resultHandler) throws TException;
   }
 
-  public interface ServiceIface {
+  public interface ServiceIface extends AbstractThriftService {
     public Future<BreedInfoResponse> breedInfo(String breedName);
   }
 
@@ -239,7 +243,7 @@ public class DogBreedService {
                   TMemoryInputTransport __memoryTransport__ = new TMemoryInputTransport(__buffer__);
                   TProtocol __prot__ = ServiceToClient.this.protocolFactory.getProtocol(__memoryTransport__);
                   try {
-                    return Future.value((new Client(__prot__)).recv_breedInfo());
+                    return new ConstFuture(serdeCtx.deserialize(__buffer__));
                   } catch (Exception e) {
                     return Future.exception(e);
                   }
@@ -442,7 +446,7 @@ public class DogBreedService {
     private void setReqRepContext(Object req, com.twitter.util.Try<Object> rep) {
       scala.Option<ServerToReqRep> serdeCtx = com.twitter.finagle.context.Contexts.local().get(ServerToReqRep.Key());
       if (serdeCtx.nonEmpty()) {
-        serdeCtx.get().setReqRep(new com.twitter.finagle.service.ReqRep(req, rep));
+        serdeCtx.get().setReqRep(com.twitter.finagle.service.ReqRep.apply(req, rep));
       }
     }
 
@@ -519,7 +523,19 @@ public class DogBreedService {
     }
   }
 
-  public static class breedInfo_args implements TBase<breedInfo_args, breedInfo_args._Fields>, java.io.Serializable, Cloneable {
+  public static class breedInfo extends ThriftMethodIface {
+    @Override
+    public String name() {
+      return "breedInfo";
+    }
+
+    @Override
+    public String serviceName() {
+      return "DogBreedService";
+    }
+  }
+
+  public static class breedInfo_args implements TBase<breedInfo_args, breedInfo_args._Fields>, java.io.Serializable, Cloneable, ThriftStructIface {
   private static final TStruct STRUCT_DESC = new TStruct("breedInfo_args");
 
   private static final TField BREED_NAME_FIELD_DESC = new TField("breedName", TType.STRING, (short)1);
@@ -527,7 +543,7 @@ public class DogBreedService {
 
   public String breedName;
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /** The set of fields this object contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements TFieldIdEnum {
     BREED_NAME((short)1, "breedName");
   
@@ -746,6 +762,10 @@ public class DogBreedService {
   }
 
   public boolean equals(breedInfo_args that) {
+    return equalsWithoutPassthrough(that);
+  }
+
+  private boolean equalsWithoutPassthrough(breedInfo_args that) {
     if (that == null)
       return false;
     boolean this_present_breedName = true && this.isSetBreedName();
@@ -756,9 +776,9 @@ public class DogBreedService {
       if (!this.breedName.equals(that.breedName))
         return false;
     }
-
     return true;
   }
+
 
   @java.lang.Override
   public int hashCode() {
@@ -857,7 +877,7 @@ public class DogBreedService {
 }
 
 
-  public static class breedInfo_result implements TBase<breedInfo_result, breedInfo_result._Fields>, java.io.Serializable, Cloneable {
+  public static class breedInfo_result implements TBase<breedInfo_result, breedInfo_result._Fields>, java.io.Serializable, Cloneable, ThriftStructIface {
   private static final TStruct STRUCT_DESC = new TStruct("breedInfo_result");
 
   private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.STRUCT, (short)0);
@@ -865,7 +885,7 @@ public class DogBreedService {
 
   public BreedInfoResponse success;
 
-  /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+  /** The set of fields this object contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements TFieldIdEnum {
     SUCCESS((short)0, "success");
   
@@ -1089,6 +1109,10 @@ public class DogBreedService {
   }
 
   public boolean equals(breedInfo_result that) {
+    return equalsWithoutPassthrough(that);
+  }
+
+  private boolean equalsWithoutPassthrough(breedInfo_result that) {
     if (that == null)
       return false;
     boolean this_present_success = true && this.isSetSuccess();
@@ -1099,9 +1123,9 @@ public class DogBreedService {
       if (!this.success.equals(that.success))
         return false;
     }
-
     return true;
   }
+
 
   @java.lang.Override
   public int hashCode() {
