@@ -26,5 +26,5 @@
   ;; pulls in finagle-core as well.
   :dependencies [[finagle-clojure/core "0.9.0-SNAPSHOT"]
                  [com.twitter/finagle-thrift_2.11 "20.8.1"]
-                 [org.apache.thrift/libthrift "0.10.0"]
+                 [org.apache.thrift/libthrift "0.13.0"]
                  [org.apache.tomcat/tomcat-jni "8.5.0"]])
