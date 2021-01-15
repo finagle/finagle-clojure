@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.10.1
+- Rollbacking thrift bump until we generate a new release with a compatible code with thrift `0.13.0`
+
 ## 0.10.0
 We are bumping `org.apache.thrift/libthrift` on `finagle-cloure/thrift` due to security issues with the current version.
 The nearest version without known vulnerabilities is `0.13.0`.
