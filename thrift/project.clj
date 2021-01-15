@@ -1,4 +1,4 @@
-(defproject finagle-clojure/thrift "0.10.1"
+(defproject finagle-clojure/thrift "0.10.2-SNAPSHOT"
   :description "A light wrapper around finagle-thrift for Clojure"
   :url "https://github.com/twitter/finagle-clojure"
   :license {:name "Apache License, Version 2.0"
