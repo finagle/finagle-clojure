@@ -24,7 +24,7 @@
   ;; but also to require fewer dependencies in projects that use thrift.
   ;; this is akin to Finagle itself, where depending on finagle-thrift
   ;; pulls in finagle-core as well.
-  :dependencies [[finagle-clojure/core "0.9.0-SNAPSHOT"]
+  :dependencies [[finagle-clojure/core "0.10.2-SNAPSHOT"]
                  [com.twitter/finagle-thrift_2.11 "20.8.1"]
                  [org.apache.thrift/libthrift "0.10.0"]
                  [org.apache.tomcat/tomcat-jni "8.5.0"]])

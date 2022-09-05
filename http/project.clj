@@ -11,6 +11,6 @@
                                   [midje "1.9.9" :exclusions [org.clojure/clojure]]]}}
   :repositories [["nu-maven" {:url "s3p://nu-maven/releases/"}]]
   :deploy-repositories [["releases" {:url "s3p://nu-maven/releases/" :no-auth true}]]
-  :dependencies [[finagle-clojure/core "0.9.0-SNAPSHOT"]
+  :dependencies [[finagle-clojure/core "0.10.2-SNAPSHOT"]
                  [com.twitter/finagle-http_2.11 "20.8.1"]
                  [com.twitter/finagle-stats_2.11 "20.8.1"]])
